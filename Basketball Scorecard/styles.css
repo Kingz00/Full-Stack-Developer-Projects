@@ -1,0 +1,58 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+@font-face {
+    font-family: Scorecard;
+    src: url("/fonts/ScoreFont.ttf");
+}
+
+body {
+    height: 100vh;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    text-align: center;
+    font-family: 'Roboto', sans-serif;
+    background-color: #191f41;
+}
+
+#home h3,
+#home h1,
+#guest h3,
+#guest h1 {
+    margin-bottom: 30px;
+}
+
+#home h1,
+#guest h1,
+.btns button {
+    font-family: Scorecard;
+}
+
+#home h3,
+#guest h3 {
+    color: #fff;
+    font-size: 50px;
+}
+
+#home h1,
+#guest h1 {
+    background-color: #080000;
+    color: #db455f;
+    font-weight: bold;
+    font-size: 80px;
+    padding: 10px 20px;
+}
+
+button {
+    font-size: 30px;
+    margin: 5px;
+    padding: 4px 8px;
+    border-radius: 8px;
+    background-color: #191f41;
+    color: #fff;
+    border: 2px solid #fff;
+}
