@@ -1,0 +1,72 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    margin: 5px;
+    text-align: center;
+    font-family: "Roboto", sans-serif;
+    background: #f0f3f5;
+}
+
+#hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 50px;
+    background: #603cfb;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+#hero h1 {
+    margin: 20px 0;
+}
+
+#input-box {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 60px;
+    font-family: inherit;
+    /* automatically size the input field's width based on its content */
+    field-sizing: content;
+
+    padding: 4px 12px;
+    background: #603cfb;
+    color: white;
+    border: 1px solid white;
+    min-width: 100px;
+}
+
+#input-box::placeholder {
+    color: white;
+}
+
+/* removing the wheel buttons on an input field */
+#input-box::-webkit-inner-spin-button,
+#input-box::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+}
+
+#convert-btn {
+    margin-bottom: 30px;
+    padding: 8px 24px;
+}
+
+#results {
+    display: flex;
+    flex-direction: column;
+}
+
+.result-container {
+    background: white;
+    margin: 0px 30px 20px 30px;
+    padding: 20px 0;
+    border-radius: 10px;
+}
+
+.result-container p {
+    margin-top: 10px;
+}
