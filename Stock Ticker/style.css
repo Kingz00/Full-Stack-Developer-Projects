@@ -1,0 +1,33 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-family: "Noto Sans", sans-serif;
+    background: black;
+}
+
+#ticker {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    padding: 20px 100px 20px 20px;
+    border: 2px solid black;
+    border-radius: 20px;
+    background: white;
+}
+
+#ticker h2 {
+    margin-bottom: 10px;
+}
+
+#price-icon {
+    width: 20px;
+    height: 20px;
+}
