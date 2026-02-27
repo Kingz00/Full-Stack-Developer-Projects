@@ -1,0 +1,58 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: "Roboto", sans-serif;
+}
+
+.card {
+    display: flex;
+    height: 200px;
+    /* min-width: 300px;
+    max-width: 600px; */
+
+    width: 95%;
+    box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.28);
+    border-radius: 12px;
+    margin: 20px 0;
+}
+
+#property-image {
+    object-fit: cover;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+
+.card-right {
+    padding: 30px;
+}
+
+#description {
+    margin: 20px 0;
+}
+
+/* Style for when the screen is in landscape orientation */
+@media only screen and (orientation: landscape) {
+    .card {
+        width: 70%;
+    }
+
+    .card-right {
+        padding: 30px;
+    }
+}
+
+@media only screen and ((orientation: portrait) or (max-width: 750px)) {
+    #property-image {
+        width: 50%;
+    }
+
+    .card-right {
+        padding: 10px;
+    }
+}
