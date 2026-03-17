@@ -1,5 +1,8 @@
 import { getData } from "../utils/getData.js";
 import { sendResponse } from "../utils/sendResponse.js";
+import { parseJSONBody } from "../utils/parseJSONBody.js";
+import { addNewSighting } from "../utils/addNewSighting.js";
+
 // handleGet
 
 export const handleGet = async (res) => {
@@ -16,3 +19,20 @@ export const handleGet = async (res) => {
 }
 
 // handlePost
+
+export const handlePost = async (req, res) => {
+
+    try {
+
+        const parsedBody = await parseJSONBody(req)
+        await addNewSighting(parsedBody)
+        sendResponse(res, 201, 'application/json', JSON.stringify(parsedBody))
+        // 201 - Resource Created Successfully
+
+    } catch (err) {
+
+        console.log(err)
+        sendResponse(res, 400, 'application/json', JSON.stringify({ error: err }))
+        // 400 - Bad Request Status code
+    }
+}

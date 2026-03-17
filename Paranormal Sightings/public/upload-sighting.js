@@ -36,7 +36,7 @@ form.addEventListener("submit", async function (event) {
     location: location,
     timeStamp: readableDate,
     text: text,
-    title: title,
+    title: title
   }
 
   try {
