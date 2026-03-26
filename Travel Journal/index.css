@@ -23,7 +23,7 @@ header span {
 }
 
 .journal-entry {
-    margin-top: 20px;
+    margin: 20px 30px;
     display: flex;
 }
 
