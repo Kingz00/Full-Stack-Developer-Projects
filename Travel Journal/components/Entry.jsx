@@ -2,7 +2,7 @@ import Marker from "../images/marker.png"
 
 export default function Entry(props) {
 
-    const { img, title, country, googleMapsLink, dates, text } = props
+    const { id, img, title, country, googleMapsLink, dates, text } = props.propObj
 
     return (
         <article className="journal-entry">

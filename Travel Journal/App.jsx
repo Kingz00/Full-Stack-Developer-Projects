@@ -5,16 +5,10 @@ import data from './data.js'
 const App = () => {
 
     const entryElements = data.map((entryObj) => {
-        const { id, img, title, country, googleMapsLink, dates, text } = entryObj
         return (
             <Entry
-                key={id}
-                img={img}
-                title={title}
-                country={country}
-                googleMapsLink={googleMapsLink}
-                dates={dates}
-                text={text}
+                key={entryObj.id}
+                propObj={entryObj}
             />)
     })
 
