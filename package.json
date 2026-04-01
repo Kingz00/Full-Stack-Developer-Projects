@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.81.0",
+    "@huggingface/inference": "^4.13.15"
+  }
+}
