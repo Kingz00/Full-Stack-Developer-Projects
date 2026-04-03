@@ -7,6 +7,9 @@ const Main = () => {
 
     const [ingredients, setIngredients] = React.useState([])
     const [recipe, setRecipe] = React.useState(null)
+    const recipeSection = React.useRef(null)
+
+
     // let ingredients = ['Chicken', 'Oregano', 'Tomatoes']
     const ingredientElements = ingredients.map((ingredient, index) => {
         return <li key={index}>{ingredient}</li>
@@ -26,9 +29,21 @@ const Main = () => {
     }
 
     const getRecipe = async () => {
-        const recipeFromAI = await getRecipeFromMistral(ingredients)
-        setRecipe(prevState => recipeFromAI)
+        try {
+            const recipeFromAI = await getRecipeFromMistral(ingredients)
+            setRecipe(prevState => recipeFromAI)
+        } catch (err) {
+            setRecipe(`> **Response Error:** ${err}`)
+        }
     }
+
+    React.useEffect(() => {
+
+        recipe != null && recipeSection != null
+            ? recipeSection.current.scrollIntoView({ behavior: "smooth" })
+            : console.log(recipeSection)
+
+    }, [recipe != null && recipeSection != null])
 
     return (
         <main>
@@ -43,7 +58,11 @@ const Main = () => {
             </form>
 
             {ingredients.length > 0 ?
-                <IngredientsList ingredientsLi={ingredientElements} ingredientsArr={ingredients} showRecipe={getRecipe} />
+                <IngredientsList
+                    ingredientsLi={ingredientElements}
+                    ingredientsArr={ingredients}
+                    showRecipe={getRecipe}
+                    useRef={recipeSection} />
                 : null}
 
             {recipe != null ? <ClaudeRecipe recipe={recipe} /> : null}

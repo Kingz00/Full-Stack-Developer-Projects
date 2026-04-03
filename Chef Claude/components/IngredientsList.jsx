@@ -1,6 +1,6 @@
 const IngredientsList = (props) => {
 
-    const { ingredientsLi, ingredientsArr, showRecipe } = props
+    const { ingredientsLi, ingredientsArr, showRecipe, useRef } = props
 
     return (
         <section>
@@ -8,7 +8,7 @@ const IngredientsList = (props) => {
             <ul className="ingredients-list" aria-live="polite">{ingredientsLi}</ul>
             {ingredientsArr.length > 3 ?
                 <div className="get-recipe-container">
-                    <div>
+                    <div ref={useRef}>
                         <h3>Ready for a recipe?</h3>
                         <p>Generate a recipe from your list of ingredients.</p>
                     </div>
