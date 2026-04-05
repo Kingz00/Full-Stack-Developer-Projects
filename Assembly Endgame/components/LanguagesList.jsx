@@ -3,9 +3,9 @@ const LanguagesList = (props) => {
     const { langList } = props
 
     return (
-        <ul className="language-list">
-            {langList}
-        </ul>
+        <section className="language-list">
+            <ul>{langList}</ul>
+        </section>
     )
 }
 
