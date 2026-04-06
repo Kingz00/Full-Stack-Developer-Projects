@@ -1,12 +1,21 @@
 import React from "react"
 import LanguagesList from "./LanguagesList"
 import { languages } from "../languages"
+import { clsx } from "clsx"
 
 const AssemblyEndGame = () => {
-
+    // State Values
     const [currentWord, setCurrentWord] = React.useState(["r", "e", "a", "c", "t"])
+    const [guessedWord, setGuessedWord] = React.useState([])
 
+    // Static Values
     const alphabet = "abcdefghijklmnopqrstuvwxyz"
+
+    // Derived Values
+    const wrongGuessCount = guessedWord.reduce((acc, currentVal) => {
+        return !currentWord.includes(currentVal) ? acc + 1 : acc
+    }, 0)
+    console.log(wrongGuessCount)
 
     const langList = languages.map((langObj) => {
         const langStyles = {
@@ -17,13 +26,28 @@ const AssemblyEndGame = () => {
     })
 
     const wordDisplayEls = currentWord.map((letter, index) => {
-        return <span key={index}>{letter}</span>
+        return <span key={index}>{guessedWord.includes(letter) ? letter : ""}</span>
     })
 
     const keyboardBtns = alphabet.split("").map((letter) => {
-        return <button key={letter} >{letter.toUpperCase()}</button>
+
+        const isGuessed = guessedWord.includes(letter)
+        const isCorrect = isGuessed && currentWord.includes(letter)
+        const isWrong = isGuessed && !currentWord.includes(letter)
+        const btnClassName = clsx(isCorrect && "right-Btn", isWrong && "wrong-Btn")
+
+        return <button key={letter}
+            onClick={() => keyboardClick(letter)}
+            className={btnClassName} >
+            {letter.toUpperCase()}
+        </button>
     })
 
+    const keyboardClick = (char) => {
+        setGuessedWord(prevArr => {
+            return prevArr.includes(char) ? prevArr : [...prevArr, char]
+        })
+    }
 
     return (
         <main>

@@ -120,3 +120,11 @@ button.new-game {
     margin-inline: auto;
     cursor: pointer;
 }
+
+.keyboard button.wrong-Btn {
+    background-color: #F00;
+}
+
+.keyboard button.right-Btn {
+    background-color: #008000;
+}
