@@ -7,6 +7,7 @@ const AssemblyEndGame = () => {
     // State Values
     const [currentWord, setCurrentWord] = React.useState(["r", "e", "a", "c", "t"])
     const [guessedWord, setGuessedWord] = React.useState([])
+    const [randomIndexArr, setRandomIndexArr] = React.useState([])
 
     // Static Values
     const alphabet = "abcdefghijklmnopqrstuvwxyz"
@@ -15,14 +16,38 @@ const AssemblyEndGame = () => {
     const wrongGuessCount = guessedWord.reduce((acc, currentVal) => {
         return !currentWord.includes(currentVal) ? acc + 1 : acc
     }, 0)
-    console.log(wrongGuessCount)
 
-    const langList = languages.map((langObj) => {
+
+    React.useEffect(() => {
+        if (wrongGuessCount > 0) {
+            let randomIndex = Math.floor(Math.random() * 8)
+            while (randomIndexArr.includes(randomIndex)) {
+                randomIndex = Math.floor(Math.random() * 8)
+                if (randomIndexArr.length === 8) {
+                    break
+                }
+            }
+            if (randomIndexArr.length !== 8) {
+                setRandomIndexArr(prev => {
+                    return [...prev,
+                        randomIndex]
+                })
+            }
+        }
+    }, [wrongGuessCount])
+
+    console.log(randomIndexArr)
+
+    const langList = languages.map((langObj, index) => {
         const langStyles = {
             backgroundColor: langObj.backgroundColor,
             color: langObj.color
         }
-        return <li key={langObj.name} style={langStyles}>{langObj.name}</li>
+
+        const lostLanguage = clsx(randomIndexArr.includes(index) ? "lost" : "")
+
+
+        return <li key={langObj.name} style={langStyles} className={lostLanguage}>{langObj.name}</li>
     })
 
     const wordDisplayEls = currentWord.map((letter, index) => {

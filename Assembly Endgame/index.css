@@ -70,6 +70,23 @@ section.language-list {
 .language-list li {
     border-radius: 3px;
     padding: 4.5px;
+    position: relative;
+    width: fit-content;
+}
+
+/* Dimmed overlay with skull on "lost" languages */
+.language-list li.lost::before {
+    content: "💀";
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.7);
 }
 
 .word-display {
