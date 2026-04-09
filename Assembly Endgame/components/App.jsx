@@ -3,6 +3,7 @@ import LanguagesList from "./LanguagesList"
 import { languages } from "../languages"
 import { getFarewellText, getRandomWord } from "../utils"
 import { clsx } from "clsx"
+import Confetti from "react-confetti"
 
 const AssemblyEndGame = () => {
     // State Values
@@ -103,6 +104,12 @@ const AssemblyEndGame = () => {
 
     return (
         <main>
+
+            {
+                isGameWon && <Confetti recycle={false} numberOfPieces={1000} />
+            }
+
+
             <header>
                 <h1>Assembly: Endgame</h1>
                 <p>Guess the word within 8 attempts to keep the programming world safe from Assembly!</p>
