@@ -1,121 +1,140 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import React from "react"
+import { languages } from "./languages"
+import { getRandomWord } from "./utils"
+import { clsx } from "clsx"
+import type { LanguageType } from "./languages"
+import type { JSX } from 'react'
 
-function App() {
-  const [count, setCount] = useState(0)
+import AriaLiveStatus from "../components/AriaLiveStatus"
+import LanguagesList from "../components/LanguagesList"
+import ConfettiContainer from "../components/ConfettiContainer"
+import Header from "../components/Header"
+import GameStatus from "../components/GameStatus"
+import Keyboard from "../components/Keyboard"
+import WordLetters from "../components/WordLetters"
+import NewGameButton from "../components/NewGameButton"
+
+const AssemblyEndGame = () => {
+  // State Values
+  const [currentWord, setCurrentWord] = React.useState<string[]>((): string[] => getRandomWord())
+  const [guessedWord, setGuessedWord] = React.useState<string[]>([])
+  const [randomIndexArr, setRandomIndexArr] = React.useState<number[]>([])
+  const [eliminatedLang, setEliminatedLang] = React.useState<string>("")
+
+  // Static Values
+  const alphabet = "abcdefghijklmnopqrstuvwxyz"
+
+  // Derived Values
+  const wrongGuessCount: number = guessedWord.reduce((acc: number, currentVal: string): number => {
+    return !currentWord.includes(currentVal) ? acc + 1 : acc
+  }, 0)
+
+  const isGameWon: boolean = currentWord.every((letter: string): boolean => guessedWord.includes(letter))
+  const isGameOver: boolean = wrongGuessCount >= (languages.length - 1) ? true : false
+  const lastGuessedLetter: string = guessedWord[guessedWord.length - 1]
+  const isLastGuessIncorrect: string | boolean = lastGuessedLetter && !currentWord.includes(lastGuessedLetter)
+
+  // useEffect
+  React.useEffect(() => {
+    let randomIndex: number
+    if (wrongGuessCount > 0) {
+      randomIndex = Math.floor(Math.random() * (languages.length - 1))
+      while (randomIndexArr.includes(randomIndex)) {
+        randomIndex = Math.floor(Math.random() * (languages.length - 1))
+        if (randomIndexArr.length === (languages.length - 1)) {
+          break
+        }
+      }
+      if (randomIndexArr.length !== (languages.length - 1)) {
+        setRandomIndexArr(prev => {
+          return [...prev,
+            randomIndex]
+        })
+        setEliminatedLang(languages[randomIndex].name)
+      }
+    }
+  }, [wrongGuessCount])
+
+
+  const langList: JSX.Element[] = languages.map((langObj: LanguageType, index: number): JSX.Element => {
+
+    // Alternate method to strike out a language if the user's guess is wrong (in a non-random order)
+    // const isLanguageLost = index < wrongGuessCount
+    // const lostLanguage = clsx(isLanguageLost && "lost")
+
+    const langStyles: Omit<LanguageType, "name"> = {
+      backgroundColor: langObj.backgroundColor,
+      color: langObj.color
+    }
+    const lostLanguage: string = clsx(randomIndexArr.includes(index) && "lost")
+    return <li key={langObj.name} style={langStyles} className={lostLanguage}>{langObj.name}</li>
+  })
+
+
+  const wordDisplayEls: JSX.Element[] = currentWord.map((letter: string, index: number): JSX.Element => {
+    const letterClassName: string = clsx(isGameOver && !guessedWord.includes(letter) && "missed-letter")
+    return <span key={index}
+      className={letterClassName}
+    >{guessedWord.includes(letter) || isGameOver ? letter : ""}</span>
+  })
+
+
+  const keyboardBtns: JSX.Element[] = alphabet.split("").map((letter: string): JSX.Element => {
+
+    const isGuessed: boolean = guessedWord.includes(letter)
+    const isCorrect: boolean = isGuessed && currentWord.includes(letter)
+    const isWrong: boolean = isGuessed && !currentWord.includes(letter)
+    const btnClassName: string = clsx(isCorrect && "right-Btn", isWrong && "wrong-Btn")
+
+    return <button key={letter}
+      onClick={() => keyboardClick(letter)}
+      className={btnClassName}
+      disabled={isGameOver || isGameWon ? true : undefined}
+      aria-disabled={guessedWord.includes(letter)}
+      aria-label={`Letter ${letter}`}>
+      {letter.toUpperCase()}
+    </button>
+  })
+
+  const keyboardClick = (char: string): void => {
+    setGuessedWord((prevArr: string[]): string[] => {
+      return prevArr.includes(char) ? prevArr : [...prevArr, char]
+    })
+  }
+
+  const startNewGame = (): void => {
+    setGuessedWord([])
+    setRandomIndexArr([])
+    setCurrentWord(getRandomWord())
+  }
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <main>
 
-      <div className="ticks"></div>
+      <ConfettiContainer isGameWon={isGameWon} />
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+      <Header />
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+      <GameStatus isGameWon={isGameWon}
+        isGameOver={isGameOver}
+        wrongGuessCount={wrongGuessCount}
+        isLastGuessIncorrect={isLastGuessIncorrect}
+        eliminatedLang={eliminatedLang} />
+
+      <LanguagesList langList={langList} />
+
+      <WordLetters wordDisplayEls={wordDisplayEls} />
+
+      {/* Some extra accessibility features for screen readers */}
+      <AriaLiveStatus currentWord={currentWord}
+        lastGuessedLetter={lastGuessedLetter}
+        guessedWord={guessedWord} />
+
+      <Keyboard keyboardBtns={keyboardBtns} />
+
+      <NewGameButton isGameOver={isGameOver} isGameWon={isGameWon} startNewGame={startNewGame} />
+    </main>
   )
 }
 
-export default App
+export default AssemblyEndGame
