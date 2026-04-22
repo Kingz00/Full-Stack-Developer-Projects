@@ -28,6 +28,7 @@ h2 .bold-text {
 h1,
 h2 {
     font-weight: 300;
+    margin-top: 0;
 }
 
 h1 {
@@ -41,6 +42,11 @@ h2 {
 h3 {
     font-size: 36px;
     font-weight: 900;
+    margin-bottom: 0;
+}
+
+p {
+    margin-bottom: 0;
 }
 
 a {
@@ -55,9 +61,27 @@ a:focus {
 
 .small-text {
     font-size: 16px;
+    margin-top: 5px;
 }
 
 .dark-bkg {
     background-color: #252525;
     color: #ffffff;
+}
+
+.work-btn {
+    display: inline-block;
+    border: 1px solid #99D930;
+    border-radius: 4.6px;
+    background-color: #99D930;
+    color: #252525;
+    text-decoration: none;
+    padding: 10px 15px;
+    margin-top: 40px;
+}
+
+.work-btn:hover,
+.work-btn:focus {
+    background-color: #252525;
+    color: #fff;
 }
