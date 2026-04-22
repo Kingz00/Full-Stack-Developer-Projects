@@ -57,14 +57,7 @@ a:focus {
     font-size: 16px;
 }
 
-.top {
-    background-color: #D7D7D7;
-}
-
-.middle {
-    background-color: #FFEAEA;
-}
-
-.bottom {
-    background-color: #EAF9FF;
+.dark-bkg {
+    background-color: #252525;
+    color: #ffffff;
 }
