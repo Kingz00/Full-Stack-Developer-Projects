@@ -37,6 +37,10 @@ h1 {
 
 h2 {
     font-size: 42px;
+    border-top: 1px solid #C4C4C4;
+    border-bottom: 1px solid #C4C4C4;
+    box-sizing: border-box;
+    padding: 20px 0;
 }
 
 h3 {
@@ -76,12 +80,27 @@ a:focus {
     background-color: #99D930;
     color: #252525;
     text-decoration: none;
-    padding: 10px 15px;
-    margin-top: 40px;
+    padding: 10px 25px;
+    margin-top: 25px;
 }
 
 .work-btn:hover,
 .work-btn:focus {
     background-color: #252525;
     color: #fff;
+}
+
+.bold-text,
+.name,
+time {
+    color: #99d930;
+    font-weight: 900;
+}
+
+article a:hover,
+article a.work-btn:hover,
+article a:focus,
+article a.work-btn:focus {
+    background-color: #fff;
+    color: #252525;
 }
