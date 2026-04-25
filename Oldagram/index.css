@@ -3,3 +3,82 @@ body {
     margin: 0;
     padding: 0;
 }
+
+body {
+    font-family: "Roboto", sans-serif;
+}
+
+
+header {
+    display: flex;
+    height: 67px;
+    padding: 16px;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid #C6C6C6;
+    max-width: 375px;
+}
+
+header img.avatar {
+    margin-left: auto;
+}
+
+.avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+}
+
+.title-logo {
+    height: 34px;
+}
+
+.author {
+    display: flex;
+    gap: 7px;
+    padding: 12px;
+}
+
+.author-details h1 {
+    margin-bottom: 5px;
+}
+
+h1 {
+    font-size: 13px;
+    font-weight: 700;
+    margin-top: 0;
+}
+
+p {
+    font-size: 12px;
+    margin-top: 0;
+}
+
+.post-image-container {
+    margin-top: 11px;
+    width: 375px;
+    height: 375px;
+}
+
+.post-image {
+    width: 100%;
+}
+
+.container {
+    margin-top: 21px;
+    margin-left: 10px;
+}
+
+.post-icons-container {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.post-icons {
+    width: 25px;
+}
+
+.comments span {
+    font-weight: 700;
+}
