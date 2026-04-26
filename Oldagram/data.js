@@ -1,6 +1,6 @@
 export const posts = [
     {
-        id: 1,
+        uuid: "c86fed21-3c46-4015-a4cb-0b213ea4ab7b",
         name: "Vincent van Gogh",
         username: "vincey1853",
         location: "Zundert, Netherlands",
@@ -10,7 +10,7 @@ export const posts = [
         likes: 21
     },
     {
-        id: 2,
+        uuid: "c1e033a5-9982-44ca-8cfe-6d4aa49c8f19",
         name: "Gustave Courbet",
         username: "gus1819",
         location: "Ornans, France",
@@ -20,7 +20,7 @@ export const posts = [
         likes: 4
     },
     {
-        id: 3,
+        uuid: "ff252f3b-eaaf-4cee-8488-e595fc1c0c7b",
         name: "Joseph Ducreux",
         username: "jd1735",
         location: "Paris, France",

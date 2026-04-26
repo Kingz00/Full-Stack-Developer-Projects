@@ -1,4 +1,5 @@
 import { posts } from "./data";
+import { v4 as uuidv4 } from "uuid"
 
 const mainEl = document.querySelector("#main")
 
@@ -23,11 +24,9 @@ const getArticles = () => {
     
             <section class="container">
                 <div class="post-icons-container">
-                    <img id="like-icon-${post.id}" class="post-icons" src="./images/icon-heart.png" alt="An icon to like the post">
-                    <img id="comment-icon-${post.id}" class="post-icons" src="./images/icon-comment.png"
-                        alt="An icon to add a comment to the post">
-                    <img id="dm-icon-${post.id}" class="post-icons" src="./images/icon-dm.png"
-                        alt="An icon to send the user a direct message">
+                    <i class="fa-regular fa-light fa-heart post-icons" data-like="${post.uuid}"></i>
+                    <i class="fa-regular fa-comment-dots post-icons"></i>
+                    <i class="fa-duotone fa-regular fa-paper-plane post-icons"></i>
                 </div>
                 <h1 id="likes-count">${post.likes} likes</h1>
                 <div>
@@ -46,19 +45,14 @@ const render = () => {
 
 render()
 
-// const postIconsContainer = document.querySelectorAll(".post-icons-container")
-// for (let postIcon of postIconsContainer) {
-//     postIcon.addEventListener("click", (e) => {
+document.addEventListener("click", (e) => {
+    if (e.target.dataset.like) {
+        handleLikeClick(e.target.dataset.like)
+    }
+})
 
-//         for (let post of posts) {
-//             if (e.target.id === `like-icon-${post.id}`) {
-//                 post = { ...post, likes: post.likes += 1 }
-//                 // console.log(post)
-//             }
-//         }
-
-//         console.log(posts)
-//         // render()
-//         // postIcon.removeEventListener("click", render())
-//     })
-// }
+const handleLikeClick = (postId) => {
+    const postObject = posts.filter((post) => { return postId === post.uuid })[0]
+    postObject.likes++
+    render()
+}
