@@ -82,3 +82,7 @@ p {
 .comments span {
     font-weight: 700;
 }
+
+article {
+    margin-bottom: 25px;
+}
