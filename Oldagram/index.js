@@ -24,13 +24,13 @@ const getArticles = () => {
     
             <section class="container">
                 <div class="post-icons-container">
-                    <i class="fa-regular fa-light fa-heart post-icons" data-like="${post.uuid}"></i>
-                    <i class="fa-regular fa-comment-dots post-icons"></i>
-                    <i class="fa-duotone fa-regular fa-paper-plane post-icons"></i>
+                    <i class="${post.isLiked ? "fa-solid" : "fa-regular"} fa-heart ${post.isLiked ? "liked" : ""}" data-like="${post.uuid}"></i>
+                    <i class="fa-regular fa-comment-dots" data-comment="${post.uuid}"></i>
+                    <i class="fa-duotone fa-regular fa-paper-plane"></i>
                 </div>
                 <h1 id="likes-count">${post.likes} likes</h1>
-                <div>
-                    <p id="comments" class="comments"><span>${post.username}</span> ${post.comment}</p>
+                <div id="comments-${post.uuid}" class="comments">
+                    <p><span>${post.username}</span> ${post.comment}</p>
                 </div>
             </section>
         `
@@ -49,10 +49,18 @@ document.addEventListener("click", (e) => {
     if (e.target.dataset.like) {
         handleLikeClick(e.target.dataset.like)
     }
+    else if (e.target.dataset.comment) {
+        handleCommentClick(e.target.dataset.comment)
+    }
 })
 
 const handleLikeClick = (postId) => {
     const postObject = posts.filter((post) => { return postId === post.uuid })[0]
-    postObject.likes++
+    postObject.isLiked ? postObject.likes-- : postObject.likes++
+    postObject.isLiked = !postObject.isLiked
     render()
+}
+
+const handleCommentClick = (postId) => {
+    document.getElementById(`comments-${postId}`).classList.toggle("comments")
 }

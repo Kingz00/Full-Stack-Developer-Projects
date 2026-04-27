@@ -75,19 +75,28 @@ p {
     margin-bottom: 12px;
 }
 
-.post-icons {
-    width: 25px;
+.comments {
+    display: none;
 }
 
 .comments span {
     font-weight: 700;
 }
 
+
 article {
     margin-bottom: 25px;
 }
 
-/* i {
+i {
+    width: 25px;
+}
+
+i:hover,
+i:focus {
+    font-size: 1.25rem;
+}
+
+.liked {
     color: red;
-    font-size: 30px;
-} */
+}
