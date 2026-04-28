@@ -1,0 +1,31 @@
+body {
+    margin: 0;
+    font-family: "Smythe", system-ui;
+}
+
+header {
+    width: 600px;
+    height: 167px;
+    background-image: url("/images/header.png");
+    background-size: 100%;
+}
+
+.menu-item {
+    display: flex;
+    margin: 67px 46px 45px;
+    border: 1px solid #999;
+}
+
+.emoji {
+    font-family: "Inter", sans-serif;
+    font-size: 78px;
+    font-weight: 400;
+    margin-top: 0;
+    line-height: 1.2;
+}
+
+.item-name {
+    font-size: 28px;
+    font-weight: 400;
+    margin-top: 0;
+}
