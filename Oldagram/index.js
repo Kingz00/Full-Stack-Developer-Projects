@@ -29,7 +29,7 @@ const getArticles = () => {
                     <i class="fa-duotone fa-regular fa-paper-plane"></i>
                 </div>
                 <h1 id="likes-count">${post.likes} likes</h1>
-                <div id="comments-${post.uuid}" class="comments">
+                <div id="comments-${post.uuid}" class="${post.isShown || "hidden"} comments">
                     <p><span>${post.username}</span> ${post.comment}</p>
                 </div>
             </section>
@@ -62,5 +62,7 @@ const handleLikeClick = (postId) => {
 }
 
 const handleCommentClick = (postId) => {
-    document.getElementById(`comments-${postId}`).classList.toggle("comments")
+    const postObject = posts.filter((post) => { return postId === post.uuid })[0]
+    postObject.isShown = !postObject.isShown
+    render()
 }
