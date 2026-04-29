@@ -32,7 +32,7 @@ header {
     line-height: 1.2;
 }
 
-.item-name {
+h2 {
     font-size: 28px;
     font-weight: 400;
     color: #000000;
@@ -70,4 +70,54 @@ header {
     font-size: 32px;
     font-family: "Inter", system-ui;
     color: #3C3C3C;
+}
+
+.order-container {
+    margin: 0 46px;
+}
+
+.order-title {
+    text-align: center;
+}
+
+.order-items-container {
+    margin-bottom: 23px;
+}
+
+.order-item-container,
+.total-price-container {
+    display: flex;
+    gap: 13px;
+}
+
+.order-item-container .price,
+.total-price-container .price {
+    margin-left: auto;
+}
+
+.remove-btn {
+    border: none;
+    background-color: #ffffff;
+    font-size: 12px;
+    font-family: "Arimo", sans-serif;
+    color: #BBBBBB;
+}
+
+.total-price-container {
+    border-top: 2px solid #393333;
+    padding: 14px 0 53px;
+}
+
+.complete-btn {
+    width: 100%;
+    height: 60px;
+    border: none;
+    border-radius: 3px;
+    background-color: #16DB99;
+
+    /* Text */
+    font-family: "Arimo", sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    color: #FFFFFF;
 }
