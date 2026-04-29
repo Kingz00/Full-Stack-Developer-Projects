@@ -15,15 +15,34 @@
 </head>
 
 <body>
-    <header>
+    <header class="container">
 
     </header>
     <main>
         <section id="menu" class="menu">
-
+            <div id="menu-container" class="container"></div>
         </section>
         <section id="order" class="order">
-
+            <div id="order-container" class="container">
+                <h2 class="order-title">Your order</h2>
+                <div class="order-items-container">
+                    <div class="order-item-container">
+                        <h2 class="order-item">Pizza</h2>
+                        <button class="remove-btn">remove</button>
+                        <p class="order-price">14</p>
+                    </div>
+                    <div class="order-item-container">
+                        <h2 class="order-item">Beer</h2>
+                        <button class="remove-btn">remove</button>
+                        <p class="order-price">12</p>
+                    </div>
+                </div>
+                <div class="total-price-container">
+                    <h2 class="total-price-title">Total price:</h2>
+                    <p class="total-price">26</p>
+                </div>
+                <button id="complete-btn" class="complete-btn">Complete order</button>
+            </div>
         </section>
     </main>
     <script type="module" src="index.js"></script>

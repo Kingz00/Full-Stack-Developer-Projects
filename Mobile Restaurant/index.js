@@ -1,6 +1,6 @@
 import { menuArray } from "./data";
 
-const menuEl = document.querySelector("#menu")
+const menuContainer = document.querySelector("#menu-container")
 
 document.addEventListener("click", (e) => {
 
@@ -24,7 +24,7 @@ const getMenus = () => {
 }
 
 const render = () => {
-    menuEl.innerHTML = getMenus()
+    menuContainer.innerHTML = getMenus()
 }
 
 render()

@@ -4,16 +4,24 @@ body {
 }
 
 header {
-    width: 600px;
+    width: 100%;
     height: 167px;
     background-image: url("/images/header.png");
     background-size: 100%;
 }
 
+.container {
+    display: block;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
 .menu-item {
     display: flex;
     margin: 67px 46px 45px;
-    border: 1px solid #999;
+    max-width: 508px;
+    gap: 30px;
+    border-bottom: 1px solid #D2D2D2;
 }
 
 .emoji {
@@ -27,5 +35,39 @@ header {
 .item-name {
     font-size: 28px;
     font-weight: 400;
-    margin-top: 0;
+    color: #000000;
+    margin: 0 0 8px;
+}
+
+.ingredients {
+    font-size: 16px;
+    font-weight: 400;
+    color: #8B8B8B;
+    margin: 0 0 8px;
+}
+
+.price {
+    font-size: 20px;
+    font-weight: 400;
+    color: #000000;
+    margin: 0;
+}
+
+.price::before {
+    content: "$";
+}
+
+.add-item {
+    margin-left: auto;
+    width: 50px;
+    height: 50px;
+    border: 1.5px solid #DEDEDE;
+    background-color: #ffffff;
+    border-radius: 50%;
+
+    /* Text */
+    font-weight: 200;
+    font-size: 32px;
+    font-family: "Inter", system-ui;
+    color: #3C3C3C;
 }
