@@ -44,7 +44,21 @@
                     </div>
                     <button id="complete-btn" class="complete-btn">Complete order</button>
                 </div>
+                <div class="feedback-container">
+                    <h4 class="feedback-text">Thanks, James! Your order is on its way!</h4>
+                </div>
             </div>
+        </section>
+        <section class="form-container">
+            <h3 class="form-title">Enter card details</h3>
+            <form id="payment-details">
+                <input type="text" name="user-name" placeholder="Enter your name" required>
+                <input type="text" name="card-number" placeholder="Enter card number" minlength="16" maxlength="16"
+                    pattern="[0-9]" required>
+                <input type="text" name="cvv" placeholder="Enter CVV" minlength="3" maxlength="3" pattern="[0-9]"
+                    required>
+                <button id="pay-btn" class="pay-btn" type="submit">Pay</button>
+            </form>
         </section>
     </main>
     <script type="module" src="index.js"></script>
