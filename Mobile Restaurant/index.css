@@ -15,8 +15,7 @@ body {
 
 h1.emoji {
     font-family: "Inter", sans-serif;
-    font-size: 4.875rem;
-    /* font-size: 78px;  */
+    font-size: 3rem;
     font-weight: inherit;
     margin-top: 0;
     line-height: 1.2;
@@ -39,10 +38,8 @@ h3 {
     text-align: center;
     font-family: "Arimo", sans-serif;
     font-weight: 700;
-    /* font-size: 24px; */
-    font-size: 1.5rem;
-    /* margin-bottom: 46px; */
-    margin-bottom: 1.917em;
+    font-size: 1.25rem;
+    margin-bottom: 1.5em;
 }
 
 h4.feedback-text {
@@ -74,18 +71,14 @@ p.price::before {
 input {
     display: block;
     width: 100%;
-    height: 72px;
-    /* margin-bottom: 23px; */
-    margin-bottom: 1.15em;
-    /* padding: 15px 25px; */
-    padding: 0.75em 1.25em;
+    margin-bottom: 0.8em;
+    padding: 0.5em 1em;
     border-radius: 4px;
     border: 1.3px solid #757575;
 
     /* Text */
     font-family: "Arimo", sans-serif;
-    /* font-size: 20px; */
-    font-size: 1.25rem;
+    font-size: 1.15rem;
 }
 
 input::placeholder {
@@ -101,7 +94,6 @@ header {
     height: 167px;
     background-image: url("/images/header.png");
     background-size: cover;
-    /* border: 2px solid red; */
 }
 
 .container {
@@ -112,11 +104,9 @@ header {
 
 .menu-item {
     display: flex;
-    /* margin: 67px 46px 45px; */
-    margin: 4.187em 2.875em 2.813em;
+    margin: 2.5em 2em 2em;
     max-width: 508px;
-    /* gap: 30px; */
-    gap: 1.875em;
+    gap: 1em;
     border-bottom: 1px solid #D2D2D2;
     /* border: 2px solid red; */
 }
@@ -127,13 +117,11 @@ header {
 
 .order-container,
 .feedback-container {
-    /* margin: 0 46px; */
-    margin: 0 2.875em;
+    margin: 0 2em;
 }
 
 .order-items-container {
-    /* margin-bottom: 23px; */
-    margin-bottom: 1.437em;
+    margin-bottom: 1em;
 }
 
 .order-item-container,
@@ -150,14 +138,13 @@ header {
 
 .total-price-container {
     border-top: 2px solid #393333;
-    /* padding: 14px 0 53px; */
-    padding: 0.875em 0 3.312em;
+    padding: 0.875em 0 2.5em;
 }
 
 section.form-container {
     display: none;
-    width: 524px;
-    height: 542px;
+    max-width: 524px;
+    height: 380px;
     background-color: #fff;
     position: fixed;
     top: 0;
@@ -165,8 +152,7 @@ section.form-container {
     left: 0;
     right: 0;
     margin: auto;
-    /* padding: 30px 25px; */
-    padding: 1.875em 1.562em;
+    padding: 1em 0.5em;
     border-radius: 4px;
 }
 
@@ -229,11 +215,76 @@ section.form-container {
 
 .pay-btn {
     display: block;
-    height: 72px;
-    /* margin-top: 46px; */
-    margin-top: 2.3em;
+    height: 50px;
+    margin-top: 1.8em;
 
     /* Text */
-    /* font-size: 20px; */
-    font-size: 1.25rem;
+    font-size: 1rem;
+}
+
+/* Media Queries */
+
+@media (min-width: 576px) {
+    h1.emoji {
+        /* font-size: 78px; */
+        font-size: 4.875rem;
+    }
+
+    h3 {
+        /* font-size: 24px; */
+        font-size: 1.5rem;
+        /* margin-bottom: 46px; */
+        margin-bottom: 1.917em;
+    }
+
+    input {
+        height: 72px;
+        /* margin-bottom: 23px; */
+        margin-bottom: 1.15em;
+        /* padding: 15px 25px; */
+        padding: 0.75em 1.25em;
+
+        /* Text */
+        /* font-size: 20px; */
+        font-size: 1.25rem;
+    }
+
+    .menu-item {
+        /* gap: 30px; */
+        gap: 1.875em;
+        /* margin: 67px 46px 45px; */
+        margin: 4.187em 2.875em 2.813em;
+    }
+
+    .order-container,
+    .feedback-container {
+        /* margin: 0 46px; */
+        margin: 0 2.875em;
+    }
+
+    .order-items-container {
+        /* margin-bottom: 23px; */
+        margin-bottom: 1.437em;
+    }
+
+    .total-price-container {
+        /* padding: 14px 0 53px; */
+        padding-bottom: 3.312em;
+    }
+
+    section.form-container {
+        height: 542px;
+        /* padding: 30px 25px; */
+        padding: 1.875em 1.562em;
+    }
+
+    .pay-btn {
+        height: 72px;
+        /* margin-top: 46px; */
+        margin-top: 2.3em;
+
+        /* Text */
+        /* font-size: 20px; */
+        font-size: 1.25rem;
+    }
 }
