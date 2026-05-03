@@ -112,7 +112,7 @@ header {
 }
 
 .order-container {
-    display: block;
+    display: none;
 }
 
 .order-container,
