@@ -5,30 +5,28 @@ const orderContainer = document.querySelector("#order-container")
 
 
 const orders = []
-const orderEls = []
 
 document.addEventListener("click", (e) => {
     if (e.target.dataset.menuItem) {
         addItem(e.target.dataset.menuItem)
+    }
+    else if (e.target.dataset.orderIndex) {
+        removeOrder(e.target.dataset.orderIndex)
     }
 })
 
 const addItem = (menuId) => {
     const menuObj = menuArray.filter((obj) => { return Number(menuId) === obj.id })[0]
     orders.push(menuObj)
-    orderEls.push(`
-        <div class="order-item-container">
-            <h2 class="order-item">${menuObj.name}</h2>
-            <button class="remove-btn">remove</button>
-            <p class="price">${menuObj.price}</p>
-        </div>
-        `)
-    document.getElementById("order-items-container").innerHTML = orderEls.join('')
-    const totalPrice = orders.reduce((acc, currentValue) => {
-        return acc + currentValue.price
-    }, 0)
-    document.getElementById("total-price").textContent = totalPrice
-    orderContainer.style.display = "block"
+    renderOrders()
+}
+
+const removeOrder = (orderIndex) => {
+    orders.splice(Number(orderIndex), 1)
+    renderOrders()
+    if (orders.length === 0) {
+        orderContainer.style.display = "none"
+    }
 }
 
 const getMenus = () => {
@@ -48,8 +46,26 @@ const getMenus = () => {
     return menus
 }
 
-const render = (domArray) => {
-    menuContainer.innerHTML = domArray
+const render = () => {
+    menuContainer.innerHTML = getMenus()
 }
 
-render(getMenus())
+const renderOrders = () => {
+    const orderEls = orders.map((order, index) => {
+        return `
+        <div class="order-item-container">
+            <h2 class="order-item">${order.name}</h2>
+            <button class="remove-btn" data-order-index="${index}">remove</button>
+            <p class="price">${order.price}</p>
+        </div>
+        `
+    })
+    document.getElementById("order-items-container").innerHTML = orderEls.join('')
+    const totalPrice = orders.reduce((acc, currentValue) => {
+        return acc + currentValue.price
+    }, 0)
+    document.getElementById("total-price").textContent = totalPrice
+    orderContainer.style.display = "block"
+}
+
+render()
