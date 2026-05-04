@@ -35,21 +35,24 @@
                     </div>
                     <button id="complete-btn" class="btn complete-btn">Complete order</button>
                 </div>
-                <div class="feedback-container">
-                    <h4 class="feedback-text">Thanks, James! Your order is on its way!</h4>
+                <div id="feedback-container" class="feedback-container">
+                    <h4 id="feedback-text" class="feedback-text">Thanks, James! Your order is on its way!</h4>
                 </div>
             </div>
         </section>
-        <section class="form-container">
-            <h3 class="form-title">Enter card details</h3>
-            <form id="payment-details">
-                <input type="text" name="user-name" placeholder="Enter your name" aria-label="Enter your name" required>
-                <input type="text" name="card-number" placeholder="Enter card number" aria-label="Enter card number"
-                    minlength="16" maxlength="16" pattern="[0-9]" required>
-                <input type="text" name="cvv" placeholder="Enter CVV" aria-label="Enter CVV" minlength="3" maxlength="3"
-                    pattern="[0-9]" required>
-                <button id="pay-btn" class="btn pay-btn" type="submit">Pay</button>
-            </form>
+        <section id="form-section" class="form-section">
+            <div class="form-container">
+                <h3 class="form-title">Enter card details</h3>
+                <form id="payment-details">
+                    <input type="text" name="user-name" placeholder="Enter your name" aria-label="Enter your name"
+                        pattern="^\p{L}+( \p{L}+)*$" required>
+                    <input type="text" name="card-number" placeholder="Enter card number" aria-label="Enter card number"
+                        minlength="16" maxlength="16" pattern="^[0-9]+$" required>
+                    <input type="text" name="cvv" placeholder="Enter CVV" aria-label="Enter CVV" minlength="3"
+                        maxlength="3" pattern="^[0-9]+$" required>
+                    <button id="pay-btn" class="btn pay-btn" type="submit">Pay</button>
+                </form>
+            </div>
         </section>
     </main>
     <script type="module" src="index.js"></script>

@@ -13,6 +13,15 @@ document.addEventListener("click", (e) => {
     else if (e.target.dataset.orderIndex) {
         removeOrder(e.target.dataset.orderIndex)
     }
+    else if (e.target.id === "complete-btn") {
+        document.getElementById("form-section").style.display = "flex"
+    }
+    else if (e.target.id === "form-section") {
+        document.getElementById("form-section").style.display = "none"
+    }
+    else if (e.target.id === "pay-btn") {
+        handlePay(e)
+    }
 })
 
 const addItem = (menuId) => {
@@ -27,6 +36,16 @@ const removeOrder = (orderIndex) => {
     if (orders.length === 0) {
         orderContainer.style.display = "none"
     }
+}
+
+function handlePay(e) {
+    e.preventDefault()
+    const payForm = document.getElementById("payment-details")
+    const inputData = new FormData(payForm)
+    document.getElementById("feedback-text").textContent = `Thanks, ${inputData.get("user-name")}! Your order is on its way!`
+    document.getElementById("form-section").style.display = "none"
+    orderContainer.style.display = "none"
+    document.getElementById("feedback-container").style.display = "flex"
 }
 
 const getMenus = () => {

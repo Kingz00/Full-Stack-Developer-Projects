@@ -141,19 +141,26 @@ header {
     padding: 0.875em 0 2.5em;
 }
 
-section.form-container {
+section.form-section {
     display: none;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.6);
+    position: fixed;
+    top: 0;
+    left: 0;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+div.form-container {
     max-width: 524px;
     height: 380px;
     background-color: #fff;
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    margin: auto;
     padding: 1em 0.5em;
     border-radius: 4px;
+    z-index: 1000;
 }
 
 .feedback-container {
@@ -272,7 +279,7 @@ section.form-container {
         padding-bottom: 3.312em;
     }
 
-    section.form-container {
+    div.form-container {
         height: 542px;
         /* padding: 30px 25px; */
         padding: 1.875em 1.562em;
