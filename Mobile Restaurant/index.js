@@ -27,6 +27,7 @@ document.addEventListener("click", (e) => {
 const addItem = (menuId) => {
     const menuObj = menuArray.filter((obj) => { return Number(menuId) === obj.id })[0]
     orders.push(menuObj)
+    document.getElementById("feedback-container").style.display = "none"
     renderOrders()
 }
 
@@ -43,9 +44,11 @@ function handlePay(e) {
     const payForm = document.getElementById("payment-details")
     const inputData = new FormData(payForm)
     document.getElementById("feedback-text").textContent = `Thanks, ${inputData.get("user-name")}! Your order is on its way!`
+    payForm.reset()
     document.getElementById("form-section").style.display = "none"
     orderContainer.style.display = "none"
     document.getElementById("feedback-container").style.display = "flex"
+    orders.length = 0 //empties an array that has been declared as a const
 }
 
 const getMenus = () => {
