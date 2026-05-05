@@ -1,5 +1,6 @@
 import { menuArray } from "./data";
 
+document.getElementById("currentYear").textContent = new Date().getFullYear()
 const menuContainer = document.querySelector("#menu-container")
 const orderContainer = document.querySelector("#order-container")
 

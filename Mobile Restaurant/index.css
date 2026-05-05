@@ -5,6 +5,7 @@
 }
 
 body {
+    display: grid;
     margin: 0;
     font-family: "Smythe", system-ui;
     font-weight: 400;
@@ -68,6 +69,10 @@ p.price::before {
     content: "$";
 }
 
+footer p {
+    font-size: 1.25rem;
+}
+
 input {
     display: block;
     width: 100%;
@@ -94,6 +99,14 @@ header {
     height: 167px;
     background-image: url("/images/header.png");
     background-size: cover;
+}
+
+main {
+    display: grid;
+}
+
+footer {
+    text-align: center;
 }
 
 .container {
@@ -293,5 +306,43 @@ div.form-container {
         /* Text */
         /* font-size: 20px; */
         font-size: 1.25rem;
+    }
+}
+
+@media (min-width: 870px) {
+    body {
+        grid-template-columns: 1em 1fr 1em;
+        gap: 1em 0;
+        grid-template-areas:
+            "... head ..."
+            "... main ..."
+            "... foot ...";
+    }
+
+
+    header.container {
+        grid-area: head;
+        max-width: none;
+        height: 20vh;
+        background-size: 100% 100%;
+        background-repeat: no-repeat;
+    }
+
+    main {
+        grid-area: main;
+        grid-template-columns: 1fr 1fr;
+        gap: 1em;
+    }
+
+    footer {
+        grid-area: foot;
+    }
+
+    .menu {
+        grid-column: 1 / 2;
+    }
+
+    .order {
+        grid-column: 2 / 3;
     }
 }
