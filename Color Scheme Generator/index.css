@@ -1,0 +1,54 @@
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Inter", sans-serif;
+    height: 100vh;
+}
+
+h1 {
+    font-size: 1rem;
+}
+
+header,
+.input-section {
+    display: flex;
+    gap: 1em;
+    padding: 0.5em 1em;
+    margin-bottom: 1em;
+}
+
+header {
+    justify-content: space-between;
+}
+
+.input-section {
+    justify-content: center;
+    /* border: 1px solid red; */
+}
+
+.color-picker {
+    width: 61px;
+    height: 42px;
+}
+
+.color-dropdown {
+    width: 312px;
+}
+
+button {
+    background-color: #ffffff;
+    border: 1px solid black;
+    border-radius: 5px;
+    padding: 0.5em 1em;
+
+    /* Text */
+    font-family: inherit;
+    font-weight: 500;
+    font-size: 0.75rem;
+    color: #374151;
+}

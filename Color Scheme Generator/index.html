@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Scheme Generator</title>
+    <link rel="stylesheet" href="index.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <header>
+        <h1>Color Scheme Generator</h1>
+        <button id="theme-btn" class="theme-btn">Light Theme</button>
+    </header>
+    <main>
+        <section class="input-section">
+            <input id="color-picker" class="color-picker" type="color" value="#ff0000">
+            <select id="color-dropdown" class="color-dropdown">
+                <option value="#ff0000">Red</option>
+                <option value="#0000ff">Blue</option>
+                <option value="#00ff00">Green</option>
+                <option value="#ffff00">Yellow</option>
+            </select>
+            <button id="color-scheme-btn" class="color-scheme-btn">Get color scheme</button>
+        </section>
+
+        <section class="color-scheme-section">
+            <div class="scheme-container">
+                <div class="color-scheme"></div>
+                <span class="scheme-hex">#F55A5A</span>
+            </div>
+            <div class="scheme-container">
+                <div class="color-scheme"></div>
+                <span class="scheme-hex">#2B283A</span>
+            </div>
+            <div class="scheme-container">
+                <div class="color-scheme"></div>
+                <span class="scheme-hex">#FBF3AB</span>
+            </div>
+            <div class="scheme-container">
+                <div class="color-scheme"></div>
+                <span class="scheme-hex">#AAD1B6</span>
+            </div>
+            <div class="scheme-container">
+                <div class="color-scheme"></div>
+                <span class="scheme-hex">#A626D3</span>
+            </div>
+        </section>
+    </main>
+    <script type="module" src="index.js"></script>
+</body>
+
+</html>
