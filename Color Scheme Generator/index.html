@@ -22,33 +22,37 @@
         <section class="input-section">
             <input id="color-picker" class="color-picker" type="color" value="#ff0000">
             <select id="color-dropdown" class="color-dropdown">
-                <option value="#ff0000">Red</option>
-                <option value="#0000ff">Blue</option>
-                <option value="#00ff00">Green</option>
-                <option value="#ffff00">Yellow</option>
+                <option value="monochrome">Monochrome</option>
+                <option value="monochrome-dark">Monochrome-Dark</option>
+                <option value="monochrome-light">Monochrome-Light</option>
+                <option value="analogic">Analogic</option>
+                <option value="complement">Complement</option>
+                <option value="analogic-complement">Analogic-Complement</option>
+                <option value="triad ">Triad</option>
+                <option value="quad">Quad</option>
             </select>
             <button id="color-scheme-btn" class="color-scheme-btn">Get color scheme</button>
         </section>
 
-        <section class="color-scheme-section">
+        <section id="color-scheme-section" class="color-scheme-section">
             <div class="scheme-container">
-                <div class="color-scheme"></div>
+                <div class="color-scheme" style="background-color: #F55A5A;"></div>
                 <span class="scheme-hex">#F55A5A</span>
             </div>
             <div class="scheme-container">
-                <div class="color-scheme"></div>
+                <div class="color-scheme" style="background-color: #2B283A;"></div>
                 <span class="scheme-hex">#2B283A</span>
             </div>
             <div class="scheme-container">
-                <div class="color-scheme"></div>
+                <div class="color-scheme" style="background-color: #FBF3AB;"></div>
                 <span class="scheme-hex">#FBF3AB</span>
             </div>
             <div class="scheme-container">
-                <div class="color-scheme"></div>
+                <div class="color-scheme" style="background-color: #AAD1B6;"></div>
                 <span class="scheme-hex">#AAD1B6</span>
             </div>
             <div class="scheme-container">
-                <div class="color-scheme"></div>
+                <div class="color-scheme" style="background-color: #A626D3;"></div>
                 <span class="scheme-hex">#A626D3</span>
             </div>
         </section>
