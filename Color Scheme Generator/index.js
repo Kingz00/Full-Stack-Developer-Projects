@@ -2,7 +2,9 @@ const dropdown = document.getElementById('color-dropdown')
 const picker = document.getElementById('color-picker')
 const colorSchemeBtn = document.getElementById('color-scheme-btn')
 const colorSchemeSection = document.getElementById('color-scheme-section')
+const themeBtn = document.getElementById('theme-btn')
 
+let isDark = true
 
 colorSchemeBtn.addEventListener("click", async () => {
     try {
@@ -25,4 +27,12 @@ colorSchemeBtn.addEventListener("click", async () => {
     catch (err) {
         console.error(err)
     }
+})
+
+themeBtn.addEventListener("click", (e) => {
+    isDark = !isDark
+    themeBtn.textContent = isDark ? "Light Theme" : "Dark Theme"
+    document.body.classList.toggle("dark-theme")
+    themeBtn.classList.toggle("dark-theme-btn")
+    colorSchemeBtn.classList.toggle("dark-theme-btn")
 })

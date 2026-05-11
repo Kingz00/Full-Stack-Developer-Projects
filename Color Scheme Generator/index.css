@@ -75,3 +75,13 @@ button {
     font-size: 0.75rem;
     color: #374151;
 }
+
+.dark-theme {
+    background-color: #1F2937;
+    color: #D5D4D8;
+}
+
+.dark-theme-btn {
+    background-color: #3D4B60;
+    color: #FFFFFF;
+}
