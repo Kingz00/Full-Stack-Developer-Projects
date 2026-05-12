@@ -76,6 +76,10 @@ button {
     color: #374151;
 }
 
+.theme-btn {
+    align-self: center;
+}
+
 .dark-theme {
     background-color: #1F2937;
     color: #D5D4D8;
@@ -84,4 +88,18 @@ button {
 .dark-theme-btn {
     background-color: #3D4B60;
     color: #FFFFFF;
+}
+
+/* Media Queries */
+
+@media(min-width: 720px) {
+    h1 {
+        font-size: 2rem;
+    }
+
+    select,
+    button,
+    .scheme-hex {
+        font-size: 1rem;
+    }
 }
