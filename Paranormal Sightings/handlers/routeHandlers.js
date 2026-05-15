@@ -4,6 +4,7 @@ import { parseJSONBody } from "../utils/parseJSONBody.js";
 import { addNewSighting } from "../utils/addNewSighting.js";
 import { sightingEvent } from "../events/sightingEvents.js";
 import { stories } from "../data/stories.js";
+import sanitizeHtml from 'sanitize-html'
 
 // handleGet
 
@@ -27,7 +28,12 @@ export const handlePost = async (req, res) => {
     try {
 
         const parsedBody = await parseJSONBody(req)
-        await addNewSighting(parsedBody)
+        const cleanBody = Object.fromEntries(
+            Object.entries(parsedBody).map(([key, value]) => {
+                return [key, sanitizeData(value)]
+            })
+        )
+        await addNewSighting(cleanBody)
         sendResponse(res, 201, 'application/json', JSON.stringify(parsedBody))
         // 201 - Resource Created Successfully
 
@@ -60,4 +66,13 @@ export const handleNews = async (req, res) => {
         })}\n\n`)
 
     }, 3000)
+}
+
+// sanitize data
+const sanitizeData = (text) => {
+    const clean = sanitizeHtml(text, {
+        allowedTags: ['b'],
+        allowedAttributes: {}
+    })
+    return clean
 }
