@@ -1,0 +1,63 @@
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+/* Layout the form row */
+.search-form {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    /* Space between input field and button */
+    max-width: 500px;
+    /* Optional constraints */
+}
+
+/* Create a relative positioning context for the icon */
+.input-wrapper {
+    position: relative;
+    flex-grow: 1;
+    /* Makes the input expand to fill space */
+}
+
+/* Style the input field */
+.input-wrapper input {
+    width: 100%;
+    padding: 10px 12px 10px 40px;
+    /* Extra padding on the left (40px) makes room for the icon */
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+/* Position the icon perfectly inside the left padding */
+.search-icon {
+    width: 18px;
+    height: 18px;
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    /* Perfectly centers it vertically */
+    color: #777;
+    pointer-events: none;
+    /* Allows clicks to pass through to the input */
+}
+
+/* Style the right-side button */
+.search-btn {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    white-space: nowrap;
+    /* Prevents text from wrapping */
+}
+
+.search-btn:hover {
+    background-color: #0056b3;
+}

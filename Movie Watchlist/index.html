@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Watchlist</title>
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="index.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+        integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body>
+    <header>
+        <h1>Find your film</h1>
+        <a id="watchlist-btn" class="watchlist-btn" href="#">My Watchlist</a>
+    </header>
+    <main>
+        <section class="search-section">
+            <search class="search-container">
+                <form class="search-form">
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                        <input type="search" name="search-input" placeholder="Search for a movie" aria-label="Search">
+                    </div>
+                    <button type="submit" class="search-btn">Search</button>
+                </form>
+            </search>
+
+        </section>
+
+        <section class="movie-list-section">
+            <div class="empty-list">
+                <i class="fa-solid fa-film"></i>
+                <h2>Start exploring</h2>
+            </div>
+        </section>
+    </main>
+    <script type="module" src="index.js"></script>
+</body>
+
+</html>
