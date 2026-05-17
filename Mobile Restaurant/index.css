@@ -9,10 +9,19 @@ body {
     margin: 0;
     font-family: "Smythe", system-ui;
     font-weight: 400;
+    min-height: 100vh;
     /* background-color: #757575; */
 }
 
 /* Topography */
+
+h1.header-title {
+    margin: 0;
+    font-family: 'Smythe', sans-serif;
+    font-weight: 400;
+    font-size: 2rem;
+    color: #ffffff;
+}
 
 h1.emoji {
     font-family: "Inter", sans-serif;
@@ -73,6 +82,13 @@ footer p {
     font-size: 1.25rem;
 }
 
+span.sub-text {
+    font-family: 'Smythe', sans-serif;
+    font-weight: 400;
+    font-size: 1rem;
+    color: #ffffff;
+}
+
 input {
     display: block;
     width: 100%;
@@ -97,8 +113,11 @@ input::placeholder {
 header {
     width: 100%;
     height: 167px;
-    background-image: url("/images/header.png");
+    padding: 2.5em;
+    background-image: url("/images/burger.jpg");
     background-size: cover;
+    background-position: 0 70%;
+    background-repeat: no-repeat;
 }
 
 main {
@@ -178,7 +197,6 @@ div.form-container {
 
 .feedback-container {
     display: none;
-    width: 504px;
     height: 120px;
     background-color: #ECFDF5;
     justify-content: center;
@@ -245,6 +263,11 @@ div.form-container {
 /* Media Queries */
 
 @media (min-width: 576px) {
+
+    h1.header-title {
+        font-size: 2.438rem;
+    }
+
     h1.emoji {
         /* font-size: 78px; */
         font-size: 4.875rem;
@@ -257,6 +280,10 @@ div.form-container {
         margin-bottom: 1.917em;
     }
 
+    span.sub-text {
+        font-size: 1.401rem;
+    }
+
     input {
         height: 72px;
         /* margin-bottom: 23px; */
@@ -267,6 +294,10 @@ div.form-container {
         /* Text */
         /* font-size: 20px; */
         font-size: 1.25rem;
+    }
+
+    header {
+        padding: 2.875em;
     }
 
     .menu-item {
@@ -292,6 +323,10 @@ div.form-container {
         padding-bottom: 3.312em;
     }
 
+    .feedback-container {
+        max-width: 504px;
+    }
+
     div.form-container {
         height: 542px;
         /* padding: 30px 25px; */
@@ -311,12 +346,20 @@ div.form-container {
 
 @media (min-width: 870px) {
     body {
-        grid-template-columns: 1em 1fr 1em;
+        grid-template-columns: 1fr;
         gap: 1em 0;
         grid-template-areas:
-            "... head ..."
-            "... main ..."
-            "... foot ...";
+            "head"
+            "main"
+            "foot";
+    }
+
+    h1.header-title {
+        font-size: 3rem;
+    }
+
+    span.sub-text {
+        font-size: 1.6rem;
     }
 
 
@@ -324,8 +367,7 @@ div.form-container {
         grid-area: head;
         max-width: none;
         height: 20vh;
-        background-size: 100% 100%;
-        background-repeat: no-repeat;
+        background-position: 0 60%;
     }
 
     main {
