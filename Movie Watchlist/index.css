@@ -4,13 +4,59 @@
     box-sizing: border-box;
 }
 
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: "Inter", sans-serif;
+}
+
+/* Topograpgy */
+
+h1 {
+    font-weight: 800;
+    font-size: 2.674rem;
+    color: #ffffff;
+    margin-top: 0;
+}
+
+a.watchlist-btn {
+    display: inline-block;
+    font-weight: 700;
+    font-size: 0.875rem;
+    color: #ffffff;
+    text-decoration: none;
+    align-self: center;
+}
+
+/* Layout */
+
+header .container {
+    display: flex;
+    justify-content: space-between;
+    height: 208px;
+    background-image: url("/images/movie_bkg_2.jpg");
+    background-size: cover;
+    background-position: 80% 20%;
+    background-repeat: no-repeat;
+    background-color: rgba(0, 0, 0, 0.8);
+    background-blend-mode: darken;
+    padding: 5.125em 2.625em;
+}
+
+.container {
+    width: 100%;
+    max-width: 550px;
+    margin: 0 auto;
+}
+
+
 /* Layout the form row */
 .search-form {
     display: flex;
     align-items: center;
     gap: 8px;
     /* Space between input field and button */
-    max-width: 500px;
+    max-width: 550px;
     /* Optional constraints */
 }
 
