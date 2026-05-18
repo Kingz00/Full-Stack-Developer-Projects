@@ -49,15 +49,23 @@ header .container {
     margin: 0 auto;
 }
 
+.search-container {
+    display: flex;
+    justify-content: center;
+    position: fixed;
+    top: 190px;
+    left: 0;
+    right: 0;
+    margin: auto;
+}
 
 /* Layout the form row */
 .search-form {
     display: flex;
     align-items: center;
-    gap: 8px;
-    /* Space between input field and button */
-    max-width: 550px;
-    /* Optional constraints */
+    height: 38px;
+    width: 100%;
+    max-width: 462px;
 }
 
 /* Create a relative positioning context for the icon */
@@ -70,40 +78,55 @@ header .container {
 /* Style the input field */
 .input-wrapper input {
     width: 100%;
-    padding: 10px 12px 10px 40px;
+    padding: 0.714em 0.857em 0.714em 2.857em;
     /* Extra padding on the left (40px) makes room for the icon */
-    font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
+    border: 1px solid #D1D5DB;
+    border-top-left-radius: 6px;
+    border-bottom-left-radius: 6px;
+
+    /* Text */
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #6B7280;
 }
 
 /* Position the icon perfectly inside the left padding */
 .search-icon {
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
     position: absolute;
     left: 14px;
     top: 50%;
     transform: translateY(-50%);
     /* Perfectly centers it vertically */
-    color: #777;
+    color: #9CA3AF;
     pointer-events: none;
     /* Allows clicks to pass through to the input */
 }
 
 /* Style the right-side button */
 .search-btn {
-    padding: 10px 20px;
-    font-size: 16px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 6px;
+    padding: 0.714em 2.5em;
+    background-color: #F9FAFB;
+    border: 1px solid #D1D5DB;
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
     cursor: pointer;
     white-space: nowrap;
     /* Prevents text from wrapping */
+
+    /* Text */
+    font-family: inherit;
+    font-weight: 500;
+    font-size: 0.875rem;
+    color: #374151;
+
 }
 
 .search-btn:hover {
-    background-color: #0056b3;
+    background-color: #F3F4F6;
+}
+
+.movie-list-section {
+    margin-top: 40px;
 }
