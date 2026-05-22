@@ -21,6 +21,35 @@ h1 {
     margin-top: 0;
 }
 
+h2 {
+    font-weight: 700;
+    font-size: 1.125rem;
+    margin-bottom: 0;
+}
+
+.empty-list h2 {
+    color: #DFDDDD;
+}
+
+h3,
+.add-btn {
+    font-weight: 400;
+    font-size: 0.75rem;
+    color: #111827;
+    align-self: center;
+}
+
+.movie-title-container h3::before {
+    content: "⭐ ";
+}
+
+p {
+    font-weight: 400;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    margin-top: 0;
+}
+
 a.watchlist-btn {
     display: inline-block;
     font-weight: 700;
@@ -28,6 +57,18 @@ a.watchlist-btn {
     color: #ffffff;
     text-decoration: none;
     align-self: center;
+}
+
+.empty-list i.icon {
+    font-size: 4rem;
+    color: #DFDDDD;
+}
+
+img.movie-image {
+    width: 100px;
+    height: 147px;
+    background-size: cover;
+    margin-left: 2.75em;
 }
 
 /* Layout */
@@ -56,6 +97,36 @@ main {
     margin: 0 auto;
 }
 
+section.movie-list-section {
+    margin-top: 3.94em;
+}
+
+.empty-list {
+    display: none;
+    height: 100%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.search-result-container, 
+.movie-title-container, 
+.movie-genre-container {
+    display: flex;
+    gap: 1.25em;
+}
+
+.right {
+    margin-right: 2.75em;
+}
+
+.search-result-container {
+    margin-bottom: 1.25em;
+    padding-bottom: 0.625em;
+    border-bottom: 1.5px solid #E5E7EB;
+}
+
+/* Search */
 .search-container {
     display: flex;
     justify-content: center;
@@ -111,6 +182,8 @@ main {
     /* Allows clicks to pass through to the input */
 }
 
+/* Buttons */
+
 /* Style the right-side button */
 .search-btn {
     padding: 0.714em 2.5em;
@@ -134,25 +207,8 @@ main {
     background-color: #F3F4F6;
 }
 
-.movie-list-section {
-    margin-top: 40px;
-}
-
-.empty-list {
-    display: flex;
-    height: 100%;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
-.empty-list .icon {
-    font-size: 4rem;
-    color: #DFDDDD;
-}
-
-.empty-list h2 {
-    font-weight: 700;
-    font-size: 1.125rem;
-    color: #DFDDDD;
+.add-btn {
+    border: none;
+    background-color: #ffffff;
+    cursor: pointer;
 }
