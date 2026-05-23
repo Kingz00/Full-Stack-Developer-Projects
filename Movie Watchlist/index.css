@@ -27,7 +27,8 @@ h2 {
     margin-bottom: 0;
 }
 
-.empty-list h2 {
+.empty-list h2,
+.no-result h2 {
     color: #DFDDDD;
 }
 
@@ -68,7 +69,6 @@ img.movie-image {
     width: 100px;
     height: 147px;
     background-size: cover;
-    margin-left: 2.75em;
 }
 
 /* Layout */
@@ -98,10 +98,11 @@ main {
 }
 
 section.movie-list-section {
-    margin-top: 3.94em;
+    margin-top: 1.19em;
 }
 
-.empty-list {
+.empty-list,
+.no-result {
     display: none;
     height: 100%;
     flex-direction: column;
@@ -116,14 +117,19 @@ section.movie-list-section {
     gap: 1.25em;
 }
 
-.right {
-    margin-right: 2.75em;
+.search-result-container {
+    margin: 2.75em 2.75em 1.375em;
+    padding-bottom: 1.375em;
+    border-bottom: 1.5px solid #E5E7EB;
 }
 
-.search-result-container {
-    margin-bottom: 1.25em;
-    padding-bottom: 0.625em;
-    border-bottom: 1.5px solid #E5E7EB;
+.movie-list-container {
+    display: block;
+}
+
+.no-result {
+    text-align: center;
+    padding: 0 7.187em;
 }
 
 /* Search */
