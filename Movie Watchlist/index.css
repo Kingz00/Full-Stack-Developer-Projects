@@ -91,6 +91,10 @@ main {
     grid-template-rows: auto 1fr;
 }
 
+main.watchlist-main {
+    grid-template-rows: 1fr;
+}
+
 .container {
     width: 100%;
     max-width: 550px;
@@ -130,6 +134,11 @@ section.movie-list-section {
 .no-result {
     text-align: center;
     padding: 0 7.187em;
+}
+
+.watchlist-empty-list {
+    gap: 1em;
+    padding: 0;
 }
 
 /* Search */
@@ -217,4 +226,9 @@ section.movie-list-section {
     border: none;
     background-color: #ffffff;
     cursor: pointer;
+}
+
+/* Hidden */
+.hidden {
+    display: none;
 }
