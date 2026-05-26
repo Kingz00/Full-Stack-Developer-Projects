@@ -29,10 +29,10 @@
     <main>
         <section class="search-section">
             <search class="search-container container">
-                <form class="search-form">
+                <form id="search-form" class="search-form">
                     <div class="input-wrapper">
                         <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                        <input type="search" name="search-input" placeholder="Search for a movie" aria-label="Search">
+                        <input id="search-input" type="search" name="search-input" placeholder="Search for a movie" aria-label="Search">
                     </div>
                     <button type="submit" class="search-btn">Search</button>
                 </form>
@@ -45,7 +45,7 @@
                 <i class="fa-solid fa-film icon"></i>
                 <h2>Start exploring</h2>
             </div>
-            <div class="movie-list-container container">
+            <div id="movie-list-container" class="movie-list-container container">
                 <div class="search-result-container">
                     <img class="movie-image" src="./images/movie-1.jpg">
                     <div class="right">
