@@ -5,11 +5,11 @@ export async function checkAuth() {
 
     if (!res.ok) {
       console.warn('Unexpected response:', res.status)
-      return 'Guest'
-    } 
+      return false
+    }
 
     const user = await res.json()
-    if (user.isGuest) {
+    if (!user.isLoggedIn) {
       return false
     }
 
@@ -17,7 +17,7 @@ export async function checkAuth() {
 
   } catch (err) {
     console.log(err, 'Auth check failed')
-    return 'Guest' // fallback
+    return false // fallback
   }
 }
 

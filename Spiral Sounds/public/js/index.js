@@ -11,10 +11,10 @@ document.getElementById('logout-btn').addEventListener('click', logout)
 async function init() {
   populateGenreSelect()
   const products = await getProducts()
-  // const username = await checkAuth()
-  // renderGreeting(username)
+  const username = await checkAuth()
+  renderGreeting(username)
   renderProducts(products)
-  // showHideMenuItems(username)
+  showHideMenuItems(username)
   // if (username) {
   //   await updateCartIcon()
   // }
@@ -37,7 +37,7 @@ document.getElementById('search-input').addEventListener('submit', (e) => {
 
 document.querySelector('form').addEventListener('submit', (e) => {
   e.preventDefault()
-  applySearchFilter() 
+  applySearchFilter()
 })
 
 document.getElementById('genre-select').addEventListener('change', async (e) => {
@@ -47,4 +47,3 @@ document.getElementById('genre-select').addEventListener('change', async (e) => 
 })
 
 
- 
