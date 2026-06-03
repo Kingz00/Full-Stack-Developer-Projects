@@ -137,3 +137,16 @@ export async function loginUser(req, res) {
         res.status(500).json({ error: 'Login failed. Please try again.' })
     }
 }
+
+export async function logoutUser(req, res) {
+
+    if (req.session) {
+        req.session.destroy((err) => {
+            if (err) {
+                return res.status(500).json({ error: 'Could not log out. Please try again.' })
+            }
+
+            res.json({ message: 'Logged out' })
+        })
+    }
+}
