@@ -15,9 +15,9 @@ async function init() {
   renderGreeting(username)
   renderProducts(products)
   showHideMenuItems(username)
-  // if (username) {
-  //   await updateCartIcon()
-  // }
+  if (username) {
+    await updateCartIcon()
+  }
 }
 
 init()

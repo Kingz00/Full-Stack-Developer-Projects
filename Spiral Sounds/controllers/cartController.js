@@ -90,3 +90,36 @@ export async function getCartCount(req, res) {
         }
     }
 }
+
+export async function getAll(req, res) {
+
+    if (!req.session.userId) {
+        return res.json({ error: 'not logged in' })
+    }
+
+    const db = await getDBConnection()
+
+    try {
+
+        const cartItems = await db.all(`
+            SELECT C.id AS cartItemId, C.quantity, P.title, P.artist, P.price FROM cart_items C
+            LEFT JOIN products P ON C.product_id = P.id
+            WHERE C.user_id = ?
+            `,
+            [req.session.userId])
+
+        if (!cartItems) {
+            return res.json([])
+        }
+
+        res.json({ items: cartItems })
+    }
+    catch (err) {
+        console.error(err)
+    }
+    finally {
+        if (db) {
+            await db.close()
+        }
+    }
+}
