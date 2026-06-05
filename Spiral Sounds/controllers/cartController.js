@@ -60,3 +60,33 @@ export async function addToCart(req, res) {
         }
     }
 }
+
+export async function getCartCount(req, res) {
+
+    const userId = req.session.userId
+
+    const db = await getDBConnection()
+
+    try {
+
+        const cartCount = await db.get(`
+            SELECT SUM(quantity) AS totalItems FROM cart_items
+            WHERE user_id = ?
+            `,
+            [userId])
+
+        if (!cartCount.totalItems) {
+            return res.json({ totalItems: 0 })
+        }
+
+        res.json({ totalItems: cartCount.totalItems })
+    }
+    catch (err) {
+        console.error(err)
+    }
+    finally {
+        if (db) {
+            await db.close()
+        }
+    }
+}
