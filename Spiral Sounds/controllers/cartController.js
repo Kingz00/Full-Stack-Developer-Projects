@@ -14,11 +14,6 @@ export async function addToCart(req, res) {
         return res.status(400).json({ error: 'Invalid product ID' })
     }
 
-    // check if there is a valid user session id
-    if (!req.session.userId) {
-        return res.status(400).json({ error: 'Login in or register an account to add items to cart' })
-    }
-
     const db = await getDBConnection()
 
     try {
@@ -93,10 +88,6 @@ export async function getCartCount(req, res) {
 
 export async function getAll(req, res) {
 
-    if (!req.session.userId) {
-        return res.json({ error: 'not logged in' })
-    }
-
     const db = await getDBConnection()
 
     try {
@@ -113,6 +104,80 @@ export async function getAll(req, res) {
         }
 
         res.json({ items: cartItems })
+    }
+    catch (err) {
+        console.error(err)
+    }
+    finally {
+        if (db) {
+            await db.close()
+        }
+    }
+}
+
+export async function deleteItem(req, res) {
+
+    if (req.params.itemId === 'all') {
+        deleteAll(req, res)
+        return
+    }
+
+    const itemId = parseInt(req.params.itemId)
+
+    // if the item id is not a number send an error response
+    if (isNaN(itemId)) {
+        return res.status(400).json({ error: 'Invalid item ID' })
+    }
+
+    const db = await getDBConnection()
+
+    try {
+
+        // Get the item from the database
+        const item = await db.get(`
+            SELECT quantity FROM cart_items WHERE id = ? AND user_id = ?
+            `,
+            [itemId, req.session.userId])
+
+        // check if the item exists and send an error response if it doesn't
+        if (!item) {
+            return res.status(400).json({ error: 'Item not found' })
+        }
+
+        // delete the item from the cart_items table
+        await db.run(`
+            DELETE FROM cart_items WHERE id = ? AND user_id = ?
+            `,
+            [itemId, req.session.userId])
+
+        // Sends 204 (No Content) status code and closes the connection without a body
+        res.sendStatus(204)
+        // can also be sent with res.status(204).send()
+    }
+    catch (err) {
+        console.error(err)
+    }
+    finally {
+        if (db) {
+            await db.close()
+        }
+    }
+}
+
+export async function deleteAll(req, res) {
+
+    const userId = req.session.userId
+
+    const db = await getDBConnection()
+
+    try {
+
+        await db.run(`
+            DELETE FROM cart_items WHERE user_id = ?
+            `,
+            [userId])
+
+        res.status(204).send()
     }
     catch (err) {
         console.error(err)
