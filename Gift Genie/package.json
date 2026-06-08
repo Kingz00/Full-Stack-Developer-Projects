@@ -1,0 +1,21 @@
+{
+  "name": "gift-genie",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "A webapp that offers gift advice using Web Search with Responses API from an AI assistant",
+  "scripts": {
+    "start": "vite",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "dompurify": "^3.3.1",
+    "dotenv": "^17.4.2",
+    "marked": "^17.0.1",
+    "openai": "^6.15.0"
+  },
+  "devDependencies": {
+    "vite": "^7.3.0"
+  }
+}
