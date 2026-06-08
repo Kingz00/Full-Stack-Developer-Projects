@@ -1,22 +1,6 @@
-// import 'dotenv/config'
-import OpenAI from "openai";
+import { autoResizeTextarea, setLoading } from "./utils.js";
 import { marked } from "marked";
-import DOMPurify from "dompurify";
-import {
-  checkEnvironment,
-  autoResizeTextarea,
-  setLoading,
-  showStream,
-} from "./utils.js";
-
-checkEnvironment();
-
-// Initialize an OpenAI client for your provider using env vars
-const openai = new OpenAI({
-  apiKey: process.env.AI_KEY,
-  baseURL: process.env.AI_URL,
-  dangerouslyAllowBrowser: true,
-});
+import DOMPurify from 'dompurify'
 
 // Get UI elements
 const giftForm = document.getElementById("gift-form");
@@ -28,26 +12,6 @@ function start() {
   userInput.addEventListener("input", () => autoResizeTextarea(userInput));
   giftForm.addEventListener("submit", handleGiftRequest);
 }
-
-// System prompt for the Gift Genie with web search capability
-const systemPrompt = `You are the Gift Genie. 
-
-You generate gift ideas that feel thoughtful, specific, and genuinely useful.
-Your output must be in structured Markdown.
-Do not write introductions or conclusions.
-Start directly with the gift suggestions.
-
-Each gift must:
-- Have a clear heading
-- Include a short explanation of why it works
-
-If the user mentions a location, situation, or constraint,
-adapt the gift ideas and add another short section 
-under each gift that guides the user to get the gift in that 
-constrained context.
-
-After the gift ideas, include a section titled "Questions for you"
-with clarifying questions that would help improve the recommendations.`;
 
 async function handleGiftRequest(e) {
   // Prevent default form submission
@@ -61,24 +25,25 @@ async function handleGiftRequest(e) {
   setLoading(true);
 
   try {
-    // Use Responses API with web_search_preview tool
-    const response = await openai.responses.create({
-      model: process.env.AI_MODEL,
-      input: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: userPrompt },
-      ],
-      tools: [{ type: "web_search_preview" }],
-    });
 
-    // Show output container
-    showStream();
+    const response = await fetch('/api/gift', {
+      method: 'POST',
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ userPrompt })
+    })
 
-    // Get the response text
-    const giftSuggestions = response.output_text;
+    // // Show output container
+    // showStream();
+
+    // Get the response text from the backend
+    const giftSuggestions = await response.json();
+
+    console.log(giftSuggestions)
 
     // Convert Markdown to HTML
-    const html = marked.parse(giftSuggestions);
+    const html = marked.parse(giftSuggestions.message);
 
     // Sanitize the HTML to prevent XSS attacks
     const safeHTML = DOMPurify.sanitize(html);
@@ -86,7 +51,6 @@ async function handleGiftRequest(e) {
     // Render the output
     outputContent.innerHTML = safeHTML;
 
-    console.log(giftSuggestions);
   } catch (error) {
     // Log the error for debugging
     console.error(error);
