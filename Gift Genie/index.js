@@ -38,12 +38,16 @@ async function handleGiftRequest(e) {
     // showStream();
 
     // Get the response text from the backend
-    const giftSuggestions = await response.json();
+    const data = await response.json();
 
-    console.log(giftSuggestions)
+    if (!response.ok) {
+      throw new Error(data.message || "Server error")
+    }
+
+    const giftSuggestions = data.message
 
     // Convert Markdown to HTML
-    const html = marked.parse(giftSuggestions.message);
+    const html = marked.parse(giftSuggestions);
 
     // Sanitize the HTML to prevent XSS attacks
     const safeHTML = DOMPurify.sanitize(html);

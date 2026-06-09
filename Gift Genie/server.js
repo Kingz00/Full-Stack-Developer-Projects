@@ -91,7 +91,7 @@ app.post('/api/gift', async (req, res) => {
     }
     catch (err) {
         console.error(err)
-        res.status(501).json({ error: "Not implemented" });
+        res.status(500).json({ message: "Something went wrong on the server" });
     }
 })
 
