@@ -1,0 +1,22 @@
+{
+  "name": "reel-recs",
+  "description": "https://scrimba.com/fullstack-path-c0fullstack/~02bn",
+  "type": "module",
+  "scripts": {
+    "start": "vite",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@langchain/textsplitters": "^1.0.1",
+    "@supabase/supabase-js": "^2.108.1",
+    "cors": "^2.8.6",
+    "dompurify": "^3.4.10",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "marked": "^18.0.5",
+    "openai": "^6.42.0",
+    "vite": "latest"
+  }
+}
