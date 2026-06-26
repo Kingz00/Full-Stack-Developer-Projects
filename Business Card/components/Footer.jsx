@@ -1,10 +1,23 @@
 const Footer = () => {
     return (
-        <footer class="social-footer">
-            <a href="#"><i class="fa-brands fa-twitter"></i></a>
-            <a href="#"><i class="fa-brands fa-facebook-square"></i></a>
-            <a href="#"><i class="fa-brands fa-instagram"></i></a>
-            <a href="#"><i class="fa-brands fa-github"></i></a>
+        <footer className="profile-footer">
+
+            <a href="#">
+                <i className="fa-brands fa-twitter"></i>
+            </a>
+
+            <a href="#">
+                <i className="fa-brands fa-facebook-f"></i>
+            </a>
+
+            <a href="#">
+                <i className="fa-brands fa-instagram"></i>
+            </a>
+
+            <a href="#">
+                <i className="fa-brands fa-github"></i>
+            </a>
+
         </footer>
     )
 }
