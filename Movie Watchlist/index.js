@@ -1,7 +1,7 @@
 import DOMPurify from 'dompurify'
 import { genres } from './genres.js'
 
-const movieListContainer = document.getElementById('movie-list-container')
+const movieListContainer = document.getElementById('movies-search-result')
 const searchForm = document.getElementById('search-form')
 const searchInput = document.getElementById('search-input')
 
@@ -53,30 +53,55 @@ const renderSearchResult = async (userInput) => {
             const filteredGenres = genres.filter(genre => movie.genre_ids.includes(genre.id)).map(obj => obj.name).join(", ")
 
             return `
-                <div class="search-result-container">
-                    <img class="movie-image" src="https://image.tmdb.org/t/p/w185${movie.poster_path}" alt="${movie.title} image">
-                    <div class="right">
-                        <div class="movie-title-container">
+                <article class="movie-card">
+
+                    <img src="https://image.tmdb.org/t/p/w185${movie.poster_path}" alt="${movie.title} image" class="movie-poster">
+
+                    <div class="movie-info">
+
+                        <div class="movie-title-row">
                             <h2>${movie.title}</h2>
-                            <h3>${movie.vote_average.toFixed(1)}</h3>
+
+                            <span class="rating">
+                                ⭐ ${movie.vote_average.toFixed(1)}
+                            </span>
                         </div>
-                        <div class="movie-genre-container">
-                            <h3>${movie.release_date}</h3>
-                            <h3>${filteredGenres}</h3>
-                            <button class="add-btn">
-                                <i class="fa-solid fa-circle-plus"></i>
+
+                        <div class="movie-meta">
+                            <span>${movie.release_date}</span>
+                            <span>${filteredGenres}</span>
+
+                            <button class="watchlist-btn">
+                                <span class="plus">+</span>
                                 Watchlist
                             </button>
                         </div>
-                        <div class="movie-detail-container">
-                            <p>${movie.overview}</p>
+
+                        <div class="movie-description-container">
+
+                            <p class="movie-description collapsed">
+                                ${movie.overview}
+                            </p>
+
+                            <button
+                                class="read-more-btn"
+                                type="button"
+                                aria-expanded="false"
+                            >
+                                Read more
+                            </button>
+
                         </div>
+
                     </div>
-                </div>
+
+                </article>
             `
         }).join("")
 
         movieListContainer.innerHTML = movieList
+
+        readMoreFn()
 
     } catch (err) {
         console.error(err)
@@ -86,4 +111,59 @@ const renderSearchResult = async (userInput) => {
             </div>
         `
     }
+}
+
+const readMoreFn = () => {
+    document.querySelectorAll(".movie-description")
+        .forEach(description => {
+
+            const button =
+                description.nextElementSibling;
+
+            if (
+                description.scrollHeight <=
+                description.clientHeight + 5
+            ) {
+                button.style.display = "none";
+            }
+
+        });
+
+    const readMoreButtons = document.querySelectorAll(".read-more-btn");
+
+    readMoreButtons.forEach(button => {
+
+        button.addEventListener("click", () => {
+
+            const description = button.previousElementSibling;
+
+            const isCollapsed = description.classList.contains("collapsed");
+
+            if (isCollapsed) {
+
+                description.classList.remove("collapsed");
+
+                button.textContent = "Show less";
+
+                button.setAttribute(
+                    "aria-expanded",
+                    "true"
+                );
+
+            } else {
+
+                description.classList.add("collapsed");
+
+                button.textContent = "Read more";
+
+                button.setAttribute(
+                    "aria-expanded",
+                    "false"
+                );
+
+            }
+
+        });
+
+    });
 }

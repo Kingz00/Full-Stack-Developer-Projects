@@ -5,94 +5,116 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Movie Watchlist</title>
-    <!-- Stylesheet -->
     <link rel="stylesheet" href="index.css">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
-        integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <!-- Google Font -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
-        rel="stylesheet">
 </head>
 
 <body>
-    <header>
-        <div class="container">
+
+    <!-- HERO -->
+    <header class="hero">
+        <div class="hero__overlay"></div>
+
+        <div class="hero__content">
             <h1>Find your film</h1>
-            <a id="watchlist-btn" class="watchlist-btn" href="watchlist.html">My Watchlist</a>
+            <a href="#" class="hero__watchlist-link">
+                My Watchlist
+            </a>
         </div>
     </header>
-    <main>
-        <section class="search-section">
-            <search class="search-container container">
-                <form id="search-form" class="search-form">
-                    <div class="input-wrapper">
-                        <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                        <input id="search-input" type="search" name="search-input" placeholder="Search for a movie" aria-label="Search">
-                    </div>
-                    <button type="submit" class="search-btn">Search</button>
-                </form>
-            </search>
 
-        </section>
+    <!-- SEARCH -->
+    <section class="search-section">
+        <form id="search-form" class="search-form">
+            <div class="search-input-wrapper">
+                <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
 
-        <section class="movie-list-section">
-            <div class="empty-list container">
-                <i class="fa-solid fa-film icon"></i>
-                <h2>Start exploring</h2>
+                <input id="search-input" name="search-input" type="text" placeholder="Search for a movie">
             </div>
-            <div id="movie-list-container" class="movie-list-container container">
-                <div class="search-result-container">
-                    <img class="movie-image" src="./images/movie-1.jpg">
-                    <div class="right">
-                        <div class="movie-title-container">
-                            <h2>Blade Runner</h2>
-                            <h3>8.1</h3>
-                        </div>
-                        <div class="movie-genre-container">
-                            <h3>117 min</h3>
-                            <h3>Action, Drama, Sci-fi</h3>
-                            <button class="add-btn">
-                                <i class="fa-solid fa-circle-plus"></i>
-                                Watchlist
-                            </button>
-                        </div>
-                        <div class="movie-detail-container">
-                            <p>A blade runner must pursue and terminate four replicants who stole a ship in space, and have returned to Earth to find their creator.</p>
-                        </div>
-                    </div>
+
+            <button type="submit">
+                Search
+            </button>
+        </form>
+    </section>
+
+    <!-- RESULTS -->
+    <main id="movies-search-result" class="movies">
+
+        <!-- MOVIE CARD -->
+        <article class="movie-card">
+
+            <img src="./images/movie-1.jpg" alt="Blade Runner Poster" class="movie-poster">
+
+            <div class="movie-info">
+
+                <div class="movie-title-row">
+                    <h2>Blade Runner</h2>
+
+                    <span class="rating">
+                        ⭐ 8.1
+                    </span>
                 </div>
 
-                <div class="search-result-container">
-                    <img class="movie-image" src="./images/movie-2.jpg">
-                    <div class="right">
-                        <div class="movie-title-container">
-                            <h2>Blade Runner 2049</h2>
-                            <h3>8.0</h3>
-                        </div>
-                        <div class="movie-genre-container">
-                            <h3>164 min</h3>
-                            <h3>Action, Drama, Mystery</h3>
-                            <button class="add-btn">
-                                <i class="fa-solid fa-circle-plus"></i>
-                                Watchlist
-                            </button>
-                        </div>
-                        <div class="movie-detail-container">
-                            <p>Young Blade Runner K's discovery of a long-buried secret leads him to track down former Blade Runner Rick Deckard, who's been missing for thirty years.</p>
-                        </div>
-                    </div>
+                <div class="movie-meta">
+                    <span>117 min</span>
+                    <span>Action, Drama, Sci-fi</span>
+
+                    <button class="watchlist-btn">
+                        <span class="plus">+</span>
+                        Watchlist
+                    </button>
                 </div>
+
+                <p class="movie-description">
+                    A blade runner must pursue and terminate four
+                    replicants who stole a ship in space and have
+                    returned to Earth to find their creator.
+                </p>
+
             </div>
-            <div class="no-result container">
-                <h2>Unable to find what you're looking for. Please try another search.</h2>
+
+        </article>
+
+        <article class="movie-card">
+
+            <img src="./images/movie-2.jpg" alt="Blade Runner 2049 Poster" class="movie-poster">
+
+            <div class="movie-info">
+
+                <div class="movie-title-row">
+                    <h2>Blade Runner 2049</h2>
+
+                    <span class="rating">
+                        ⭐ 8.0
+                    </span>
+                </div>
+
+                <div class="movie-meta">
+                    <span>164 min</span>
+                    <span>Action, Drama, Mystery</span>
+
+                    <button class="watchlist-btn">
+                        <span class="plus">+</span>
+                        Watchlist
+                    </button>
+                </div>
+
+                <p class="movie-description">
+                    Young Blade Runner K's discovery of a long-buried
+                    secret leads him to track down former Blade Runner
+                    Rick Deckard, who's been missing...
+                </p>
+
             </div>
-        </section>
+
+        </article>
+
     </main>
+
     <script type="module" src="index.js"></script>
 </body>
 
