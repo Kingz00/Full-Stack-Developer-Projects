@@ -311,6 +311,44 @@ body {
 }
 
 /* =========================
+   EMPTY STATE
+========================= */
+
+.empty-state {
+    min-height: calc(100vh - 320px);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 2rem;
+}
+
+.empty-state-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    text-align: center;
+}
+
+.empty-icon {
+    width: 70px;
+    height: 70px;
+
+    color: #dfdddd;
+
+    margin-bottom: 0.75rem;
+}
+
+.empty-state-content p {
+    color: #dfdddd;
+
+    font-size: 1.125rem;
+    font-weight: 700;
+}
+
+/* =========================
    TABLET
 ========================= */
 

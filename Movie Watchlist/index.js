@@ -99,6 +99,10 @@ const renderSearchResult = async (userInput) => {
             `
         }).join("")
 
+        movieListContainer.classList.remove('empty-state')
+
+        movieListContainer.classList.add('movies')
+
         movieListContainer.innerHTML = movieList
 
         readMoreFn()
