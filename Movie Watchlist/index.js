@@ -5,18 +5,22 @@ const movieListContainer = document.getElementById('movies-search-result')
 const searchForm = document.getElementById('search-form')
 const searchInput = document.getElementById('search-input')
 
-let searchResult = []
-
-// Constants
 // const apiKey = import.meta.env.VITE_OMDb_API_KEY
+
+let searchResult = []
 
 searchForm.addEventListener('submit', async (e) => {
     e.preventDefault()
     const formData = new FormData(searchForm)
     const cleanInput = DOMPurify.sanitize(formData.get('search-input'))
-    console.log(cleanInput)
     searchInput.value = ''
     await renderSearchResult(cleanInput)
+})
+
+document.addEventListener('click', (e) => {
+    if (e.target.className === 'watchlist-btn') {
+        addToWatchList(e.target.dataset.movieId)
+    }
 })
 
 const getDataFromAPI = async (userInput) => {
@@ -52,10 +56,12 @@ const renderSearchResult = async (userInput) => {
 
             const filteredGenres = genres.filter(genre => movie.genre_ids.includes(genre.id)).map(obj => obj.name).join(", ")
 
+            const posterUrl = movie.poster_path !== null ? `https://image.tmdb.org/t/p/w185${movie.poster_path}` : "./images/no-poster.png";
+
             return `
                 <article class="movie-card">
 
-                    <img src="https://image.tmdb.org/t/p/w185${movie.poster_path}" alt="${movie.title} image" class="movie-poster">
+                    <img src="${posterUrl}" alt="${movie.title} image" class="movie-poster">
 
                     <div class="movie-info">
 
@@ -71,7 +77,7 @@ const renderSearchResult = async (userInput) => {
                             <span>${movie.release_date}</span>
                             <span>${filteredGenres}</span>
 
-                            <button class="watchlist-btn">
+                            <button class="watchlist-btn" data-movie-id=${movie.id}>
                                 <span class="plus">+</span>
                                 Watchlist
                             </button>
@@ -170,4 +176,15 @@ const readMoreFn = () => {
         });
 
     });
+}
+
+const addToWatchList = (movieId) => {
+    // 1. Initialize or retrieve the watchList array
+    const watchlistArray = JSON.parse(localStorage.getItem("watchlistArray")) || [];
+
+    const selectedMovie = searchResult.filter(movie => movie.id === parseInt(movieId))[0]
+    watchlistArray.push(selectedMovie)
+
+    // 3. Save the updated array back to localStorage
+    localStorage.setItem("watchlistArray", JSON.stringify(watchlistArray));
 }

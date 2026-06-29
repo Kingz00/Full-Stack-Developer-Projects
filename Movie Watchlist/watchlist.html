@@ -20,81 +20,20 @@
 </head>
 
 <body>
-    <header>
-        <div class="container">
-            <h1>My Watchlist</h1>
-            <a id="watchlist-btn" class="watchlist-btn" href="index.html">Search for movies</a>
+    <header class="hero">
+        <div class="hero__overlay"></div>
+
+        <div class="hero__content">
+            <h1>Find your film</h1>
+            <a href="./index.html" class="hero__watchlist-link">
+                Search for movies
+            </a>
         </div>
     </header>
-    <main class="watchlist-main">
+    <main id="watchlist-main" class="movies">
 
-        <section class="search-section hidden">
-            <search class="search-container container">
-                <form class="search-form">
-                    <div class="input-wrapper">
-                        <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                        <input type="search" name="search-input" placeholder="Search for a movie" aria-label="Search">
-                    </div>
-                    <button type="submit" class="search-btn">Search</button>
-                </form>
-            </search>
-        </section>
-
-        <section class="movie-list-section">
-            <div class="movie-list-container container">
-                <div class="search-result-container">
-                    <img class="movie-image" src="./images/movie-1.jpg">
-                    <div class="right">
-                        <div class="movie-title-container">
-                            <h2>Blade Runner</h2>
-                            <h3>8.1</h3>
-                        </div>
-                        <div class="movie-genre-container">
-                            <h3>117 min</h3>
-                            <h3>Action, Drama, Sci-fi</h3>
-                            <button class="add-btn">
-                                <i class="fa-solid fa-circle-minus"></i>
-                                Remove
-                            </button>
-                        </div>
-                        <div class="movie-detail-container">
-                            <p>A blade runner must pursue and terminate four replicants who stole a ship in space, and have returned to Earth to find their creator.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="search-result-container">
-                    <img class="movie-image" src="./images/movie-2.jpg">
-                    <div class="right">
-                        <div class="movie-title-container">
-                            <h2>Blade Runner 2049</h2>
-                            <h3>8.0</h3>
-                        </div>
-                        <div class="movie-genre-container">
-                            <h3>164 min</h3>
-                            <h3>Action, Drama, Mystery</h3>
-                            <button class="add-btn">
-                                <i class="fa-solid fa-circle-minus"></i>
-                                Remove
-                            </button>
-                        </div>
-                        <div class="movie-detail-container">
-                            <p>Young Blade Runner K's discovery of a long-buried secret leads him to track down former Blade Runner Rick Deckard, who's been missing for thirty years.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="watchlist-empty-list no-result container">
-                <h2>Your watchlist is looking a little empty...</h2>
-                <button class="add-btn">
-                    <i class="fa-solid fa-circle-plus"></i>
-                    Let's add some movies!
-                </button>
-            </div>
-        </section>
     </main>
-    <script type="module" src="index.js"></script>
+    <script type="module" src="watchlist.js"></script>
 </body>
 
 </html>
