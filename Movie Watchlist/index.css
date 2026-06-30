@@ -342,10 +342,36 @@ body {
 }
 
 .empty-state-content p {
-    color: #dfdddd;
+    color: #544F4F;
 
     font-size: 1.125rem;
     font-weight: 700;
+}
+
+/* =========================
+   NO RESULTS STATE
+========================= */
+
+.no-results {
+    min-height: calc(100vh - 320px);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 2rem;
+}
+
+.no-results-message {
+    max-width: 320px;
+
+    text-align: center;
+
+    color: #544F4F;
+
+    font-size: 1.125rem;
+    font-weight: 700;
+    line-height: 1.3;
 }
 
 /* =========================

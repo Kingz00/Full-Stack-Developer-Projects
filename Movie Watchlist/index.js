@@ -52,6 +52,20 @@ const renderSearchResult = async (userInput) => {
 
         searchResult = await getDataFromAPI(userInput)
 
+        if (searchResult.length === 0) {
+            movieListContainer.innerHTML = `
+                <main class="no-results">
+
+                    <p class="no-results-message">
+                        Unable to find what you're looking for.
+                        Please try another search.
+                    </p>
+
+                </main>
+            `
+            return
+        }
+
         const movieList = searchResult.map(movie => {
 
             const filteredGenres = genres.filter(genre => movie.genre_ids.includes(genre.id)).map(obj => obj.name).join(", ")
@@ -107,6 +121,8 @@ const renderSearchResult = async (userInput) => {
 
         movieListContainer.classList.remove('empty-state')
 
+        movieListContainer.classList.remove('no-results')
+
         movieListContainer.classList.add('movies')
 
         movieListContainer.innerHTML = movieList
@@ -116,9 +132,13 @@ const renderSearchResult = async (userInput) => {
     } catch (err) {
         console.error(err)
         movieListContainer.innerHTML = `
-            <div class="no-result container">
-                <h2>${err.message}</h2>
-            </div>
+            <main class="no-results">
+
+                <p class="no-results-message">
+                    Something went wrong. Please try again later.
+                </p>
+
+            </main>
         `
     }
 }
