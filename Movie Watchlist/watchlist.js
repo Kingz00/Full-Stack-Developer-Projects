@@ -6,7 +6,7 @@ const watchListContainer = document.getElementById('watchlist-main')
 const watchlistData = localStorage.getItem("watchlistArray")
 
 // 2. Parse it back into a real JavaScript array
-const watchlistArray = watchlistData ? JSON.parse(watchlistData) : []
+let watchlistArray = watchlistData ? JSON.parse(watchlistData) : []
 
 const readMoreFn = () => {
     document.querySelectorAll(".movie-description")
@@ -64,9 +64,28 @@ const readMoreFn = () => {
 }
 
 const renderWatchList = () => {
-    if (watchlistArray.length < 1) {
+    if (watchlistArray.length === 0) {
+        watchListContainer.innerHTML = `
+            <main class="empty-watchlist">
+
+                <div class="empty-watchlist-content">
+
+                    <p class="empty-watchlist-message">
+                        Your watchlist is looking a little empty...
+                    </p>
+
+                    <a href="index.html" class="add-movies-link">
+                        <span class="add-icon">+</span>
+                        Let's add some movies!
+                    </a>
+
+                </div>
+
+            </main>
+        `
         return
     }
+
     const watchList = watchlistArray.map(movie => {
         const filteredGenres = genres.filter(genre => movie.genre_ids.includes(genre.id)).map(obj => obj.name).join(", ")
 
@@ -91,7 +110,7 @@ const renderWatchList = () => {
                                     <span>${movie.release_date}</span>
                                     <span>${filteredGenres}</span>
         
-                                    <button class="watchlist-btn" data-movie-id=${movie.id}>
+                                    <button class="watchlist-btn remove-btn" data-movie-id=${movie.id}>
                                         <span class="plus">-</span>
                                         Remove
                                     </button>
@@ -119,9 +138,26 @@ const renderWatchList = () => {
                     `
     }).join("")
 
+    watchListContainer.classList.remove("empty-watchlist")
+
     watchListContainer.innerHTML = watchList
 
     readMoreFn()
 }
 
 renderWatchList()
+
+const removeMovie = (movieId) => {
+    watchlistArray = watchlistArray.filter(movie => movie.id !== parseInt(movieId))
+
+    // Save the updated array back to localStorage
+    localStorage.setItem("watchlistArray", JSON.stringify(watchlistArray));
+
+    renderWatchList()
+}
+
+document.addEventListener('click', (e) => {
+    if (e.target.classList.contains('remove-btn')) {
+        removeMovie(e.target.dataset.movieId)
+    }
+})

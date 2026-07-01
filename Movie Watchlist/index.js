@@ -203,6 +203,14 @@ const addToWatchList = (movieId) => {
     const watchlistArray = JSON.parse(localStorage.getItem("watchlistArray")) || [];
 
     const selectedMovie = searchResult.filter(movie => movie.id === parseInt(movieId))[0]
+
+    // Check if any object inside the array has a matching ID
+    const exists = watchlistArray.some(watchlist => watchlist.id === selectedMovie.id)
+
+    if (exists) {
+        return
+    }
+
     watchlistArray.push(selectedMovie)
 
     // 3. Save the updated array back to localStorage

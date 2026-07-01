@@ -375,6 +375,75 @@ body {
 }
 
 /* =========================
+   EMPTY WATCHLIST
+========================= */
+
+.empty-watchlist {
+    min-height: calc(100vh - 210px);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 2rem;
+}
+
+.empty-watchlist-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.empty-watchlist-message {
+    margin-bottom: 1rem;
+
+    color: #544F4F;
+
+    font-size: 1.125rem;
+    font-weight: 700;
+
+    text-align: center;
+}
+
+.add-movies-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    color: #363636;
+
+    font-size: 0.9rem;
+    font-weight: 700;
+
+    text-decoration: none;
+}
+
+.add-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 18px;
+    height: 18px;
+
+    border-radius: 50%;
+
+    background-color: #363636;
+    color: #ffffff;
+
+    font-size: 0.8rem;
+    font-weight: 700;
+
+    line-height: 1;
+}
+
+.add-movies-link:hover {
+    text-decoration: underline;
+}
+
+/* Media Queries */
+
+/* =========================
    TABLET
 ========================= */
 
