@@ -492,3 +492,32 @@ body {
         max-width: 65ch;
     }
 }
+
+/* Dark Theme */
+@media (prefers-color-scheme: dark) {
+    body {
+        background: #121212;
+        color: #FFFFFF;
+    }
+
+    .watchlist-btn,
+    .add-movies-link {
+        color: #FFFFFF;
+    }
+
+    .plus,
+    .add-icon {
+        background: #FFFFFF;
+        color: #121212;
+    }
+
+    .movie-description {
+        color: #A5A5A5;
+    }
+
+    .empty-state-content p,
+    .no-results-message,
+    .empty-watchlist-message {
+        color: #A5A5A5;
+    }
+}
