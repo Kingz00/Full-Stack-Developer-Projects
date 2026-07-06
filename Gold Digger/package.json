@@ -1,0 +1,12 @@
+{
+  "name": "gold-digger",
+  "version": "1.0.0",
+  "description": "a webapp to purchase gold at the current market price",
+  "license": "ISC",
+  "author": "Kingsley Onwus",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  }
+}
