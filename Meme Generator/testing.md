@@ -48,3 +48,20 @@ npm run test
 ```
 npm i -D msw
 ```
+
+9. Install code coverage to guage how much the app's source code is executed during testing
+```
+npm i -D @vitest/coverage-istanbul
+```
+
+10. Add the following to scripts in package.json for the coverage testing
+```
+"test:coverage": "vitest --coverage"
+```
+
+11. Add the folowing to vite.config.js for the coverage testing under test
+```
+coverage: {
+      provider: 'istanbul'
+    }
+```
