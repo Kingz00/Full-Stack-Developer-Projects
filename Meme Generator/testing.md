@@ -43,3 +43,8 @@ test: {
 ```
 npm run test
 ```
+
+8. Install Mock Service Worker to test external service like a fetch request from an API
+```
+npm i -D msw
+```
