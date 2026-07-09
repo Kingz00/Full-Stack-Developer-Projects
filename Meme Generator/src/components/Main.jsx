@@ -5,11 +5,12 @@ export default function Main() {
     const [meme, setMeme] = React.useState({
         topText: "One does not simply",
         bottomText: "Walk into Mordor",
-        imageUrl: "http://i.imgflip.com/1bij.jpg"
+        imageUrl: "http://i.imgflip.com/1bij.jpg",
+        imageAlt: "Meme image from Api"
     })
     const [memeImgArr, setMemeImgArr] = React.useState([])
 
-    const { topText, bottomText, imageUrl } = meme
+    const { topText, bottomText, imageUrl, imageAlt } = meme
 
     const handleChange = (e) => {
         const { value, name } = e.currentTarget
@@ -65,7 +66,7 @@ export default function Main() {
                 <button onClick={getRandomMemeImg} >Get a new meme image 🖼</button>
             </div>
             <div className="meme">
-                <img src={imageUrl} />
+                <img src={imageUrl} alt={imageAlt} />
                 <span className="top">{topText}</span>
                 <span className="bottom">{bottomText}</span>
             </div>
