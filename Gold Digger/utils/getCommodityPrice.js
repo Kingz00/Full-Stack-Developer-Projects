@@ -1,19 +1,25 @@
 import 'dotenv/config'
 
-const getCommodityPrice = async (amount) => {
+const getCommodityPrice = async () => {
+
+    // GC=F = Gold Futures
+    const url = 'https://query1.finance.yahoo.com/v8/finance/chart/GC=F?interval=1d&range=1d';
 
     try {
+        const response = await fetch(url, {
+            headers: {
+                // Yahoo requires a User-Agent header to prevent blocking
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
+            }
+        });
 
-        // XAU price from CommodityPriceApi
-        const res = await fetch(`https://api.commoditypriceapi.com/v2/rates/latest?symbols=xau&apiKey=${process.env.COMMODITY_PRICE_API}`)
-        const data = await res.json()
+        const data = await response.json();
+        const result = data.chart.result[0];
+        const latestPrice = result.meta.regularMarketPrice;
 
-        const price = amount * data.rates.XAU
-        console.log(price)
-        return price
-
+        console.log(`Live Gold Price: $${latestPrice} USD`);
     } catch (err) {
-        console.error(err)
+        console.error('Fetch error:', err);
     }
 }
 
