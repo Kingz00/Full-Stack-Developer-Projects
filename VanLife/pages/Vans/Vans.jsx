@@ -53,8 +53,7 @@ export default function Vans() {
         ))
 
         return (
-            <div className="van-list-container">
-                <h1>Explore our van options</h1>
+            <>
                 <div className="van-list-filter-buttons">
                     <button
                         onClick={() => handleFilterChange("type", "simple")}
@@ -89,16 +88,19 @@ export default function Vans() {
                 <div className="van-list">
                     {vanElements}
                 </div>
-            </div>
+            </>
         )
     }
 
     return (
-        <React.Suspense fallback={<h1>Loading vans data...</h1>}>
-            <Await resolve={deferredVans.vans}>
-                {renderVanElements}
-            </Await>
-        </React.Suspense>
+        <div className="van-list-container">
+            <h1>Explore our van options</h1>
+            <React.Suspense fallback={<h1>Loading vans data...</h1>}>
+                <Await resolve={deferredVans.vans}>
+                    {renderVanElements}
+                </Await>
+            </React.Suspense>
+        </div>
     )
 
 }
