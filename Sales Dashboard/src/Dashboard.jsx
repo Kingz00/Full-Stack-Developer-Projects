@@ -26,8 +26,6 @@ function Dashboard() {
             if (error) {
                 throw new Error(`${error.message}`)
             }
-
-            console.log(data)
             setMetrics(data)
         } catch (err) {
             console.log(`Error fetching sales data: ${err}`)
@@ -37,6 +35,27 @@ function Dashboard() {
 
     React.useEffect(() => {
         fetchMetrics()
+
+        const channel = supabase
+            .channel('deal-changes')
+            .on(
+                'postgres_changes',
+                {
+                    event: '*',
+                    schema: 'public',
+                    table: 'sales_deals'
+                },
+                (payload) => {
+                    // Action
+                    console.log(payload)
+                    fetchMetrics()
+                })
+            .subscribe();
+
+        // Clean up subscription
+        return () => {
+            supabase.removeChannel(channel);
+        };
     }, [])
 
     const chartData = [
