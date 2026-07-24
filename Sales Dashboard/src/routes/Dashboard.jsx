@@ -1,7 +1,7 @@
 import React from "react";
-import supabase from "./supabase-client";
+import supabase from "../supabase-client";
 import { Chart } from 'react-charts';
-import Form from "./Form";
+import Form from "../components/Form";
 
 function Dashboard() {
 

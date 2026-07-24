@@ -1,5 +1,5 @@
 import { useActionState } from "react";
-import supabase from "./supabase-client";
+import supabase from "../supabase-client";
 
 const action = async (prevState, formData) => {
     // Action logic
