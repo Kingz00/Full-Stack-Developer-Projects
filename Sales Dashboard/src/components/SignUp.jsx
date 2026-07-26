@@ -9,10 +9,12 @@ const SignUp = () => {
     const navigate = useNavigate()
 
     const action = async (prevState, formData) => {
+        const name = formData.get('name')
         const email = formData.get('email')
         const password = formData.get('password')
+        const accountType = formData.get('account-type')
 
-        const { success, data, error: signUpError } = await signUpNewUser(email, password)
+        const { success, data, error: signUpError } = await signUpNewUser(name, email, password, accountType)
 
         if (signUpError) {
             return {
@@ -59,6 +61,20 @@ const SignUp = () => {
                         </Link>
                     </p>
 
+                    <label htmlFor="name">Name</label>
+                    <input
+                        className="form-input"
+                        type="name"
+                        name="name"
+                        id="name"
+                        placeholder=""
+                        required
+                        aria-required="true"
+                        aria-invalid={error ? 'true' : 'false'}
+                        aria-describedby={error ? 'siginup-error' : undefined}
+                        disabled={isPending}
+                    />
+
                     <label htmlFor="email">Email</label>
                     <input
                         className="form-input"
@@ -86,6 +102,29 @@ const SignUp = () => {
                         aria-describedby={error ? 'siginup-error' : undefined}
                         disabled={isPending}
                     />
+
+                    <fieldset
+                        className="form-fieldset"
+                        aria-required="true"
+                        aria-label="Select your role"
+                    >
+                        <legend>Select your role</legend>
+                        <div className="radio-group">
+                            <label>
+                                <input
+                                    type="radio"
+                                    name="account-type"
+                                    value="admin"
+                                    required
+                                />{' '}
+                                Admin
+                            </label>
+                            <label>
+                                <input type="radio" name="account-type" value="rep" required />{' '}
+                                Sales Rep
+                            </label>
+                        </div>
+                    </fieldset>
 
                     <button
                         type="submit"

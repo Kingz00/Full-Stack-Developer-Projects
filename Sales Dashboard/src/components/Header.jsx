@@ -6,7 +6,9 @@ function Header() {
 
     const [error, setError] = useState(null)
 
-    const { signOut, session } = useContext(AuthContext)
+    const { signOut, session, users } = useContext(AuthContext)
+
+    const currentUser = users.find(user => user.id === session?.user?.id)
 
     const navigate = useNavigate()
 
@@ -23,6 +25,13 @@ function Header() {
         }
     }
 
+    const accountTypeMap = {
+        rep: 'Sales Rep',
+        admin: 'Admin'
+    }
+
+    const displayAccountType = currentUser?.account_type ? accountTypeMap[currentUser.account_type] : ''
+
     return (
         <>
             <header role="banner" aria-label="Dashboard header">
@@ -33,7 +42,7 @@ function Header() {
                 >
                     <h2>
                         <span className="sr-only">Logged in as:</span>
-                        {session?.user?.email}
+                        {currentUser?.name} ({displayAccountType})
                     </h2>
                     {error && (
                         <div role="alert" className="error-message" id="signout-error">

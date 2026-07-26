@@ -1,34 +1,48 @@
-import { useActionState } from "react";
+import { useActionState, useContext } from "react";
 import supabase from "../supabase-client";
+import { AuthContext } from "../context/AuthContext";
 
-const action = async (prevState, formData) => {
-    // Action logic
-    const newDeal = {
-        name: formData.get('name'),
-        value: formData.get('value')
+
+function Form() {
+
+    const { users, session } = useContext(AuthContext)
+
+    const action = async (prevState, formData) => {
+        // Action logic
+        const submittedName = formData.get('name')
+
+        // Find the user object from 'users' array that matches 'submittedName'
+        const user = users.find(user => user.name === submittedName)
+
+        const newDeal = {
+            user_id: user.id,
+            name: user.name,
+            value: formData.get('value')
+        }
+        //Async operation
+        const { error } = await supabase.from('sales_deals').insert([newDeal])
+
+        // Return error state
+        if (error) {
+            console.error(`Error adding a deal: ${error.message}`)
+            return new Error("Failed to add a deal")
+        }
+
+        return null
     }
-    //Async operation
-    const { error } = await supabase.from('sales_deals').insert([newDeal])
-
-    // Return error state
-    if (error) {
-        console.error(`Error adding a deal: ${error.message}`)
-        return new Error("Failed to add a deal")
-    }
-
-    return null
-}
-
-function Form({ metrics }) {
 
     const [error, submitAction, isPending] = useActionState(action, null)
 
+    const currentUser = users.find(user => user.id === session?.user?.id)
+
     const generateOptions = () => {
-        return metrics.map((metric) => (
-            <option key={metric.name} value={metric.name}>
-                {metric.name}
-            </option>
-        ));
+        return users
+            .filter(user => user.account_type === 'rep')
+            .map((user) => (
+                <option key={user.id} value={user.name}>
+                    {user.name}
+                </option>
+            ));
     };
 
     return (
@@ -39,15 +53,32 @@ function Form({ metrics }) {
                     the amount.
                 </div>
 
-                <label htmlFor="deal-name">
-                    Name:
-                    <select id="deal-name" name="name" defaultValue={metrics?.[0]?.name || ''} aria-required="true"
-                        aria-invalid={error ? 'true' : 'false'}
-                        disabled={isPending}
-                    >
-                        {generateOptions()}
-                    </select>
-                </label>
+                {currentUser?.account_type === 'rep' ? (
+                    <label htmlFor="deal-name">
+                        Name:
+                        <input
+                            id="deal-name"
+                            type="text"
+                            name="name"
+                            value={currentUser?.name || ''}
+                            readOnly
+                            className="rep-name-input"
+                            aria-label="Sales representative name"
+                            aria-readonly="true"
+                        />
+                    </label>
+                ) : (
+                    <label htmlFor="deal-name">
+                        Name:
+                        <select id="deal-name" name="name" defaultValue={users?.[0]?.name || ''} aria-required="true"
+                            aria-invalid={error ? 'true' : 'false'}
+                            disabled={isPending}
+                        >
+                            {generateOptions()}
+                        </select>
+                    </label>
+                )}
+
 
                 <label htmlFor="deal-value">
                     Amount: $

@@ -19,8 +19,10 @@ function Dashboard() {
                 .from('sales_deals')
                 .select(
                     `
-                    name,
-                    total_sales:value.sum()
+                    total_sales:value.sum(),
+                    ...user_profiles!inner(
+                    name
+                    )
                     `,
                 )
 
@@ -48,7 +50,6 @@ function Dashboard() {
                 },
                 (payload) => {
                     // Action
-                    console.log(payload)
                     fetchMetrics()
                 })
             .subscribe();
@@ -115,7 +116,7 @@ function Dashboard() {
                         }}
                     />
                 </div>
-                <Form metrics={metrics} />
+                <Form />
             </div>
         </div>
     );

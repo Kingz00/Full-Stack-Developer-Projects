@@ -6,6 +6,7 @@ export const AuthContext = createContext()
 const AuthContextProvider = ({ children }) => {
     //Session state (user info, sign-in status)
     const [session, setSession] = useState(undefined);
+    const [users, setUsers] = useState([])
 
     useEffect(() => {
         //1) Check on 1st render for a session (getSession())
@@ -15,7 +16,6 @@ const AuthContextProvider = ({ children }) => {
                 if (error) {
                     throw error
                 }
-                console.log(data)
                 setSession(data.session)
             } catch (err) {
                 console.error(`Invalid session: ${err}`)
@@ -27,10 +27,31 @@ const AuthContextProvider = ({ children }) => {
         //2) Listen for changes in auth state (.onAuthStateChange())
         supabase.auth.onAuthStateChange((_event, session) => {
             setSession(session)
-            console.log(`Session changed: ${session}`)
         })
 
+
     }, []);
+
+    useEffect(() => {
+
+        // Query user_profiles
+        const fetchUsers = async () => {
+            try {
+
+                const { data, error } = await supabase.from('user_profiles')
+                    .select("id, name, account_type")
+
+                if (error) {
+                    throw new Error(error.message)
+                }
+                setUsers(data)
+            } catch (err) {
+                console.error(`Error fetching user profiles: ${err}`)
+            }
+        }
+
+        fetchUsers()
+    }, [session])
 
     //Auth functions (signin, signup, logout)
 
@@ -52,7 +73,6 @@ const AuthContextProvider = ({ children }) => {
             }
 
             //success
-            console.log('Supabase sign-in success:', data)
             return { success: true, data };
         } catch (err) {
             // Unexpected error
@@ -74,7 +94,6 @@ const AuthContextProvider = ({ children }) => {
             }
 
             //success
-            console.log('Supabase sign-out success')
             return { success: true };
         } catch (err) {
             // Unexpected error
@@ -84,13 +103,20 @@ const AuthContextProvider = ({ children }) => {
     }
 
     // Sign up
-    const signUpNewUser = async (email, password) => {
+    const signUpNewUser = async (name, email, password, accountType) => {
         try {
 
             const { data, error } = await supabase.auth.signUp(
                 {
                     email: email.toLowerCase(),
                     password: password,
+                    // options property for users metadata
+                    options: {
+                        data: {
+                            name: name,
+                            account_type: accountType,
+                        }
+                    }
                 }
             )
 
@@ -101,7 +127,6 @@ const AuthContextProvider = ({ children }) => {
             }
 
             //success
-            console.log('Supabase sign-up success:', data)
             return { success: true, data };
         } catch (err) {
             // Unexpected error
@@ -111,7 +136,7 @@ const AuthContextProvider = ({ children }) => {
     }
 
     return (
-        <AuthContext.Provider value={{ session, signInUser, signOut, signUpNewUser }}>
+        <AuthContext.Provider value={{ session, signInUser, signOut, signUpNewUser, users }}>
             {children}
         </AuthContext.Provider>
     )
