@@ -1,6 +1,7 @@
 For Loop.js
 test_code.js
 node_modules/
+.next/
 
 .env
 dist
