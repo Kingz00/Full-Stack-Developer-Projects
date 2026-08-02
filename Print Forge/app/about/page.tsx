@@ -1,4 +1,6 @@
 import { CubeTransparentIcon, GlobeAltIcon, FlagIcon } from "@heroicons/react/24/outline"
+import Image from "next/image"
+import HeroImageSquare from '@/public/hero-image-square.png'
 
 const About = () => {
     return (
@@ -11,9 +13,9 @@ const About = () => {
 
                     {/* Image */}
                     <div>
-                        <img
-                            src="/hero-image-square.png"
-                            alt="3D Printing Models"
+                        <Image
+                            src={HeroImageSquare}
+                            alt="PrintForge Community - A group of makers collaborating on 3D printing projects"
                             className="w-full rounded-md object-cover"
                         />
                     </div>
