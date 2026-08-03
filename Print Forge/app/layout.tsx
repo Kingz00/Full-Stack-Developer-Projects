@@ -1,4 +1,5 @@
 import "./globals.css";
+import type React from "react";
 import { Albert_Sans, Montserrat_Alternates } from "next/font/google"
 import Nav from '@/app/components/Navbar'
 
