@@ -1,7 +1,12 @@
+'use client'
+
 import Link from "next/link";
 import type { Category } from "@/app/lib/categories";
+import { usePathname } from "next/navigation";
 
 const ModelsNavLink = ({ categories }: { categories: Category[] }) => {
+    const pathName = usePathname()
+
     return (
         <>
             {/* Mobile */}
@@ -11,7 +16,9 @@ const ModelsNavLink = ({ categories }: { categories: Category[] }) => {
                         <ul className="flex min-w-max items-center gap-8 px-5 py-5 text-sm uppercase tracking-wider">
 
                             <li>
-                                <Link href="/3d-models" className="text-gray-700 hover:text-orange-500">
+                                <Link
+                                    href="/3d-models"
+                                    className={`hover:text-orange-500 ${pathName === "/3d-models" ? "text-orange-500" : "text-gray-700"}`}>
                                     All
                                 </Link>
                             </li>
@@ -20,7 +27,7 @@ const ModelsNavLink = ({ categories }: { categories: Category[] }) => {
                                 <li key={item.slug}>
                                     <Link
                                         href={`/3d-models/categories/${item.slug}`}
-                                        className="text-gray-700 hover:text-orange-500"
+                                        className={`hover:text-orange-500 ${pathName === `/3d-models/categories/${item.slug}` ? "text-orange-500" : "text-gray-700"}`}
                                     >
                                         {item.displayName}
                                     </Link>
@@ -28,17 +35,6 @@ const ModelsNavLink = ({ categories }: { categories: Category[] }) => {
                             ))}
                         </ul>
                     </div>
-
-                    <div className="px-5 pb-6">
-
-                        <input
-                            type="search"
-                            placeholder="Search for a model"
-                            className="w-full rounded-full border border-gray-900 px-5 py-3 outline-none focus:ring-2 focus:ring-orange-500"
-                        />
-
-                    </div>
-
                 </nav>
             </div>
 
@@ -57,9 +53,9 @@ const ModelsNavLink = ({ categories }: { categories: Category[] }) => {
                             <li>
                                 <Link
                                     href="/3d-models"
-                                    className="group flex items-center gap-3 text-sm font-medium uppercase tracking-[0.15em] text-gray-600 hover:text-orange-500"
+                                    className={`group flex items-center gap-3 text-sm font-medium uppercase tracking-[0.15em] hover:text-orange-500 ${pathName === "/3d-models" ? "text-orange-500" : "text-gray-600"}`}
                                 >
-                                    <span className="h-5 w-px bg-orange-500 opacity-0 transition-opacity duration-200 group-hover:opacity-100"></span>
+                                    <span className={`h-5 w-px bg-orange-500 transition-opacity duration-200 group-hover:opacity-100 ${pathName === "/3d-models" ? "opacity-100" : "opacity-0"}`}></span>
                                     All
                                 </Link>
                             </li>
@@ -68,9 +64,9 @@ const ModelsNavLink = ({ categories }: { categories: Category[] }) => {
                                 <li key={item.slug}>
                                     <Link
                                         href={`/3d-models/categories/${item.slug}`}
-                                        className="group flex items-center gap-3 text-sm font-medium uppercase tracking-[0.15em] text-gray-600 hover:text-orange-500"
+                                        className={`group flex items-center gap-3 text-sm font-medium uppercase tracking-[0.15em] hover:text-orange-500 ${pathName === `/3d-models/categories/${item.slug}` ? "text-orange-500" : "text-gray-600"}`}
                                     >
-                                        <span className="h-5 w-px bg-orange-500 opacity-0 transition-opacity duration-200 group-hover:opacity-100"></span>
+                                        <span className={`h-5 w-px bg-orange-500 transition-opacity duration-200 group-hover:opacity-100 ${pathName === `/3d-models/categories/${item.slug}` ? "opacity-100" : "opacity-0"}`}></span>
                                         {item.displayName}
                                     </Link>
                                 </li>

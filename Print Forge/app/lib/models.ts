@@ -29,3 +29,8 @@ export async function getModelById(id: string | number): Promise<Model> {
   }
   return foundModel
 }
+
+export async function getModelsByCategory(category: string) {
+  const foundModels = modelsData.filter((model: Model) => model.category === category)
+  return foundModels
+}
