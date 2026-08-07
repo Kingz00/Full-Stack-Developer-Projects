@@ -1,8 +1,9 @@
 'use client'
 
 import Link from "next/link";
-import type { Category } from "@/app/lib/categories";
 import { usePathname } from "next/navigation";
+import type { Category } from "@/lib/types";
+
 
 const ModelsNavLink = ({ categories }: { categories: Category[] }) => {
     const pathName = usePathname()
@@ -24,12 +25,12 @@ const ModelsNavLink = ({ categories }: { categories: Category[] }) => {
                             </li>
 
                             {categories.map(item => (
-                                <li key={item.slug}>
+                                <li key={item.id}>
                                     <Link
                                         href={`/3d-models/categories/${item.slug}`}
                                         className={`hover:text-orange-500 ${pathName === `/3d-models/categories/${item.slug}` ? "text-orange-500" : "text-gray-700"}`}
                                     >
-                                        {item.displayName}
+                                        {item.name}
                                     </Link>
                                 </li>
                             ))}
@@ -61,13 +62,13 @@ const ModelsNavLink = ({ categories }: { categories: Category[] }) => {
                             </li>
 
                             {categories.map(item => (
-                                <li key={item.slug}>
+                                <li key={item.id}>
                                     <Link
                                         href={`/3d-models/categories/${item.slug}`}
                                         className={`group flex items-center gap-3 text-sm font-medium uppercase tracking-[0.15em] hover:text-orange-500 ${pathName === `/3d-models/categories/${item.slug}` ? "text-orange-500" : "text-gray-600"}`}
                                     >
                                         <span className={`h-5 w-px bg-orange-500 transition-opacity duration-200 group-hover:opacity-100 ${pathName === `/3d-models/categories/${item.slug}` ? "opacity-100" : "opacity-0"}`}></span>
-                                        {item.displayName}
+                                        {item.name}
                                     </Link>
                                 </li>
                             ))}

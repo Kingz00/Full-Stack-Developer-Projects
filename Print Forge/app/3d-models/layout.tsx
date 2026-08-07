@@ -1,9 +1,9 @@
 import type React from "react"
-import { getAllCategories } from "@/app/lib/categories"
+import { getCategories } from "@/lib/categories"
 import ModelsNavLink from "@/app/components/ModelsNavLink"
 
-const ModelsPageLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
-    const categories = getAllCategories()
+const ModelsPageLayout = async ({ children }: Readonly<{ children: React.ReactNode }>) => {
+    const categories = await getCategories()
 
     return (
         <div

@@ -1,10 +1,10 @@
-import { getAllModels } from "@/app/lib/models"
-import type { Model } from "@/app/lib/models"
+import { getModels } from "@/lib/models"
+import type { Model } from "@/lib/types"
 import ModelsGrid from "@/app/components/ModelsGrid"
 import Form from 'next/form'
 
 const ModelsPage = async ({ searchParams }: { searchParams: Promise<{ search?: string }> }) => {
-    const models = await getAllModels()
+    const models = await getModels()
 
     const { search } = await searchParams
 
