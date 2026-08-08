@@ -3,14 +3,13 @@ import type { Model } from "@/lib/types"
 import ModelsGrid from "@/app/components/ModelsGrid"
 import Form from 'next/form'
 
-const ModelsPage = async ({ searchParams }: { searchParams: Promise<{ search?: string }> }) => {
-    const models = await getModels()
+const ModelsPage = async ({ searchParams }: { searchParams: Promise<{ search?: string, sort?: string }> }) => {
 
-    const { search } = await searchParams
+    const search = (await searchParams).search?.toLowerCase() || ""
 
-    const filteredModels = search
-        ? models.filter((model: Model) => model.name.toLowerCase().includes(search?.toLowerCase()) || model.description.toLowerCase().includes(search?.toLowerCase()))
-        : models
+    const sort = (await searchParams).sort?.toLowerCase() || ""
+
+    const models: Model[] = await getModels(search, sort)
 
     return (
         <>
@@ -27,10 +26,11 @@ const ModelsPage = async ({ searchParams }: { searchParams: Promise<{ search?: s
                     placeholder="Search for a model"
                     className="w-full rounded-full border border-gray-900 px-5 py-3 outline-none focus:ring-2 focus:ring-orange-500"
                     autoComplete="off"
+                    defaultValue={search}
                 />
 
             </Form>
-            <ModelsGrid title="3D Models" models={filteredModels} />
+            <ModelsGrid search={search} title="3D Models" models={models} />
         </>
     )
 }

@@ -1,4 +1,4 @@
-import { getModelById } from "@/app/lib/models"
+import { getModelById } from "@/lib/models"
 import { FaRegHeart } from "react-icons/fa6"
 import Image from "next/image"
 import placeHolderImage from '@/public/placeholder.png'
@@ -10,14 +10,15 @@ const ModelDetailPage = async ({ params }: { params: Promise<{ id: string }> }) 
 
     const model = await getModelById(id)
 
+    const dateString = new Date(model.dateAdded)
+
     return (
         <main className="bg-white">
 
             {/* Main */}
 
             <section
-                className=" mx-auto max-w-7xl px-5 py-10 lg:grid lg:grid-cols-[2fr_1fr] lg:gap-10 lg:px-14 lg:pb-20
-        ">
+                className="mx-auto max-w-7xl px-5 py-10 lg:grid lg:grid-cols-[2fr_1fr] lg:gap-10 lg:px-14 lg:pb-20">
                 {/* Left */}
 
                 <div>
@@ -36,9 +37,11 @@ const ModelDetailPage = async ({ params }: { params: Promise<{ id: string }> }) 
                     </div>
 
                     <Image
-                        src={placeHolderImage}
+                        width={500}
+                        height={500}
+                        src={model.image}
                         alt={`3D model of ${model.name}`}
-                        className=" w-full rounded-md object-cover"
+                        className="w-full rounded-md object-cover"
                     />
 
                 </div>
@@ -51,7 +54,7 @@ const ModelDetailPage = async ({ params }: { params: Promise<{ id: string }> }) 
 
                     <Link
                         href="/3d-models"
-                        className=" hidden lg:inline-block text-sm uppercase tracking-[0.18em] text-gray-600"
+                        className="hidden lg:inline-block text-sm uppercase tracking-[0.18em] text-gray-600"
                     >
                         Back to Overview
                     </Link>
@@ -69,7 +72,7 @@ const ModelDetailPage = async ({ params }: { params: Promise<{ id: string }> }) 
                     </div>
 
                     <h1
-                        className=" mt-6 text-6xl font-extrabold leading-none tracking-tight lg:text-5xl"
+                        className="mt-6 text-6xl font-extrabold leading-none tracking-tight lg:text-5xl"
                     >
                         {model.name}
                     </h1>
@@ -85,7 +88,7 @@ const ModelDetailPage = async ({ params }: { params: Promise<{ id: string }> }) 
                         </span>
 
                         <span
-                            className=" rounded-full border border-gray-400 px-5 py-2 text-lg"
+                            className="rounded-full border border-gray-400 px-5 py-2 text-lg"
                         >
                             Upgrade
                         </span>
@@ -93,7 +96,7 @@ const ModelDetailPage = async ({ params }: { params: Promise<{ id: string }> }) 
                     </div>
 
                     <p
-                        className=" mt-8 text-3xl leading-relaxed text-gray-800 lg:text-2xl"
+                        className="mt-8 text-3xl leading-relaxed text-gray-800 lg:text-2xl"
                     >
                         {model.description}
                     </p>
@@ -102,12 +105,11 @@ const ModelDetailPage = async ({ params }: { params: Promise<{ id: string }> }) 
 
                     <div className="flex-1"></div>
 
-                    <p
-                        className=" mt-28 text-xl text-gray-700 lg:mt-12 lg:text-lg
-                "
+                    <time dateTime={model.dateAdded}
+                        className="mt-28 text-xl text-gray-700 lg:mt-12 lg:text-lg"
                     >
-                        Added on {model.dateAdded}
-                    </p>
+                        Added on {dateString.toLocaleDateString()}
+                    </time>
 
                 </aside>
 
