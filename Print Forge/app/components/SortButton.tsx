@@ -1,7 +1,9 @@
 'use client'
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
+import type { TransitionStartFunction } from "react"
 
-const SortButton = ({ children, sort }: { children: React.ReactNode, sort: string }) => {
+const SortButton = ({ children, sort, startTransition }
+    : { children: React.ReactNode, sort: string, startTransition: TransitionStartFunction }) => {
 
     const pathname = usePathname()
 
@@ -12,8 +14,12 @@ const SortButton = ({ children, sort }: { children: React.ReactNode, sort: strin
     const isActive = searchParams.get("sort") === sort
 
     const handleSort = () => {
-        const url = `${pathname}?sort=${sort}`
-        router.push(url)
+        const urlSearchParams = new URLSearchParams(searchParams.toString())
+        urlSearchParams.set("sort", sort)
+        const url = `${pathname}?${urlSearchParams.toString()}`
+        startTransition(() => {
+            router.push(url)
+        })
     }
 
     return (

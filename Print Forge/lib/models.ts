@@ -1,36 +1,36 @@
 import { getDBConnection } from '@/lib/db'
 
-export async function getModels(search?: string, sort?: string) {
+export async function getModels({ categorySlug, search, sort }:
+    { categorySlug?: string, search?: string, sort?: string }) {
     const db = await getDBConnection()
 
     let sql = "SELECT * FROM models"
 
     const placeholders: string[] = []
 
-    if (search) {
+    if (categorySlug) {
+        sql += " WHERE category = ?"
+        placeholders.push(categorySlug)
+    }
+
+    if (!categorySlug && search) {
         sql += " WHERE (name LIKE ? OR description LIKE ?)"
+        placeholders.push(`%${search}%`, `%${search}%`)
+    }
+
+    if (categorySlug && search) {
+        sql += " AND (name LIKE ? OR description LIKE ?)"
         placeholders.push(`%${search}%`, `%${search}%`)
     }
 
     if (sort) {
         if (sort === 'alpha') sql += " ORDER BY name ASC";
-        if (sort === 'popular') sql += " ORDER BY likes DESC"
-        if (sort === 'recent') sql += " ORDER BY dateAdded DESC"
+        if (sort === 'popular') sql += " ORDER BY likes DESC";
+        if (sort === 'recent') sql += " ORDER BY dateAdded DESC";
     }
 
     try {
         return await db.all(sql, placeholders)
-    } finally {
-        if (db) {
-            await db.close()
-        }
-    }
-}
-
-export async function getModelsByCategorySlug(categorySlug: string) {
-    const db = await getDBConnection()
-    try {
-        return await db.all(`SELECT * FROM models WHERE category=?`, [categorySlug])
     } finally {
         if (db) {
             await db.close()
