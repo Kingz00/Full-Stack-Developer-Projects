@@ -3,12 +3,17 @@ import { FaRegHeart } from "react-icons/fa6"
 import Image from "next/image"
 import placeHolderImage from '@/public/placeholder.png'
 import Link from "next/link"
+import { notFound } from "next/navigation"
 
 const ModelDetailPage = async ({ params }: { params: Promise<{ id: string }> }) => {
 
     const { id } = await params
 
     const model = await getModelById(id)
+
+    if (!model) {
+        notFound()
+    }
 
     const dateString = new Date(model.dateAdded)
 

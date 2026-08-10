@@ -4,7 +4,7 @@ import ModelsBrowser from "@/app/components/ModelsBrowser"
 
 const ModelsPage = async ({ searchParams }: { searchParams: Promise<{ search?: string, sort?: string }> }) => {
 
-    const search = (await searchParams).search?.toLowerCase() || ""
+    const search = (await searchParams).search?.trim().toLowerCase() || ""
 
     const sort = (await searchParams).sort?.toLowerCase() || ""
 

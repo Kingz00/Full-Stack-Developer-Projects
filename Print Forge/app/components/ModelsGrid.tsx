@@ -4,6 +4,7 @@ import type { Model } from "@/lib/types"
 import SortControls from "@/app/components/SortControls"
 import LoadingUI from "@/app/components/LoadingUI"
 import type { TransitionStartFunction } from "react"
+import NotFoundUI from "@/app/components/NotFoundUI"
 
 type ModelsGridProps = {
     isPending: boolean,
@@ -39,16 +40,23 @@ const ModelsGrid = ({ isPending, search, title, models, startTransition }: Model
 
             <SortControls startTransition={startTransition} />
 
-            {isPending ? <LoadingUI>Loading Models...</LoadingUI> :
-                <section
-                    className="mt-5 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
-                    role="region"
-                    aria-label="3D Models Gallery"
-                >
-                    {models.map((model: Model) => (
-                        <ModelCard key={model.id} model={model} />
-                    ))}
-                </section>}
+            {isPending ? (<LoadingUI>Loading Models...</LoadingUI>)
+                : models.length === 0
+                    ? (<NotFoundUI
+                        title="No models found"
+                        subTitle="Try searching for something else"
+                        linkText="See all models"
+                        linkHref="/3d-models"
+                    />)
+                    : (<section
+                        className="mt-5 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+                        role="region"
+                        aria-label="3D Models Gallery"
+                    >
+                        {models.map((model: Model) => (
+                            <ModelCard key={model.id} model={model} />
+                        ))}
+                    </section>)}
         </main>
     )
 }

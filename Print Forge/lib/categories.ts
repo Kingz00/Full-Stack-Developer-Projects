@@ -19,7 +19,7 @@ const getCategoryBySlug = async (categorySlug: string) => {
 
     try {
 
-        return await db.all("SELECT name FROM categories WHERE slug=?", [categorySlug])
+        return await db.get("SELECT name FROM categories WHERE slug=?", [categorySlug])
     } finally {
         if (db) {
             await db.close()
