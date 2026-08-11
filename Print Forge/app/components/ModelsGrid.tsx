@@ -5,16 +5,19 @@ import SortControls from "@/app/components/SortControls"
 import LoadingUI from "@/app/components/LoadingUI"
 import type { TransitionStartFunction } from "react"
 import NotFoundUI from "@/app/components/NotFoundUI"
+import PaginationControls from "@/app/components/PaginationControls"
 
 type ModelsGridProps = {
     isPending: boolean,
     startTransition: TransitionStartFunction,
     search?: string,
     title?: string,
-    models: Model[]
+    models: Model[],
+    totalPages: number,
+    currentPage: number
 }
 
-const ModelsGrid = ({ isPending, search, title, models, startTransition }: ModelsGridProps) => {
+const ModelsGrid = ({ isPending, search, title, models, startTransition, totalPages, currentPage }: ModelsGridProps) => {
     let displayedTitle: string = '3D Models'
 
     if (title) displayedTitle = title
@@ -49,14 +52,17 @@ const ModelsGrid = ({ isPending, search, title, models, startTransition }: Model
                         linkHref="/3d-models"
                     />)
                     : (<section
-                        className="mt-5 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+                        className="my-5 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
                         role="region"
                         aria-label="3D Models Gallery"
                     >
                         {models.map((model: Model) => (
                             <ModelCard key={model.id} model={model} />
                         ))}
-                    </section>)}
+                    </section>)
+            }
+
+            <PaginationControls totalPages={totalPages} currentPage={currentPage} />
         </main>
     )
 }

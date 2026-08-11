@@ -4,7 +4,16 @@ import ModelsGrid from "@/app/components/ModelsGrid"
 import type { Model } from "@/lib/types"
 import { useTransition } from "react"
 
-const ModelsBrowser = ({ title, search, models }: { title?: string, search?: string, models: Model[] }) => {
+type ModelsBrowserProps = {
+    title?: string,
+    search?: string,
+    models: Model[],
+    totalPages: number,
+    currentPage: number
+}
+
+const ModelsBrowser = ({ title, search, models, totalPages, currentPage }
+    : ModelsBrowserProps) => {
 
     const [isPending, startTransition] = useTransition()
 
@@ -18,6 +27,8 @@ const ModelsBrowser = ({ title, search, models }: { title?: string, search?: str
                 search={search}
                 title={title}
                 models={models}
+                totalPages={totalPages}
+                currentPage={currentPage}
                 startTransition={startTransition}
             />
         </>
