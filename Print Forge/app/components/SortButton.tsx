@@ -15,6 +15,7 @@ const SortButton = ({ children, sort, startTransition }
 
     const handleSort = () => {
         const urlSearchParams = new URLSearchParams(searchParams.toString())
+        urlSearchParams.delete("page")
         urlSearchParams.set("sort", sort)
         const url = `${pathname}?${urlSearchParams.toString()}`
         startTransition(() => {

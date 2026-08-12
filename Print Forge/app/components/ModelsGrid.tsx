@@ -22,7 +22,7 @@ const ModelsGrid = ({ isPending, search, title, models, startTransition, totalPa
 
     if (title) displayedTitle = title
 
-    if (search) displayedTitle = `Search results for "${search}"`
+    if (search) displayedTitle = title ? `Search results for "${search}" in ${title}` : `Search results for "${search}"`
 
     return (
         <main className="container px-4 py-8 mx-auto">
@@ -62,7 +62,7 @@ const ModelsGrid = ({ isPending, search, title, models, startTransition, totalPa
                     </section>)
             }
 
-            <PaginationControls totalPages={totalPages} currentPage={currentPage} />
+            {models.length > 0 && totalPages > 1 && <PaginationControls totalPages={totalPages} currentPage={currentPage} />}
         </main>
     )
 }
