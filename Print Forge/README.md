@@ -188,11 +188,16 @@ Runs ESLint.
 
 ## Screenshots
 
-Homepage
+*Homepage*
+
 <img width="1512" height="982" alt="print-forge-home" src="https://github.com/user-attachments/assets/cb72b463-0ba6-4230-b7d5-fe887d4ab28c" />
-3d-Models Page
+
+*3d-Models Page*
+
 <img width="1888" height="1065" alt="print-forge-3d-models" src="https://github.com/user-attachments/assets/85afb26e-0913-456e-9e76-aae9668fec03" />
-Individual Model Page
+
+*Individual Model Page*
+
 <img width="1905" height="1067" alt="print-forge-model-page" src="https://github.com/user-attachments/assets/a465c0d9-7723-4d10-aea9-15c66833942b" />
 
 
