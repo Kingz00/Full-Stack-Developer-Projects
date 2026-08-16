@@ -227,16 +227,20 @@ Previews the production build locally.
 
 ## Screenshots
 
-Homepage
+*Homepage*
+
 <img width="549" height="574" alt="vanlife-intro-page" src="https://github.com/user-attachments/assets/46e9d801-a3f1-4f8e-92d5-8287c4a558b4" />
 
-Van Listing
+*Van Listing*
+
 <img width="549" height="1452" alt="vanlife-product-list" src="https://github.com/user-attachments/assets/48103dd2-5844-4d70-95d0-1860c8f7e4ce" />
 
-Van Detail Page
+*Van Detail Page*
+
 <img width="549" height="1260" alt="vanlife-product-detail" src="https://github.com/user-attachments/assets/ac843205-4f91-483a-8e68-f5c126914635" />
 
-Host Dashboard
+*Host Dashboard*
+
 <img width="548" height="1096" alt="vanlife-host-page" src="https://github.com/user-attachments/assets/cafeac4f-1513-441d-a656-2af65dca83ec" />
 
 
