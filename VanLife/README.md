@@ -242,7 +242,7 @@ Host Dashboard
 
 ## Live Demo
 
-*Add your deployed application URL here.*
+[View on Netlify](https://kingz-vanlife-project.netlify.app/)
 
 ## Repository
 
