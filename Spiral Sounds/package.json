@@ -7,7 +7,7 @@
     "scripts": {
         "start": "node server.js"
     },
-    "author": "Tom Chant",
+    "author": "Kingsley Onwupeluonye",
     "license": "ISC",
     "dependencies": {
         "bcryptjs": "^3.0.3",
