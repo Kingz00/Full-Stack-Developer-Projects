@@ -242,17 +242,16 @@ http://localhost:8000
 
 ## Screenshots
 
-*Add screenshots of the storefront, product catalog, authentication screens, and shopping cart here.*
-Product Catalog
+*Product Catalog*
 
 <img width="1891" height="1067" alt="spiral-sounds-product-list" src="https://github.com/user-attachments/assets/464f79fc-c0ba-4aa7-9a6d-ccde2398cc58" />
 
-Authentication Screen
+*Authentication Screen*
 
 <img width="1909" height="688" alt="spiral-sounds-auth-screen" src="https://github.com/user-attachments/assets/11e1114b-9709-4767-a2be-273d467ae223" />
 
 
-Shopping Cart
+*Shopping Cart*
 
 <img width="1900" height="687" alt="spiral-sounds-shopping-cart" src="https://github.com/user-attachments/assets/26d674b8-dacf-4ec8-883f-678f6594dc0b" />
 
