@@ -198,7 +198,7 @@ Individual Model Page
 
 ## Live Demo
 
-*Add your deployed application URL here.*
+[View on Netlify](https://kingz-print-forge.netlify.app/)
 
 ## Repository
 
