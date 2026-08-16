@@ -3,7 +3,7 @@ import { FaRegHeart } from "react-icons/fa6"
 import Pill from "./Pill"
 import Image from "next/image"
 import placeholderImg from "@/public/placeholder.png"
-import type { Model } from "@/app/lib/models"
+import type { Model } from "@/lib/types"
 
 type ModelCardProps = {
     model: Model
