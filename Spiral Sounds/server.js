@@ -7,7 +7,7 @@ import { meRouter } from './routes/me.js'
 import { cartRouter } from './routes/cart.js'
 
 const app = express()
-const PORT = 8000
+const PORT = process.env.PORT || 8000
 
 const secret = process.env.SESSION_SECRET
 

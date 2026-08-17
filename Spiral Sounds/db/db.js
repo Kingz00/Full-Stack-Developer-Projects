@@ -4,11 +4,11 @@ import path from 'node:path'
 
 export async function getDBConnection() {
 
-  const dbPath = path.join('database.db')
+  const dbPath = process.env.DATABASE_PATH || path.join(process.cwd(), 'database.db')
 
   return open({
     filename: dbPath,
     driver: sqlite3.Database
-  }) 
+  })
 
 } 
