@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Space_Grotesk, Inter } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar/Navbar";
+import Footer from "@/components/Footer/Footer";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -14,7 +15,7 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "Kingsley Onwupeluonye Developer Portfolio",
+  title: "Kingsley Onwupeluonye Developer's Portfolio",
   description: "",
 };
 
@@ -27,6 +28,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body>
         <Navbar />
         {children}
+        <Footer />
       </body>
     </html>
   );

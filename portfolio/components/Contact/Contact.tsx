@@ -46,7 +46,7 @@ export default function Contact() {
                             </a>
 
                             <a
-                                href="www.linkedin.com/in/kingsley-onwupeluonye-445361258"
+                                href="https://www.linkedin.com/in/kingsley-onwupeluonye-445361258"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="group inline-flex items-center gap-2 text-lg font-medium text-white/60 transition-colors hover:text-white"
