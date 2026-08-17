@@ -1,52 +1,95 @@
-import Link from "next/link";
-import MobileMenu from "@/components/Navbar/MobileMenu";
+"use client"
 
-const navLinks = [
-    { label: "Work", href: "/#work" },
-    { label: "About", href: "/#about" },
-    { label: "Contact", href: "/#contact" },
-];
+import { useState } from "react"
+import Link from "next/link"
+import MobileMenu from "@/components/Navbar/MobileMenu"
+
+const navigation = [
+    {
+        number: "01",
+        label: "Work",
+        href: "#projects",
+    },
+    {
+        number: "02",
+        label: "About",
+        href: "#about",
+    },
+    {
+        number: "03",
+        label: "Contact",
+        href: "#contact",
+    },
+]
 
 export default function Navbar() {
+    const [menuOpen, setMenuOpen] = useState(false)
+
     return (
         <header className="fixed inset-x-0 top-0 z-50">
-            <nav
-                className="mx-auto flex h-20 max-w-7xl items-center justify-between border-b border-white/10 px-6 lg:px-8"
-                aria-label="Main navigation"
-            >
-                {/* Logo */}
-                <Link
-                    href="/"
-                    className="font-heading text-xl font-semibold tracking-tight text-zinc-100 transition-colors hover:text-orange-500"
-                >
-                    KINGSLEY
-                </Link>
-
-                {/* Desktop Navigation */}
-                <div className="hidden items-center gap-8 md:flex">
-                    {navLinks.map((link) => (
-                        <Link
-                            key={link.href}
-                            href={link.href}
-                            className="font-sans text-sm font-medium text-zinc-400 transition-colors duration-200 hover:text-zinc-100"
-                        >
-                            {link.label}
-                        </Link>
-                    ))}
-
-                    {/* Resume */}
+            <nav className="border-b border-white/10 bg-black/80 backdrop-blur-md">
+                <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6">
+                    {/* Logo */}
                     <Link
-                        href="/resume"
-                        className="ml-2 inline-flex items-center gap-1.5 border border-orange-500/60 px-4 py-2 font-sans text-sm font-medium text-orange-500 transition-all duration-200 hover:bg-orange-500 hover:text-zinc-950"
+                        href="/"
+                        className="text-sm font-semibold tracking-[0.2em] text-white"
                     >
-                        Resume
-                        <span aria-hidden="true">↗</span>
+                        KINGSLEY
                     </Link>
-                </div>
 
-                {/* Mobile Navigation */}
-                <MobileMenu navLinks={navLinks} />
+                    {/* Desktop navigation */}
+                    <div className="hidden items-center gap-8 md:flex">
+                        {navigation.map((item) => (
+                            <Link
+                                key={item.href}
+                                href={item.href}
+                                className="group flex items-center gap-2 text-sm text-white/60 transition-colors hover:text-white"
+                            >
+                                <span className="text-xs text-orange-500/80">
+                                    {item.number}
+                                </span>
+
+                                <span>{item.label}</span>
+                            </Link>
+                        ))}
+
+                        <span className="h-5 w-px bg-white/10" />
+
+                        <Link
+                            href="#"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="group flex items-center gap-2 text-sm font-medium text-white transition-colors hover:text-orange-400"
+                        >
+                            Resume
+
+                            <span className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5">
+                                ↗
+                            </span>
+                        </Link>
+                    </div>
+
+                    {/* Mobile menu button */}
+                    <button
+                        type="button"
+                        aria-label={menuOpen ? "Close menu" : "Open menu"}
+                        aria-expanded={menuOpen}
+                        onClick={() => setMenuOpen((open) => !open)}
+                        className="relative z-50 flex h-10 w-10 items-center justify-center text-white md:hidden"
+                    >
+                        <span className="text-xl">
+                            {menuOpen ? "×" : "☰"}
+                        </span>
+                    </button>
+                </div>
             </nav>
+
+            {/* Mobile navigation */}
+            <MobileMenu
+                open={menuOpen}
+                navigation={navigation}
+                onClose={() => setMenuOpen(false)}
+            />
         </header>
-    );
+    )
 }
