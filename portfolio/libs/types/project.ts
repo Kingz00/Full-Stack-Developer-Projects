@@ -6,6 +6,7 @@ export type Project = {
     longDescription: string
     image: string
     technologies: string[]
+    featuredTechnologies: string[]
     features: string[]
     highlights: string[]
     githubUrl: string
