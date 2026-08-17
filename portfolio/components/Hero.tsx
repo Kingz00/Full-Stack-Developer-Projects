@@ -1,4 +1,6 @@
 import Link from "next/link";
+import HERO_VISUAL_IMAGE from "@/public/hero_visual.png"
+import Image from "next/image";
 
 export default function Hero() {
     return (
@@ -7,7 +9,7 @@ export default function Hero() {
         >
             <div className="mx-auto w-full max-w-7xl">
                 <div
-                    className="grid items-center gap-16 lg:grid-cols-[1.15fr_0.85fr] lg:gap-12"
+                    className="grid items-center gap-16 lg:grid-cols-2 lg:gap-12"
                 >
                     {/* Hero Content */}
                     <div>
@@ -66,20 +68,13 @@ export default function Hero() {
                     </div>
 
                     {/* Hero Visual */}
-                    <div
-                        className="relative mx-auto w-full max-w-lg lg:max-w-none"
-                    >
-                        <div
-                            className="aspect-square border border-border bg-surface"
-                        >
-                            <div className="flex h-full items-center justify-center">
-                                <span
-                                    className="font-heading text-sm uppercase tracking-[0.3em] text-zinc-600"
-                                >
-                                    Visual
-                                </span>
-                            </div>
-                        </div>
+                    <div className="relative w-full lg:justify-self-end lg:max-w-[560px]">
+                        <Image
+                            src={HERO_VISUAL_IMAGE}
+                            alt="Abstract full-stack developer visual"
+                            className="h-auto w-full"
+                            priority
+                        />
                     </div>
                 </div>
             </div>
