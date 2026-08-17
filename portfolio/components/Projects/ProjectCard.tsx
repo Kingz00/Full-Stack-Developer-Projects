@@ -32,12 +32,6 @@ export default function ProjectCard({
                 <span className="font-medium text-orange-500">
                     {number}
                 </span>
-
-                <span className="h-px w-8 bg-white/20" />
-
-                <span className="text-white/40">
-                    Featured Project
-                </span>
             </div>
 
             {/* Title */}

@@ -3,7 +3,7 @@ import type { Project } from "@/libs/types/project"
 export const projects: Project[] = [
     {
         id: "assembly-endgame",
-        title: "Assembly Endgame - TypeScript",
+        title: "Assembly Endgame",
         slug: "assembly-endgame",
         description:
             "A word-guessing game where players try to save the programming world before all eight programming languages are eliminated.",
@@ -58,7 +58,7 @@ export const projects: Project[] = [
             "MirageJS",
             "Firebase",
         ],
-        featuredTechnologies: ["React", "React Router", "Firebase", "MirageJS"],
+        featuredTechnologies: ["React", "React Router", "Firebase", "CSS"],
         features: [
             "Browse van listings",
             "Search and filter vans",
