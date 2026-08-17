@@ -34,7 +34,7 @@ app.use('/api/auth', authRouter)
 
 app.use('/api/cart', cartRouter)
 
-app.listen(PORT, () => {
+app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server running at http://localhost:${PORT}`)
 }).on('error', (err) => {
   console.error('Failed to start server:', err)
