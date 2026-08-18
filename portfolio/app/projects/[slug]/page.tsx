@@ -177,9 +177,41 @@ export default async function ProjectPage({
                 </div>
             </section>
 
+            {/* Screenshots */}
+            <section className="mb-24 grid gap-8 border-t border-white/10 pt-16 lg:grid-cols-[220px_1fr]">
+                <SectionLabel number="03" label="Screenshots" />
+
+                <div>
+                    <h2 className="mb-10 max-w-3xl text-3xl font-medium tracking-tight text-white sm:text-4xl">
+                        See it in action
+                    </h2>
+
+                    <div className="space-y-12">
+                        {project.screenshots.map((screenshot) => (
+                            <figure key={screenshot.src}>
+                                <div className="overflow-hidden rounded-xl border border-white/10 bg-zinc-900">
+                                    <Image
+                                        src={screenshot.src}
+                                        alt={screenshot.alt}
+                                        width={1600}
+                                        height={1000}
+                                        className="h-auto w-full object-contain"
+                                        sizes="(max-width: 1024px) 100vw, 1000px"
+                                    />
+                                </div>
+
+                                <figcaption className="mt-3 text-sm leading-relaxed text-zinc-500">
+                                    {screenshot.caption}
+                                </figcaption>
+                            </figure>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
             {/* Technical details */}
             <section className="mb-24 grid gap-8 border-t border-white/10 pt-16 lg:grid-cols-[220px_1fr]">
-                <SectionLabel number="03" label="Technical" />
+                <SectionLabel number="04" label="Technical" />
 
                 <div>
                     <h2 className="mb-10 max-w-3xl text-3xl font-medium tracking-tight text-white sm:text-4xl">
@@ -220,7 +252,7 @@ export default async function ProjectPage({
 
             {/* Challenges */}
             <section className="mb-24 grid gap-8 border-t border-white/10 pt-16 lg:grid-cols-[220px_1fr]">
-                <SectionLabel number="04" label="Challenges" />
+                <SectionLabel number="05" label="Challenges" />
 
                 <div>
                     <h2 className="mb-10 max-w-3xl text-3xl font-medium tracking-tight text-white sm:text-4xl">
@@ -280,7 +312,7 @@ export default async function ProjectPage({
                     </Link>
                 ) : (
                     <Link
-                        href="/#work"
+                        href="/#projects"
                         className="group border-b border-white/10 py-8 text-left transition-colors hover:bg-orange-500 sm:pl-8 sm:text-right"
                     >
                         <span className="mb-3 block text-xs uppercase tracking-[0.2em] text-zinc-600 group-hover:text-black/60">

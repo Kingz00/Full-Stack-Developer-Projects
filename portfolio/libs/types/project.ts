@@ -17,6 +17,13 @@ export type Project = {
     features: string[]
     highlights: string[]
     challenges: string[]
+    screenshots: ProjectScreenshot[]
     githubUrl: string
     liveUrl?: string
+}
+
+export type ProjectScreenshot = {
+    src: string
+    alt: string
+    caption: string
 }
