@@ -44,7 +44,7 @@ export default function MobileMenu({
                     ))}
 
                     <Link
-                        href="#"
+                        href="/resume.pdf"
                         target="_blank"
                         rel="noopener noreferrer"
                         onClick={onClose}

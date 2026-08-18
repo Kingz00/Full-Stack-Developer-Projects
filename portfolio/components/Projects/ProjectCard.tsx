@@ -1,7 +1,6 @@
 import type { Project } from "@/libs/types/project"
 import Image from "next/image"
 import Link from "next/link"
-import { ArrowUpRight } from "lucide-react"
 
 type ProjectCardProps = {
     project: Project

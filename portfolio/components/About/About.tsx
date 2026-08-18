@@ -22,7 +22,7 @@ export default function About() {
                     {/* Introduction */}
                     <div>
                         <h2 className="max-w-4xl text-4xl font-bold leading-tight tracking-tight text-white sm:text-5xl lg:text-6xl">
-                            I'm a full-stack developer focused on building practical, responsive web applications.
+                            I’m a full-stack developer focused on building practical, responsive web applications.
                         </h2>
 
                         <div className="mt-8 max-w-2xl space-y-5 text-lg leading-8 text-white/60">
@@ -31,11 +31,11 @@ export default function About() {
                             </p>
 
                             <p>
-                                Through my projects, I've worked on applications ranging from interactive React experiences and responsive multi-page sites to full-stack applications with authentication, APIs, databases, and persistent data. I enjoy taking a project from an initial idea through development, testing, and deployment.
+                                Through my projects, I’ve worked on applications ranging from interactive React experiences and responsive multi-page sites to full-stack applications with authentication, APIs, databases, and persistent data. I enjoy taking a project from an initial idea through development, testing, and deployment.
                             </p>
 
                             <p>
-                                I'm continually expanding my skills by
+                                I’m continually expanding my skills by
                                 building real-world projects and exploring
                                 new technologies across the web development
                                 ecosystem.
