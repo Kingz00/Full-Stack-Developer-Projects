@@ -8,17 +8,17 @@ const navigation = [
     {
         number: "01",
         label: "Work",
-        href: "#projects",
+        href: "/#projects",
     },
     {
         number: "02",
         label: "About",
-        href: "#about",
+        href: "/#about",
     },
     {
         number: "03",
         label: "Contact",
-        href: "#contact",
+        href: "/#contact",
     },
 ]
 
