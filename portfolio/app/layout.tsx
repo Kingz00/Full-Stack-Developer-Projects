@@ -4,6 +4,8 @@ import "./globals.css";
 import Navbar from "@/components/Navbar/Navbar";
 import Footer from "@/components/Footer/Footer";
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://kingsley-onwupeluonye.netlify.app";
+
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
@@ -15,7 +17,7 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://kingsley-onwupeluonye.netlify.app"),
+  metadataBase: new URL(siteUrl),
 
   title: {
     default: "Kingsley Onwupeluonye | Full-Stack Developer",
@@ -46,11 +48,19 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://kingsley-onwupeluonye.netlify.app",
+    url: siteUrl,
     siteName: "Kingsley Onwupeluonye",
     title: "Kingsley Onwupeluonye | Full-Stack Developer",
     description:
       "Full-stack developer building modern, responsive web applications with React, TypeScript, Next.js, and Node.js.",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Kingsley Onwupeluonye | Full-Stack Developer",
+      },
+    ],
   },
 
   twitter: {
@@ -58,6 +68,7 @@ export const metadata: Metadata = {
     title: "Kingsley Onwupeluonye | Full-Stack Developer",
     description:
       "Full-stack developer building modern, responsive web applications with React, TypeScript, Next.js, and Node.js.",
+    images: ["/og-image.png"],
   },
 
   robots: {

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import MobileMenu from "@/components/Navbar/MobileMenu"
 
@@ -24,6 +24,22 @@ const navigation = [
 
 export default function Navbar() {
     const [menuOpen, setMenuOpen] = useState(false)
+
+    useEffect(() => {
+        if (!menuOpen) return
+
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.key === "Escape") {
+                setMenuOpen(false)
+            }
+        }
+
+        document.addEventListener("keydown", handleKeyDown)
+
+        return () => {
+            document.removeEventListener("keydown", handleKeyDown)
+        }
+    }, [menuOpen])
 
     return (
         <header className="fixed inset-x-0 top-0 z-50">
