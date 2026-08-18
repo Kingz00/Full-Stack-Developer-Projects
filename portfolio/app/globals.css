@@ -20,6 +20,7 @@
 
 html {
   background-color: var(--color-background);
+  scroll-behavior: smooth;
 }
 
 body {
@@ -27,6 +28,11 @@ body {
   background-color: var(--color-background);
   color: var(--color-foreground);
   font-family: var(--font-sans);
+}
+
+:focus-visible {
+  outline: 2px solid #f97316;
+  outline-offset: 4px;
 }
 
 @keyframes scroll-indicator {
@@ -45,4 +51,20 @@ body {
 
 .scroll-indicator>span {
   animation: scroll-indicator 1.8s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  /* *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  } */
+
+  .scroll-indicator>span {
+    animation: none;
+  }
 }
