@@ -15,9 +15,60 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "Kingsley Onwupeluonye Developer's Portfolio",
-  description: "",
-};
+  metadataBase: new URL("https://kingsley-onwupeluonye.netlify.app"),
+
+  title: {
+    default: "Kingsley Onwupeluonye | Full-Stack Developer",
+    template: "%s | Kingsley Onwupeluonye",
+  },
+
+  description:
+    "Portfolio of Kingsley Onwupeluonye, a full-stack developer building modern, responsive web applications with React, TypeScript, Next.js, and Node.js.",
+
+  keywords: [
+    "Kingsley Onwupeluonye",
+    "Full-Stack Developer",
+    "Web Developer",
+    "React Developer",
+    "Next.js Developer",
+    "TypeScript Developer",
+    "JavaScript Developer",
+  ],
+
+  authors: [
+    {
+      name: "Kingsley Onwupeluonye",
+    },
+  ],
+
+  creator: "Kingsley Onwupeluonye",
+
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://kingsley-onwupeluonye.netlify.app",
+    siteName: "Kingsley Onwupeluonye",
+    title: "Kingsley Onwupeluonye | Full-Stack Developer",
+    description:
+      "Full-stack developer building modern, responsive web applications with React, TypeScript, Next.js, and Node.js.",
+  },
+
+  twitter: {
+    card: "summary_large_image",
+    title: "Kingsley Onwupeluonye | Full-Stack Developer",
+    description:
+      "Full-stack developer building modern, responsive web applications with React, TypeScript, Next.js, and Node.js.",
+  },
+
+  robots: {
+    index: true,
+    follow: true,
+  },
+}
+
+export const viewport = {
+  themeColor: "#0a0a0a",
+}
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
