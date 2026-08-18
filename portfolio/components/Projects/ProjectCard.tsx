@@ -1,5 +1,6 @@
 import type { Project } from "@/libs/types/project"
 import Image from "next/image"
+import Link from "next/link"
 import { ArrowUpRight } from "lucide-react"
 
 type ProjectCardProps = {
@@ -59,35 +60,33 @@ export default function ProjectCard({
             </div>
 
             {/* Links */}
-            <div className="flex items-center gap-6">
-                {project.liveUrl && (
-                    <a
-                        href={project.liveUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="group/link inline-flex items-center gap-2 text-sm font-medium text-white transition-colors hover:text-orange-400"
-                    >
-                        Live Demo
+            <div className="flex flex-wrap items-center gap-4">
+                <Link
+                    href={`/projects/${project.slug}`}
+                    className="inline-flex items-center gap-2 font-medium text-white transition-opacity hover:text-orange-400"
+                >
+                    View Project
+                    <span aria-hidden="true">→</span>
+                </Link>
 
-                        <ArrowUpRight
-                            size={16}
-                            className="transition-transform duration-300 group-hover/link:-translate-y-0.5 group-hover/link:translate-x-0.5"
-                        />
-                    </a>
-                )}
+                <a
+                    href={project.liveUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-gray-400 transition-colors hover:text-white"
+                >
+                    Live Demo
+                    <span aria-hidden="true">↗</span>
+                </a>
 
                 <a
                     href={project.githubUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group/link inline-flex items-center gap-2 text-sm font-medium text-white/60 transition-colors hover:text-white"
+                    className="inline-flex items-center gap-2 text-gray-400 transition-colors hover:text-white"
                 >
                     GitHub
-
-                    <ArrowUpRight
-                        size={16}
-                        className="transition-transform duration-300 group-hover/link:-translate-y-0.5 group-hover/link:translate-x-0.5"
-                    />
+                    <span aria-hidden="true">↗</span>
                 </a>
             </div>
         </article>
