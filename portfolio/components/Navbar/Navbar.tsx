@@ -56,7 +56,7 @@ export default function Navbar() {
                         <span className="h-5 w-px bg-white/10" />
 
                         <Link
-                            href="#"
+                            href="/resume.pdf"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="group flex items-center gap-2 text-sm font-medium text-white transition-colors hover:text-orange-400"

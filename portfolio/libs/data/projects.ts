@@ -35,6 +35,34 @@ export const projects: Project[] = [
             "Interactive game logic",
             "Dynamic UI states",
         ],
+        technicalDetails: {
+            frontend: "React with TypeScript and CSS",
+            other:
+                "Vite, React Confetti, clsx, React state management, conditional rendering, and reusable components",
+        },
+        challenges: [
+            "Managing the different states of the game as players make guesses.",
+            "Tracking guessed letters and determining when a word has been completed.",
+            "Progressively eliminating programming languages based on incorrect guesses.",
+            "Providing clear visual feedback for active, winning, and losing game states.",
+        ],
+        screenshots: [
+            {
+                src: "/projects/assembly-endgame-main.png",
+                alt: "Assembly Endgame gameplay interface",
+                caption: "The main gameplay interface with the word board and on-screen keyboard.",
+            },
+            {
+                src: "/projects/assembly-endgame-winning-state.png",
+                alt: "Assembly Endgame winning state",
+                caption: "Winning the game triggers a celebration state with a new-game option.",
+            },
+            {
+                src: "/projects/assembly-endgame-losing-state.png",
+                alt: "Assembly Endgame losing state",
+                caption: "The game-over state displays the revealed word and allows the player to start again.",
+            },
+        ],
         githubUrl:
             "https://github.com/Kingz00/Full-Stack-Developer-Projects/tree/210511a19f5c3aff945cb640162d91a5b8ceeeb2/Assembly%20Endgame%20-%20TypeScript",
         liveUrl: "https://kingz-assembly-endgame-project.netlify.app/"
@@ -48,7 +76,7 @@ export const projects: Project[] = [
             "A responsive van-rental application with customer browsing, authentication, dynamic van pages, and a protected host dashboard.",
         longDescription:
             "VanLife is a responsive van-rental web application built with React and React Router. It provides a customer-facing experience for browsing and exploring vans alongside an authenticated host dashboard for managing van information. The project focuses heavily on React Router's data APIs, nested routes, dynamic routes, loaders, actions, protected routes, and error handling.",
-        image: "/projects/vanlife.png",
+        image: "/projects/vanlife-hero-section.png",
         technologies: [
             "React",
             "React Router",
@@ -78,6 +106,36 @@ export const projects: Project[] = [
             "Protected routes",
             "Authentication flow",
             "Mock API integration",
+        ],
+        technicalDetails: {
+            frontend: "React with React Router and CSS",
+            backend: "MirageJS mock API",
+            other:
+                "React Router loaders, actions, nested routes, dynamic routes, protected routes, Firebase authentication, and Vite",
+        },
+        challenges: [
+            "Structuring the application around React Router's data-router APIs.",
+            "Managing nested routes for the host dashboard and individual van pages.",
+            "Protecting host routes so authenticated functionality is separated from the public application.",
+            "Using loaders and actions to coordinate data fetching and form-related interactions.",
+            "Handling loading and error states across multiple routes.",
+        ],
+        screenshots: [
+            {
+                src: "/projects/vanlife-hero-section.png",
+                alt: "VanLife homepage",
+                caption: "The customer-facing landing page for discovering and renting vans.",
+            },
+            {
+                src: "/projects/vanlife-individual-van.png",
+                alt: "VanLife individual van details",
+                caption: "A dynamic van detail page with specifications, pricing, and a rental action.",
+            },
+            {
+                src: "/projects/vanlife-host-dashboard.png",
+                alt: "VanLife host dashboard",
+                caption: "The protected host dashboard for viewing income, reviews, and listed vans.",
+            },
         ],
         githubUrl:
             "https://github.com/Kingz00/Full-Stack-Developer-Projects/tree/main/VanLife",
@@ -124,6 +182,37 @@ export const projects: Project[] = [
             "Search and sorting logic",
             "Pagination",
             "Separation of data access and presentation",
+        ],
+        technicalDetails: {
+            frontend: "Next.js, React, TypeScript, and Tailwind CSS",
+            backend: "Next.js Server Components and server-side data access",
+            database: "SQLite using sqlite and sqlite3",
+            other:
+                "URL query parameters, search and sorting logic, pagination, Heroicons, and React Icons",
+        },
+        challenges: [
+            "Separating database access from the presentation layer to keep the application maintainable.",
+            "Using URL query parameters to represent search, sorting, and pagination state.",
+            "Building server-side data fetching around the Next.js App Router.",
+            "Implementing pagination while retrieving only the records required for the current page.",
+            "Keeping search, sorting, category filtering, and pagination working together consistently.",
+        ],
+        screenshots: [
+            {
+                src: "/projects/print-forge-3dmodels.png",
+                alt: "Print Forge 3D models catalogue",
+                caption: "The main catalogue for browsing available 3D-printable models.",
+            },
+            {
+                src: "/projects/print-forge-filtered-results.png",
+                alt: "Print Forge filtered model results",
+                caption: "Category filtering and sorting allow users to narrow down the model catalogue.",
+            },
+            {
+                src: "/projects/print-forge-model-details.png",
+                alt: "Print Forge model details",
+                caption: "A dedicated model page presenting details about an individual 3D-printable model.",
+            },
         ],
         githubUrl:
             "https://github.com/Kingz00/Full-Stack-Developer-Projects/tree/main/Print%20Forge",
@@ -172,6 +261,37 @@ export const projects: Project[] = [
             "HTTP-only cookies",
             "CRUD operations",
             "Shopping-cart logic",
+        ],
+        technicalDetails: {
+            frontend: "JavaScript-based storefront",
+            backend: "Node.js and Express REST APIs",
+            database: "SQLite using sqlite3 and sqlite",
+            other:
+                "Express Session, bcryptjs, HTTP-only cookies, Validator, dotenv, CRUD operations, and RESTful route organization",
+        },
+        challenges: [
+            "Designing a clear REST API structure for products, authentication, users, and cart operations.",
+            "Implementing session-based authentication while keeping session cookies HTTP-only.",
+            "Hashing user passwords with bcryptjs rather than storing credentials directly.",
+            "Managing shopping-cart operations including quantities, totals, additions, removals, and clearing the cart.",
+            "Separating controllers, routes, middleware, database access, and SQL into a maintainable backend structure.",
+        ],
+        screenshots: [
+            {
+                src: "/projects/spiral-sounds-product-catalogue.png",
+                alt: "Spiral Sounds vinyl catalogue",
+                caption: "The storefront catalogue with vinyl records, genres, pricing, and cart actions.",
+            },
+            {
+                src: "/projects/spiral-sounds-filtered-results.png",
+                alt: "Spiral Sounds filtered catalogue",
+                caption: "Products can be filtered by genre while browsing the vinyl catalogue.",
+            },
+            {
+                src: "/projects/spiral-sounds-shopping-cart.png",
+                alt: "Spiral Sounds shopping cart",
+                caption: "The persistent shopping cart displays selected records, quantities, and the running total.",
+            },
         ],
         githubUrl:
             "https://github.com/Kingz00/Full-Stack-Developer-Projects/tree/main/Spiral%20Sounds",

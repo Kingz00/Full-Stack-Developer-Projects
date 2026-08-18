@@ -27,9 +27,8 @@ export default function Contact() {
                             </h2>
 
                             <p className="mt-8 max-w-xl text-lg leading-8 text-white/60">
-                                I'm open to opportunities, freelance work,
-                                and interesting projects where I can put my
-                                development skills to work.
+                                I'm open to opportunities where I can contribute,
+                                learn, and build meaningful products with a great team.
                             </p>
                         </div>
 

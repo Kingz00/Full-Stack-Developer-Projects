@@ -22,22 +22,16 @@ export default function About() {
                     {/* Introduction */}
                     <div>
                         <h2 className="max-w-4xl text-4xl font-bold leading-tight tracking-tight text-white sm:text-5xl lg:text-6xl">
-                            I'm a full-stack developer who enjoys building
-                            things for the web.
+                            I'm a full-stack developer focused on building practical, responsive web applications.
                         </h2>
 
                         <div className="mt-8 max-w-2xl space-y-5 text-lg leading-8 text-white/60">
                             <p>
-                                I'm a developer focused on building modern,
-                                responsive web applications with JavaScript,
-                                TypeScript, React, and Next.js.
+                                I enjoy turning ideas into clean, functional web experiences that are intuitive to use and built with maintainability in mind. My focus is on developing modern applications across the frontend and backend, from responsive interfaces to APIs and data-driven features.
                             </p>
 
                             <p>
-                                I enjoy turning ideas into functional
-                                experiences, from polished user interfaces
-                                to full-stack applications backed by APIs
-                                and databases.
+                                Through my projects, I've worked on applications ranging from interactive React experiences and responsive multi-page sites to full-stack applications with authentication, APIs, databases, and persistent data. I enjoy taking a project from an initial idea through development, testing, and deployment.
                             </p>
 
                             <p>
@@ -54,7 +48,7 @@ export default function About() {
                         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-1">
                             <div>
                                 <h3 className="mb-4 text-sm font-medium uppercase tracking-[0.15em] text-orange-500">
-                                    Frontend
+                                    Core Technologies
                                 </h3>
 
                                 <div className="flex flex-wrap gap-x-4 gap-y-2 text-white/70">
@@ -76,16 +70,17 @@ export default function About() {
                                     <span>Express</span>
                                     <span>REST APIs</span>
                                     <span>SQLite</span>
-                                    <span>Supabase</span>
                                 </div>
                             </div>
 
                             <div>
                                 <h3 className="mb-4 text-sm font-medium uppercase tracking-[0.15em] text-orange-500">
-                                    Tools
+                                    Also Familiar With
                                 </h3>
 
                                 <div className="flex flex-wrap gap-x-4 gap-y-2 text-white/70">
+                                    <span>Supabase</span>
+                                    <span>Firebase</span>
                                     <span>Git</span>
                                     <span>GitHub</span>
                                     <span>Vite</span>
