@@ -20,6 +20,7 @@ export default function MobileMenu({
 }: MobileMenuProps) {
     return (
         <div
+            id="mobile-navigation"
             className={`absolute inset-x-0 top-20 border-b border-white/10 bg-black/95 backdrop-blur-md transition-all duration-300 md:hidden ${open
                 ? "visible translate-y-0 opacity-100"
                 : "invisible -translate-y-4 opacity-0"

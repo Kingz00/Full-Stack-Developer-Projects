@@ -74,6 +74,7 @@ export default function Navbar() {
                         type="button"
                         aria-label={menuOpen ? "Close menu" : "Open menu"}
                         aria-expanded={menuOpen}
+                        aria-controls="mobile-navigation"
                         onClick={() => setMenuOpen((open) => !open)}
                         className="relative z-50 flex h-10 w-10 items-center justify-center text-white md:hidden"
                     >

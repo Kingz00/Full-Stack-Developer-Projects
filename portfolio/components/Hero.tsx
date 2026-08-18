@@ -70,7 +70,8 @@ export default function Hero() {
                 <div className="relative w-full lg:justify-self-end lg:max-w-[560px]">
                     <Image
                         src={HERO_VISUAL_IMAGE}
-                        alt="Abstract full-stack developer visual"
+                        alt=""
+                        aria-hidden="true"
                         className="h-auto w-full"
                         priority
                     />
