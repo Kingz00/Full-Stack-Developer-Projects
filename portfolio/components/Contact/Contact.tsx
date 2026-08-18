@@ -23,11 +23,11 @@ export default function Contact() {
                         {/* CTA */}
                         <div>
                             <h2 className="max-w-4xl text-5xl font-bold leading-[1.05] tracking-tight text-white sm:text-6xl lg:text-7xl">
-                                Let's build something together.
+                                Let’s build something together.
                             </h2>
 
                             <p className="mt-8 max-w-xl text-lg leading-8 text-white/60">
-                                I'm open to opportunities where I can contribute,
+                                I’m open to opportunities where I can contribute,
                                 learn, and build meaningful products with a great team.
                             </p>
                         </div>

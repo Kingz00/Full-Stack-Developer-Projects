@@ -23,11 +23,11 @@ export default function Projects() {
                     </div>
 
                     <h2 className="mb-6 text-4xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl">
-                        Projects I've Built
+                        Projects I’ve Built
                     </h2>
 
                     <p className="max-w-2xl text-lg leading-8 text-white/60">
-                        A selection of applications I've built across
+                        A selection of applications I’ve built across
                         frontend and full-stack development, with a focus on
                         responsive interfaces, practical functionality, and
                         modern web technologies.
