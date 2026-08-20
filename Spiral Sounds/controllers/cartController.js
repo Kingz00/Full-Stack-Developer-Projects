@@ -1,6 +1,6 @@
 import { getDBConnection } from "../db/db.js"
 
-export async function addToCart(req, res) {
+export async function addToCart(req, res, next) {
 
     let { productId } = req.body
 
@@ -47,7 +47,7 @@ export async function addToCart(req, res) {
 
     }
     catch (err) {
-        console.error(err)
+        next(err)
     }
     finally {
         if (db) {
@@ -56,7 +56,7 @@ export async function addToCart(req, res) {
     }
 }
 
-export async function getCartCount(req, res) {
+export async function getCartCount(req, res, next) {
 
     const userId = req.session.userId
 
@@ -77,7 +77,7 @@ export async function getCartCount(req, res) {
         res.json({ totalItems: cartCount.totalItems })
     }
     catch (err) {
-        console.error(err)
+        next(err)
     }
     finally {
         if (db) {
@@ -86,7 +86,7 @@ export async function getCartCount(req, res) {
     }
 }
 
-export async function getAll(req, res) {
+export async function getAll(req, res, next) {
 
     const db = await getDBConnection()
 
@@ -106,7 +106,7 @@ export async function getAll(req, res) {
         res.json({ items: cartItems })
     }
     catch (err) {
-        console.error(err)
+        next(err)
     }
     finally {
         if (db) {
@@ -115,7 +115,7 @@ export async function getAll(req, res) {
     }
 }
 
-export async function deleteItem(req, res) {
+export async function deleteItem(req, res, next) {
 
     if (req.params.itemId === 'all') {
         deleteAll(req, res)
@@ -155,7 +155,7 @@ export async function deleteItem(req, res) {
         // can also be sent with res.status(204).send()
     }
     catch (err) {
-        console.error(err)
+        next(err)
     }
     finally {
         if (db) {
@@ -164,7 +164,7 @@ export async function deleteItem(req, res) {
     }
 }
 
-export async function deleteAll(req, res) {
+export async function deleteAll(req, res, next) {
 
     const userId = req.session.userId
 
@@ -180,7 +180,7 @@ export async function deleteAll(req, res) {
         res.status(204).send()
     }
     catch (err) {
-        console.error(err)
+        next(err)
     }
     finally {
         if (db) {

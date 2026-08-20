@@ -2,37 +2,54 @@ import validator from 'validator'
 import bcrypt from 'bcryptjs'
 import { getDBConnection } from '../db/db.js'
 
-export async function registerUser(req, res) {
+export async function registerUser(req, res, next) {
 
     let { name, email, username, password } = req.body
 
+    if (
+        validator.isEmpty(name ?? '') ||
+        validator.isEmpty(email ?? '') ||
+        validator.isEmpty(username ?? '') ||
+        validator.isEmpty(password ?? '')
+    ) {
+        return res.status(400).json({
+            error: 'All fields are required.'
+        })
+    }
+
+    // Trim only specific fields using an array map or direct assignment
+    ;[name, email, username] = [name, email, username].map(
+        str => str.trim()
+    )
+
+    // normalize the email
+    email = email.toLowerCase()
+
     const USERNAME_REGEX = /^[a-zA-Z0-9_-]{1,20}$/
 
-    if (!name.trim()) {
+    if (!name) {
         return res.status(400).json({
             error: 'Enter your full name.'
         })
     }
 
-    if (!validator.isEmail(email.trim())) {
+    if (!validator.isEmail(email)) {
         return res.status(400).json({
             error: 'Invalid email format.'
         })
     }
 
-    if (!USERNAME_REGEX.test(username.trim())) {
+    if (!USERNAME_REGEX.test(username)) {
         return res.status(400).json({
             error: 'Invalid username format. Must be 1-20 characters using only letters, numbers, underscores, or hyphens.'
         })
     }
 
-    if (validator.isEmpty(name) || validator.isEmpty(email) || validator.isEmpty(username) || validator.isEmpty(password)) {
-        return res.status(400).json({ error: 'All fields are required.' })
-        throw new Error('All fields are required.')
+    if (password.length < 8) {
+        return res.status(400).json({
+            error: 'Password must be at least 8 characters long.'
+        })
     }
-
-    // Trim only specific fields using an array map or direct assignment
-    ;[name, email, username] = [name, email, username].map(str => str?.trim() || '')
 
     // encrypt password using bcrypt
     const hashedPassword = await bcrypt.hash(password, 10)
@@ -44,14 +61,25 @@ export async function registerUser(req, res) {
 
     try {
 
-        const existing = await db.get(`
-            SELECT * FROM users WHERE email = ? OR password = ?
+        const existingUser = await db.get(`
+            SELECT * FROM users WHERE email = ? OR username = ?
             `,
-            [email, password])
+            [email, username])
 
         // check if the user with the same email or username exists in the database
-        if (existing) {
-            return res.status(400).json({ error: 'Email or username already in use.' })
+        if (existingUser) {
+
+            if (existingUser.email === email) {
+                return res.status(409).json({
+                    error: 'An account with this email already exists.'
+                })
+            }
+
+            if (existingUser.username === username) {
+                return res.status(409).json({
+                    error: 'That username is already taken.'
+                })
+            }
         }
 
         // add the user to the database
@@ -79,8 +107,7 @@ export async function registerUser(req, res) {
         } catch (rollbackErr) {
             console.error('Rollback failed:', rollbackErr);
         }
-        console.error('Registration error:', err.message)
-        res.status(500).json({ error: 'Registration failed. Please try again.' })
+        next(err)
     }
     finally {
         if (db) {
@@ -90,51 +117,54 @@ export async function registerUser(req, res) {
 }
 
 
-export async function loginUser(req, res) {
+export async function loginUser(req, res, next) {
+
+    let { username, password } = req.body
+
+    if (validator.isEmpty(username) || validator.isEmpty(password)) {
+        return res.status(400).json({ error: 'Username and password are required.' })
+    }
+
+    // remove whitespaces from username
+    username = username.trim()
+
+    const db = await getDBConnection()
 
     try {
 
-        let { username, password } = req.body
+        const user = await db.get(`
+        SELECT id, username, password FROM users WHERE username = ?
+        `,
+            [username])
 
-        if (validator.isEmpty(username) || validator.isEmpty(password)) {
-            return res.status(400).json({ error: 'All fields are required' })
+        if (!user) {
+
+            return res.status(401).json({
+                error: 'Invalid username or password.'
+            })
         }
 
-        // remove whitespaces from username
-        username = username.trim()
+        const isValidPassword = await bcrypt.compare(password, user.password)
 
-        const db = await getDBConnection()
+        if (!isValidPassword) {
 
-        try {
-
-            const user = await db.get(`
-            SELECT id, username, password FROM users WHERE username = ?
-            `,
-                [username])
-
-            const isValidPassword = await bcrypt.compare(password, user.password)
-
-            if (!user || !isValidPassword) {
-                return res.status(401).json({ error: 'Invalid credentials' })
-            }
-
-            // create a session for the user based on their id in the database
-            req.session.userId = user.id
-
-            res.json({ message: 'Logged in' })
+            return res.status(401).json({
+                error: 'Invalid username or password.'
+            })
         }
-        catch (err) {
-            res.status(401).json({ error: 'Invalid credentials' })
-        }
-        finally {
-            if (db) {
-                await db.close()
-            }
-        }
+
+        // create a session for the user based on their id in the database
+        req.session.userId = user.id
+
+        res.json({ message: 'Logged in' })
     }
     catch (err) {
-        console.error('Login error:', err.message)
-        res.status(500).json({ error: 'Login failed. Please try again.' })
+        next(err)
+    }
+    finally {
+        if (db) {
+            await db.close()
+        }
     }
 }
 
