@@ -5,6 +5,7 @@ import { productsRouter } from './routes/products.js'
 import { authRouter } from './routes/auth.js'
 import { meRouter } from './routes/me.js'
 import { cartRouter } from './routes/cart.js'
+import { initializeAppDatabase } from './db/init.js'
 
 const app = express()
 const PORT = process.env.PORT || 8000
@@ -34,8 +35,17 @@ app.use('/api/auth', authRouter)
 
 app.use('/api/cart', cartRouter)
 
-app.listen(PORT, "0.0.0.0", () => {
-  console.log(`Server running at http://localhost:${PORT}`)
-}).on('error', (err) => {
-  console.error('Failed to start server:', err)
-}) 
+async function startServer() {
+  try {
+    await initializeAppDatabase()
+
+    app.listen(PORT, '0.0.0.0', () => {
+      console.log(`Server running at http://localhost:${PORT}`)
+    })
+  } catch (err) {
+    console.error('Failed to initialize application:', err)
+    process.exit(1)
+  }
+}
+
+startServer()
