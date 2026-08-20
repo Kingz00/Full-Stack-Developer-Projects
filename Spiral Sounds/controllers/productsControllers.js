@@ -1,6 +1,6 @@
 import { getDBConnection } from '../db/db.js'
 
-export async function getGenres(req, res) {
+export async function getGenres(req, res, next) {
 
   const db = await getDBConnection()
 
@@ -14,7 +14,7 @@ export async function getGenres(req, res) {
 
   } catch (err) {
 
-    res.status(500).json({ error: 'Failed to fetch genres', details: err.message })
+    next(err)
 
   } finally {
     if (db) {
@@ -23,7 +23,7 @@ export async function getGenres(req, res) {
   }
 }
 
-export async function getProducts(req, res) {
+export async function getProducts(req, res, next) {
 
   const db = await getDBConnection()
 
@@ -49,8 +49,7 @@ export async function getProducts(req, res) {
 
 
   } catch (err) {
-
-    res.status(500).json({ error: 'Failed to fetch products', details: err.message })
+    next(err)
 
   } finally {
     if (db) {

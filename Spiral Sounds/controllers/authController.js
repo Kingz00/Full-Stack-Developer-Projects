@@ -2,7 +2,7 @@ import validator from 'validator'
 import bcrypt from 'bcryptjs'
 import { getDBConnection } from '../db/db.js'
 
-export async function registerUser(req, res) {
+export async function registerUser(req, res, next) {
 
     let { name, email, username, password } = req.body
 
@@ -107,8 +107,7 @@ export async function registerUser(req, res) {
         } catch (rollbackErr) {
             console.error('Rollback failed:', rollbackErr);
         }
-        console.error('Registration error:', err.message)
-        res.status(500).json({ error: 'Registration failed. Please try again.' })
+        next(err)
     }
     finally {
         if (db) {
@@ -118,7 +117,7 @@ export async function registerUser(req, res) {
 }
 
 
-export async function loginUser(req, res) {
+export async function loginUser(req, res, next) {
 
     let { username, password } = req.body
 
@@ -160,11 +159,7 @@ export async function loginUser(req, res) {
         res.json({ message: 'Logged in' })
     }
     catch (err) {
-        console.error('Login error:', err.message)
-
-        return res.status(500).json({
-            error: 'Login failed. Please try again.'
-        })
+        next(err)
     }
     finally {
         if (db) {
