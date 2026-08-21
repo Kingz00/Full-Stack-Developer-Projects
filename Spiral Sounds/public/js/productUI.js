@@ -13,6 +13,7 @@ export function renderProducts(products) {
         <h3>${album.artist}</h3>
         <p>$${album.price}</p>
         <button class="main-btn add-btn" data-id="${album.id}">Add to Cart</button>
+        <p class="cart-feedback" aria-live="polite"></p>
         <p class="genre-label">${album.genre}</p>
       </div>
     `

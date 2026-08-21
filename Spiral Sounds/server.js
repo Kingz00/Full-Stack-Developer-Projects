@@ -1,11 +1,12 @@
 import 'dotenv/config'
 import express from 'express'
 import session from 'express-session'
+import { initializeAppDatabase } from './db/init.js'
 import { productsRouter } from './routes/products.js'
 import { authRouter } from './routes/auth.js'
 import { meRouter } from './routes/me.js'
 import { cartRouter } from './routes/cart.js'
-import { initializeAppDatabase } from './db/init.js'
+import { orderRouter } from './routes/order.js'
 import { errorHandler } from './middleware/errorHandler.js'
 
 const app = express()
@@ -45,6 +46,8 @@ app.use('/api/auth/me', meRouter)
 app.use('/api/auth', authRouter)
 
 app.use('/api/cart', cartRouter)
+
+app.use('/api/orders', orderRouter)
 
 app.use(errorHandler)
 
