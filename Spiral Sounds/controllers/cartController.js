@@ -4,7 +4,7 @@ export async function addToCart(req, res, next) {
 
     let { productId } = req.body
 
-    productId = JSON.parse(productId)
+    productId = parseInt(productId, 10)
 
     // can also convert the productId into a number using parseInt()
     // const productId = parseInt(req.body.productId, 10)
@@ -18,32 +18,57 @@ export async function addToCart(req, res, next) {
 
     try {
 
+        // Check that the product exists and retrieve its current stock
+        const product = await db.get(`
+            SELECT id, stock
+            FROM products
+            WHERE id = ?
+        `,
+            [productId]
+        )
+
+        if (!product) {
+            return res.status(404).json({ error: 'Product not found' })
+        }
+
+        // Check whether the product is already in the user's cart
         const cartItem = await db.get(`
-            SELECT * FROM cart_items WHERE product_id = ? AND user_id = ?
-            `,
-            [productId, req.session.userId])
+            SELECT id, quantity
+            FROM cart_items
+            WHERE product_id = ? AND user_id = ?
+        `,
+            [productId, req.session.userId]
+        )
+
+        const currentQuantity = cartItem?.quantity ?? 0
+        const newQuantity = currentQuantity + 1
+
+        // Prevent the cart quantity from exceeding available stock
+        if (newQuantity > product.stock) {
+            return res.status(409).json({
+                error: 'Insufficient stock'
+            })
+        }
 
         if (cartItem) {
-
-            const quantity = cartItem.quantity + 1
             await db.run(`
-                UPDATE cart_items SET quantity = ?
+                UPDATE cart_items
+                SET quantity = ?
                 WHERE product_id = ? AND user_id = ?
-                `,
-                [quantity, productId, req.session.userId])
-
-            res.json({ message: 'Added to cart' })
+            `,
+                [newQuantity, productId, req.session.userId]
+            )
         }
         else {
-
             await db.run(`
-                INSERT INTO cart_items ( user_id, product_id)
+                INSERT INTO cart_items (user_id, product_id)
                 VALUES (?, ?)
-                `,
-                [req.session.userId, productId])
-
-            res.json({ message: 'Added to cart' })
+            `,
+                [req.session.userId, productId]
+            )
         }
+
+        res.json({ message: 'Added to cart' })
 
     }
     catch (err) {
@@ -93,11 +118,19 @@ export async function getAll(req, res, next) {
     try {
 
         const cartItems = await db.all(`
-            SELECT C.id AS cartItemId, C.quantity, P.title, P.artist, P.price FROM cart_items C
+            SELECT
+                C.id AS cartItemId,
+                C.quantity,
+                P.title,
+                P.artist,
+                P.price,
+                P.stock
+            FROM cart_items C
             LEFT JOIN products P ON C.product_id = P.id
             WHERE C.user_id = ?
-            `,
-            [req.session.userId])
+        `,
+            [req.session.userId]
+        )
 
         if (!cartItems) {
             return res.json([])
@@ -118,7 +151,7 @@ export async function getAll(req, res, next) {
 export async function deleteItem(req, res, next) {
 
     if (req.params.itemId === 'all') {
-        deleteAll(req, res)
+        deleteAll(req, res, next)
         return
     }
 

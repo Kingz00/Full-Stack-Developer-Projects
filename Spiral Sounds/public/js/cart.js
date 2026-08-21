@@ -1,6 +1,6 @@
 import { logout } from './logout.js'
 import { checkAuth, renderGreeting, showHideMenuItems } from './authUI.js'
-import { loadCart, removeItem, removeAll } from './cartService.js'
+import { loadCart, removeItem, createOrder } from './cartService.js'
 
 const dom = {
   checkoutBtn: document.getElementById('checkout-btn'),
@@ -18,7 +18,7 @@ dom.cartList.addEventListener('click', event => {
 })
 
 dom.checkoutBtn.addEventListener('click', () => {
-  removeAll(dom)
+  createOrder(dom)
   dom.userMessage.textContent = 'Your order has been sent for processing.'
   dom.checkoutBtn.classList.add('visually-hidden')
   dom.cartTotal.classList.add('visually-hidden')

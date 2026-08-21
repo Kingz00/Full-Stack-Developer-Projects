@@ -3,7 +3,7 @@ import { getDBConnection } from '../db/db.js'
 async function logTable() {
   const db = await getDBConnection()
 
-  const tableName = 'cart_items'
+  const tableName = 'order_items'
 
   try {
 

@@ -2,6 +2,11 @@ export function addBtnListeners() {
   document.querySelectorAll('.add-btn').forEach(button => {
     button.addEventListener('click', async (event) => {
       const albumId = event.currentTarget.dataset.id
+      const feedback = event.currentTarget
+        .closest('.product-card')
+        .querySelector('.cart-feedback')
+
+      feedback.textContent = ''
 
       try {
         const res = await fetch('/api/cart/add', {
@@ -11,13 +16,30 @@ export function addBtnListeners() {
           body: JSON.stringify({ productId: albumId })
         })
 
+        if (res.status === 401) {
+          window.location.href = '/login.html'
+          return
+        }
+
+        if (res.status === 409) {
+          feedback.textContent = 'Not enough stock available.'
+          return
+        }
+
+        if (res.status === 404) {
+          feedback.textContent = 'This product is no longer available.'
+          return
+        }
+
         if (!res.ok) {
-          return window.location.href = '/login.html'
+          feedback.textContent = data.error || 'Unable to add item to cart.'
+          return
         }
 
         await updateCartIcon()
       } catch (err) {
         console.error('Error adding to cart:', err)
+        feedback.textContent = 'Unable to add item to cart.'
       }
     })
   })
@@ -128,5 +150,35 @@ export async function removeAll(dom) {
     }
   } catch (err) {
     console.error('Error clearing cart:', err)
+  }
+}
+
+export async function createOrder(dom) {
+  try {
+    const res = await fetch('/api/orders', {
+      method: 'POST',
+      credentials: 'include'
+    })
+
+    const data = await res.json()
+
+    if (res.ok) {
+      dom.userMessage.textContent =
+        `Your order has been placed successfully. Order #${data.orderId}`
+
+      dom.checkoutBtn.classList.add('visually-hidden')
+      dom.cartTotal.classList.add('visually-hidden')
+
+      await loadCart(dom)
+      return
+    }
+
+    dom.userMessage.textContent =
+      data.error || 'Unable to place your order.'
+  }
+  catch (err) {
+    console.error('Error creating order:', err)
+    dom.userMessage.textContent =
+      'Unable to place your order. Please try again.'
   }
 }
