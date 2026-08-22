@@ -21,15 +21,16 @@ export async function getDBConnection() {
 
 export async function initializeDatabase(db) {
   await db.exec(`
+
         CREATE TABLE IF NOT EXISTS products (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             title TEXT NOT NULL,
             artist TEXT NOT NULL,
-            price REAL NOT NULL,
+            price REAL NOT NULL CHECK (price >= 0),
             image TEXT NOT NULL,
             year INTEGER,
             genre TEXT,
-            stock INTEGER
+            stock INTEGER NOT NULL DEFAULT 0 CHECK (stock >= 0)
         )
     `)
 
@@ -45,13 +46,15 @@ export async function initializeDatabase(db) {
     `)
 
   await db.exec(`
+
         CREATE TABLE IF NOT EXISTS cart_items (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id INTEGER NOT NULL,
             product_id INTEGER NOT NULL,
-            quantity INTEGER NOT NULL DEFAULT 1,
+            quantity INTEGER NOT NULL DEFAULT 1 CHECK (quantity > 0),
             FOREIGN KEY (user_id) REFERENCES users(id),
-            FOREIGN KEY (product_id) REFERENCES products(id)
+            FOREIGN KEY (product_id) REFERENCES products(id),
+            UNIQUE (user_id, product_id)
         )
     `)
 
@@ -70,8 +73,8 @@ export async function initializeDatabase(db) {
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             order_id INTEGER NOT NULL,
             product_id INTEGER NOT NULL,
-            quantity INTEGER NOT NULL,
-            price REAL NOT NULL,
+            quantity INTEGER NOT NULL CHECK (quantity > 0),
+            price REAL NOT NULL CHECK (price >= 0),
             FOREIGN KEY (order_id) REFERENCES orders(id),
             FOREIGN KEY (product_id) REFERENCES products(id)
         )
