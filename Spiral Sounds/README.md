@@ -442,6 +442,10 @@ Testing covered:
 
 <img width="1900" height="687" alt="spiral-sounds-shopping-cart" src="https://github.com/user-attachments/assets/26d674b8-dacf-4ec8-883f-678f6594dc0b" />
 
+*Order History*
+
+<img width="1126" height="855" alt="spiral-sounds-orders-history" src="https://github.com/user-attachments/assets/b3b49807-3a3a-4d09-95d3-f3c025378c97" />
+
 
 ## Deployment
 
