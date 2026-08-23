@@ -50,14 +50,6 @@ This version of Spiral Sounds focuses on improving the original application's re
 - Protection against duplicate checkout submissions.
 - User order-history page.
 
-## Overview
-
-Spiral Sounds was built to explore full-stack web development using a Node.js and Express backend connected to a SQLite database.
-
-The application exposes REST-style API endpoints for products, authentication, user information, and shopping-cart operations.
-
-The frontend consumes these endpoints to provide an e-commerce experience for browsing and purchasing vinyl records.
-
 ## Features
 
 ### Product Catalog
@@ -387,7 +379,7 @@ At minimum, configure the session secret:
 SESSION_SECRET=your-secret-here
 ```
 
-If required by your environment, e.g Render, configure:
+If required by your environment, e.g. Render, configure:
 
 ```env
 DATABASE_PATH=path/to/database.db
