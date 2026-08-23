@@ -1,7 +1,7 @@
 // ===== Check if user is signed in =====
 export async function checkAuth() {
   try {
-    const res = await fetch('api/auth/me')
+    const res = await fetch('/api/auth/me')
 
     if (!res.ok) {
       console.warn('Unexpected response:', res.status)
@@ -35,4 +35,5 @@ export function showHideMenuItems(username) {
   document.getElementById('login').style.display = isLoggedIn ? 'none' : 'inline'
   document.getElementById('signup').style.display = isLoggedIn ? 'none' : 'inline'
   document.getElementById('logout-btn').style.display = isLoggedIn ? 'inline' : 'none'
+  document.getElementById('orders-link').style.display = isLoggedIn ? 'inline' : 'none'
 }

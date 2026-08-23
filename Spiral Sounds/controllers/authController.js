@@ -121,7 +121,7 @@ export async function loginUser(req, res, next) {
 
     let { username, password } = req.body
 
-    if (validator.isEmpty(username) || validator.isEmpty(password)) {
+    if (validator.isEmpty(username ?? '') || validator.isEmpty(password ?? '')) {
         return res.status(400).json({ error: 'Username and password are required.' })
     }
 

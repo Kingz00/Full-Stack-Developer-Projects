@@ -16,6 +16,8 @@ export function addBtnListeners() {
           body: JSON.stringify({ productId: albumId })
         })
 
+        const data = await res.json()
+
         if (res.status === 401) {
           window.location.href = '/login.html'
           return
@@ -45,6 +47,10 @@ export function addBtnListeners() {
   })
 }
 
+function showCartMessage(dom, message) {
+  dom.userMessage.textContent = message
+}
+
 export async function updateCartIcon() {
   try {
     const res = await fetch('/api/cart/cart-count')
@@ -63,25 +69,30 @@ export async function updateCartIcon() {
 export async function loadCart(dom) {
   const { checkoutBtn, userMessage, cartList, cartTotal } = dom
 
+  cartList.innerHTML = '<li>Loading cart...</li>'
+
   try {
     const items = await fetchCartItems(dom)
     renderCartItems(items, cartList)
     updateCartTotal(items, cartTotal, checkoutBtn)
   } catch (err) {
     console.error('Error loading cart:', err)
-    cartList.innerHTML = '<li>Error loading cart data.</li>'
+    cartList.innerHTML = '<li>Unable to load cart data.</li>'
   }
 }
 
 async function fetchCartItems({ userMessage, checkoutBtn }) {
   const res = await fetch('/api/cart/', { credentials: 'include' })
 
-  if (!res.ok) {
-    window.location.href = '/'
+  if (res.status === 401) {
     checkoutBtn.disabled = true
     checkoutBtn.classList.add('disabled')
     userMessage.innerHTML = 'Please <a href="login.html">log in</a>.'
     return []
+  }
+
+  if (!res.ok) {
+    throw new Error('Unable to load cart data.')
   }
 
   const { items } = await res.json()
@@ -128,11 +139,22 @@ export async function removeItem(itemId, dom) {
 
     if (res.status === 204) {
       await loadCart(dom)
-    } else {
-      console.error('Error removing item:', await res.text())
+      return
     }
+
+    const data = await res.json()
+
+    showCartMessage(
+      dom,
+      data.error || 'Unable to remove item from cart.'
+    )
+
   } catch (err) {
     console.error('Error removing item:', err)
+    showCartMessage(
+      dom,
+      'Unable to remove item. Please try again.'
+    )
   }
 }
 
@@ -145,15 +167,31 @@ export async function removeAll(dom) {
 
     if (res.status === 204) {
       await loadCart(dom)
-    } else {
-      console.error('Error clearing cart:', await res.text())
+      return
     }
+
+    const data = await res.json()
+
+    showCartMessage(
+      dom,
+      data.error || 'Unable to clear cart.'
+    )
+
   } catch (err) {
     console.error('Error clearing cart:', err)
+    showCartMessage(
+      dom,
+      'Unable to clear cart. Please try again.'
+    )
   }
 }
 
 export async function createOrder(dom) {
+
+  dom.checkoutBtn.disabled = true
+
+  dom.checkoutBtn.textContent = "Processing..."
+
   try {
     const res = await fetch('/api/orders', {
       method: 'POST',
@@ -162,9 +200,16 @@ export async function createOrder(dom) {
 
     const data = await res.json()
 
+    if (res.status === 401) {
+      window.location.href = '/login.html'
+      return
+    }
+
     if (res.ok) {
       dom.userMessage.textContent =
-        `Your order has been placed successfully. Order #${data.orderId}`
+        `Your order has been placed successfully. Order #${data.orderId}
+         Total: $${data.total}
+        `
 
       dom.checkoutBtn.classList.add('visually-hidden')
       dom.cartTotal.classList.add('visually-hidden')
@@ -173,12 +218,22 @@ export async function createOrder(dom) {
       return
     }
 
-    dom.userMessage.textContent =
-      data.error || 'Unable to place your order.'
+    if (!res.ok) {
+      dom.userMessage.textContent =
+        data.error || 'Unable to place your order.'
+
+      dom.checkoutBtn.disabled = false
+      dom.checkoutBtn.textContent = 'Checkout'
+      return
+    }
+
   }
   catch (err) {
     console.error('Error creating order:', err)
     dom.userMessage.textContent =
       'Unable to place your order. Please try again.'
+
+    dom.checkoutBtn.disabled = false
+    dom.checkoutBtn.textContent = 'Checkout'
   }
 }

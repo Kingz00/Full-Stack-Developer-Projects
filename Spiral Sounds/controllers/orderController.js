@@ -123,3 +123,62 @@ export async function createOrder(req, res, next) {
         }
     }
 }
+
+export async function getOrders(req, res, next) {
+    const db = await getDBConnection()
+    const userId = req.session.userId
+
+    try {
+        const orders = await db.all(`
+            SELECT
+                O.id AS orderId,
+                O.total,
+                O.created_at AS createdAt,
+                OI.product_id AS productId,
+                P.title,
+                P.artist,
+                OI.quantity,
+                OI.price
+            FROM orders O
+            JOIN order_items OI ON O.id = OI.order_id
+            JOIN products P ON OI.product_id = P.id
+            WHERE O.user_id = ?
+            ORDER BY O.created_at DESC, O.id DESC
+        `,
+            [userId]
+        )
+
+        const orderMap = new Map()
+
+        for (const item of orders) {
+            if (!orderMap.has(item.orderId)) {
+                orderMap.set(item.orderId, {
+                    orderId: item.orderId,
+                    total: item.total,
+                    createdAt: item.createdAt,
+                    items: []
+                })
+            }
+
+            orderMap.get(item.orderId).items.push({
+                productId: item.productId,
+                title: item.title,
+                artist: item.artist,
+                quantity: item.quantity,
+                price: item.price
+            })
+        }
+
+        res.json({
+            orders: [...orderMap.values()]
+        })
+    }
+    catch (err) {
+        next(err)
+    }
+    finally {
+        if (db) {
+            await db.close()
+        }
+    }
+}
