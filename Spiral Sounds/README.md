@@ -1,8 +1,54 @@
 # Spiral Sounds
 
-Spiral Sounds is a full-stack online vinyl record store built with Node.js, Express, SQLite, and JavaScript.
+Spiral Sounds is a full-stack vinyl record store built with JavaScript, Node.js, Express, and SQLite.
 
-The application provides a product catalog, product search, genre filtering, user authentication, and a persistent shopping cart.
+Originally built as part of my Full Stack Developer learning path, I revisited the project to identify limitations in the original implementation and improved its architecture, security, database integrity, inventory handling, checkout flow, and user experience.
+
+The application now supports product discovery, session-based authentication, inventory-aware shopping carts, transactional checkout, persistent orders, and order history.
+
+## Project Improvements
+
+This version of Spiral Sounds focuses on improving the original application's reliability, security, data integrity, and business logic.
+
+### Backend & Architecture
+
+- Database initialization and seeding moved to application startup.
+- Centralized error-handling middleware for unexpected server errors.
+- Environment-aware session configuration for development and production.
+- Required environment configuration validated at startup.
+- SQLite foreign-key enforcement enabled.
+- Database constraints added to protect core data integrity.
+
+### Authentication & Security
+
+- Registration input validation and normalization.
+- Password hashing with `bcryptjs`.
+- Duplicate email and username detection.
+- Session-based authentication.
+- HTTP-only session cookies.
+- Secure production session cookies.
+- Authentication middleware for protected resources.
+- User-specific authorization for order history.
+
+### Cart & Checkout
+
+- Inventory-aware cart quantities.
+- Server-side stock validation.
+- Server-side price calculation.
+- Transactional checkout with rollback handling.
+- Inventory updates performed as part of the checkout transaction.
+- Cart cleared only after a successful order.
+- Persistent orders and order items.
+- Historical purchase prices stored with order items.
+
+### API & Frontend
+
+- Composable product search and genre filtering.
+- Meaningful HTTP status codes for API errors.
+- Consistent frontend handling of loading and error states.
+- Visual feedback for inventory conflicts.
+- Protection against duplicate checkout submissions.
+- User order-history page.
 
 ## Overview
 
@@ -16,29 +62,53 @@ The frontend consumes these endpoints to provide an e-commerce experience for br
 
 ### Product Catalog
 
-* Browse vinyl records
-* Search products
-* Filter products by genre
-* Retrieve product information
-* Display product information through the storefront
+- Browse vinyl records.
+- Search products by genre, artist, or title.
+- Filter products by genre.
+- Combine search and genre filters.
+- Display product information through the storefront.
 
 ### Authentication
 
-* User registration
-* User login
-* User logout
-* Session-based authentication
-* Password hashing with bcrypt
-* Current-user endpoint
+- User registration.
+- User login and logout.
+- Session-based authentication.
+- Password hashing with `bcryptjs`.
+- Input validation and normalization.
+- Duplicate email and username detection.
+- Current-user endpoint.
 
 ### Shopping Cart
 
-* Add products to the cart
-* Increase product quantities
-* Retrieve cart contents
-* Calculate cart totals
-* Remove products from the cart
-* Clear the cart
+- Add products to the cart.
+- Increase product quantities.
+- Prevent quantities from exceeding available stock.
+- Retrieve cart contents.
+- Calculate cart totals.
+- Remove individual items.
+- Clear the cart.
+- Display inventory-related feedback.
+
+### Checkout & Orders
+
+- Server-side checkout.
+- Server-side price calculation.
+- Inventory validation during checkout.
+- Transactional order creation.
+- Automatic inventory reduction.
+- Cart clearing after successful checkout.
+- Persistent order records.
+- Historical order-item prices.
+- User-specific order history.
+
+### Frontend Experience
+
+- Loading states.
+- API error feedback.
+- Authentication-aware navigation.
+- Checkout processing state.
+- Empty-cart and empty-order states.
+- Responsive layout.
 
 ## Tech Stack
 
@@ -68,52 +138,59 @@ The frontend consumes these endpoints to provide an e-commerce experience for br
 
 ## API Structure
 
-The Express server exposes several API areas:
-
-```text
-/api/products
-/api/auth
-/api/auth/me
-/api/cart
-```
+The Express server exposes API endpoints for products, authentication, shopping carts, and orders.
 
 ### Products
 
-The products API handles retrieving and filtering the vinyl catalog.
+`/api/products`
 
-Example:
+Handles retrieving and filtering the vinyl catalog.
 
-```text
-GET /api/products
-```
+Examples:
 
-The product functionality supports catalog retrieval and product discovery based on available product information.
+- `GET /api/products`
+- `GET /api/products?genre=indie`
+- `GET /api/products?search=echoes`
+- `GET /api/products?genre=indie&search=echoes`
+- `GET /api/products/genres`
 
 ### Authentication
 
-Authentication endpoints are grouped under:
+`/api/auth`
 
-```text
-/api/auth
-```
+Handles user authentication and session management.
 
-The application also exposes:
+Examples:
 
-```text
-/api/auth/me
-```
-
-for retrieving information about the currently authenticated user.
+- `POST /api/auth/register`
+- `POST /api/auth/login`
+- `POST /api/auth/logout`
+- `GET /api/auth/me`
 
 ### Cart
 
-Shopping-cart operations are grouped under:
+`/api/cart`
 
-```text
-/api/cart
-```
+Handles authenticated shopping-cart operations.
 
-These endpoints handle adding, retrieving, updating, and removing cart items.
+Examples:
+
+- `POST /api/cart/add`
+- `GET /api/cart`
+- `GET /api/cart/cart-count`
+- `DELETE /api/cart/:itemId`
+- `DELETE /api/cart/all`
+
+### Orders
+
+`/api/orders`
+
+Handles authenticated checkout and order history.
+
+Examples:
+
+- `POST /api/orders`
+- `GET /api/orders`
 
 ## Authentication Flow
 
@@ -129,69 +206,153 @@ The server configures session cookies with HTTP-only behavior to prevent client-
 
 SQLite is used as the application's relational database.
 
-The project contains dedicated database, SQL, controller, middleware, and route directories:
+The database is initialized when the application starts. Required tables are created if they do not already exist, and the product catalog is seeded when the products table is empty.
+
+The database contains:
+
+- `users` — registered user accounts.
+- `products` — vinyl catalog and inventory.
+- `cart_items` — authenticated users' shopping carts.
+- `orders` — completed orders.
+- `order_items` — products and purchase-price snapshots belonging to orders.
+
+The generated SQLite database file is excluded from version control. The database initialization and seed logic are the source of truth for recreating the database.
+
+## Authentication & Security
+
+Authentication is implemented using server-side sessions.
+
+### Authentication
+
+- User passwords are hashed using `bcryptjs`.
+- Registration input is validated and normalized.
+- Email addresses are normalized before storage.
+- Duplicate email addresses and usernames are rejected.
+- Protected resources use authentication middleware.
+- Order history is restricted to the authenticated user.
+
+### Session Security
+
+- Session cookies are HTTP-only.
+- `SameSite=Lax` is enabled.
+- Session cookies use `Secure` in production.
+- Express trusts the Render proxy in production so secure requests are handled correctly.
+- `SESSION_SECRET` is supplied through environment configuration and validated during application startup.
+
+### Error Handling
+
+Unexpected errors are handled centrally by Express middleware rather than exposing internal error details to clients.
+
+Expected application errors use appropriate HTTP status codes such as:
+
+- `400 Bad Request`
+- `401 Unauthorized`
+- `404 Not Found`
+- `409 Conflict`
+- `500 Internal Server Error`
+
+## Architecture
+
+The application follows a simple layered structure:
 
 ```text
-Spiral Sounds
-├── controllers/
-├── db/
-├── middleware/
-├── routes/
-├── sql/
-├── public/
-├── server.js
-└── database.db
+Browser
+   │
+   │ HTTP requests
+   ▼
+Express Server
+   │
+   ├── Routes
+   │
+   ├── Authentication Middleware
+   │
+   ├── Controllers
+   │
+   ├── Centralized Error Handling
+   │
+   ▼
+SQLite Database
+   │
+   ├── users
+   ├── products
+   ├── cart_items
+   ├── orders
+   └── order_items
 ```
 
-This structure separates API routing, application logic, database access, and middleware responsibilities.
+### Checkout Flow
 
-## What I Learned
+Checkout is handled entirely on the server.
 
-Building Spiral Sounds gave me practical experience with:
+```text
+Cart
+  ↓
+POST /api/orders
+  ↓
+Retrieve user's cart
+  ↓
+Validate current inventory
+  ↓
+Calculate total using database prices
+  ↓
+BEGIN TRANSACTION
+  ↓
+Create order
+  ↓
+Create order items
+  ↓
+Decrease product stock
+  ↓
+Clear cart
+  ↓
+COMMIT
+```
 
-* Node.js
-* Express
-* REST API design
-* SQLite
-* Database-driven applications
-* User authentication
-* Password hashing
-* Session management
-* HTTP-only cookies
-* API routing
-* Shopping-cart logic
-* CRUD operations
-* Backend project structure
 
-## Security Considerations
+## What I Learned From Revisiting the Project
 
-This project was created as a learning application and is not intended to be used as-is in a production environment.
+Revisiting Spiral Sounds after gaining more full-stack development experience highlighted the difference between making an application work and designing it to handle real-world conditions.
 
-Before deploying a production version, several areas would need additional hardening, including:
+Key lessons included:
 
-* Secure production session configuration
-* HTTPS-only cookies
-* CSRF protection
-* Production-grade session storage
-* Input validation and sanitization
-* Rate limiting
-* Secure secret management
-* Production database configuration
+- Keep business rules on the server rather than trusting client-side validation.
+- Use database transactions when multiple related operations must succeed together.
+- Use database constraints as a second layer of protection for application-level rules.
+- Separate expected application errors from unexpected server errors.
+- Treat authentication and resource authorization as separate concerns.
+- Make development and production configuration environment-aware.
+- Design API responses and HTTP status codes around meaningful application outcomes.
+- Test backend behavior independently before integrating it with the frontend.
 
-## Future Improvements
 
-Potential improvements include:
+## Security & Production Considerations
 
-* Product detail pages
-* Order processing
-* Checkout functionality
-* Payment integration
-* User order history
-* Product reviews
-* Admin product management
-* Inventory management
-* Production-grade session storage
-* Improved API validation and security
+The project includes several production-oriented security and reliability measures:
+
+- Passwords are hashed using `bcryptjs`.
+- Session cookies are HTTP-only.
+- Session cookies use `SameSite=Lax`.
+- Session cookies are marked `Secure` in production.
+- Express is configured to trust the Render proxy in production.
+- Required session configuration is validated at startup.
+- Protected resources use authentication middleware.
+- Order history is scoped to the authenticated user.
+- SQL queries use parameterized statements.
+- SQLite foreign-key enforcement is enabled.
+- Database constraints protect key business rules.
+- Unexpected server errors return generic error messages.
+
+### Known Limitations
+
+This remains a portfolio/learning application rather than a production e-commerce platform.
+
+Known limitations include:
+
+- Express's default in-memory session store is not suitable for a horizontally scaled deployment.
+- No real payment provider is integrated.
+- No administrative product-management interface exists.
+- CSRF protection beyond the `SameSite=Lax` cookie configuration has not been implemented.
+- The SQLite database is appropriate for this project but would not be the preferred database architecture for a larger multi-instance e-commerce application.
 
 ## Getting Started
 
@@ -226,6 +387,12 @@ At minimum, configure the session secret:
 SESSION_SECRET=your-secret-here
 ```
 
+If required by your environment, e.g Render, configure:
+
+```env
+DATABASE_PATH=path/to/database.db
+```
+
 Do not commit your `.env` file to the repository.
 
 ### Start the Server
@@ -239,6 +406,26 @@ The server runs on:
 ```text
 http://localhost:8000
 ```
+
+## Testing
+
+Backend API behavior was tested independently using Thunder Client.
+
+Testing covered:
+
+- User registration and login.
+- Authentication and protected routes.
+- Product filtering.
+- Cart operations.
+- Inventory limits.
+- Invalid product and cart IDs.
+- Transactional checkout.
+- Insufficient-stock rollback.
+- Order creation.
+- Order history.
+- User-specific order authorization.
+- Unauthenticated requests.
+- Frontend checkout and error states.
 
 ## Screenshots
 
@@ -256,6 +443,17 @@ http://localhost:8000
 <img width="1900" height="687" alt="spiral-sounds-shopping-cart" src="https://github.com/user-attachments/assets/26d674b8-dacf-4ec8-883f-678f6594dc0b" />
 
 
+## Deployment
+
+The application is deployed on Render.
+
+The production environment uses:
+
+- `NODE_ENV=production`
+- Environment-provided session configuration
+- HTTPS
+- Environment-aware secure session cookies
+- SQLite database initialization at application startup
 
 ## Live Demo
 
