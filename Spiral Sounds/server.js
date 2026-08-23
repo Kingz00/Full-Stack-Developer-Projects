@@ -49,6 +49,16 @@ app.use('/api/cart', cartRouter)
 
 app.use('/api/orders', orderRouter)
 
+app.use((req, res, next) => {
+  if (req.path.startsWith('/api/')) {
+    return res.status(404).json({
+      error: 'Route not found'
+    })
+  }
+
+  next()
+})
+
 app.use(errorHandler)
 
 async function startServer() {
