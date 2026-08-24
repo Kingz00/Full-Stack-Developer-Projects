@@ -153,7 +153,7 @@ export default async function ProjectPage({
 
                 <div>
                     <h2 className="mb-10 max-w-3xl text-3xl font-medium tracking-tight text-white sm:text-4xl">
-                        What the application does
+                        {project.featureSectionTitle ?? "What the application does"}
                     </h2>
 
                     <div className="grid border-t border-white/10 sm:grid-cols-2">
