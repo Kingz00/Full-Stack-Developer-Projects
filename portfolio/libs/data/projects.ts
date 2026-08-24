@@ -80,147 +80,6 @@ export const projects: Project[] = [
         liveUrl: "https://spiral-sounds-408t.onrender.com",
     },
     {
-        id: "assembly-endgame",
-        title: "Assembly Endgame",
-        slug: "assembly-endgame",
-        description:
-            "A word-guessing game where players try to save the programming world before all eight programming languages are eliminated.",
-        longDescription:
-            "Assembly Endgame is an interactive word-guessing game built with React. Players attempt to reveal a hidden word while incorrect guesses progressively eliminate programming languages from the game. The application includes visual game states, keyboard interaction, win and loss conditions, and a new-game flow.",
-        image: "/projects/assembly-endgame.png",
-        technologies: [
-            "React",
-            "TypeScript",
-            "Vite",
-            "CSS",
-            "React Confetti",
-            "clsx",
-        ],
-        featuredTechnologies: ["React", "TypeScript", "Vite", "CSS"],
-        features: [
-            "Interactive word guessing",
-            "On-screen keyboard",
-            "Progressive language elimination",
-            "Win and loss states",
-            "New game functionality",
-            "Confetti celebration on victory",
-            "Responsive interface",
-        ],
-        highlights: [
-            "React state management",
-            "Conditional rendering",
-            "Reusable components",
-            "Interactive game logic",
-            "Dynamic UI states",
-        ],
-        technicalDetails: {
-            frontend: "React with TypeScript and CSS",
-            other:
-                "Vite, React Confetti, clsx, React state management, conditional rendering, and reusable components",
-        },
-        challenges: [
-            "Managing the different states of the game as players make guesses.",
-            "Tracking guessed letters and determining when a word has been completed.",
-            "Progressively eliminating programming languages based on incorrect guesses.",
-            "Providing clear visual feedback for active, winning, and losing game states.",
-        ],
-        screenshots: [
-            {
-                src: "/projects/assembly-endgame-main.png",
-                alt: "Assembly Endgame gameplay interface",
-                caption: "The main gameplay interface with the word board and on-screen keyboard.",
-            },
-            {
-                src: "/projects/assembly-endgame-winning-state.png",
-                alt: "Assembly Endgame winning state",
-                caption: "Winning the game triggers a celebration state with a new-game option.",
-            },
-            {
-                src: "/projects/assembly-endgame-losing-state.png",
-                alt: "Assembly Endgame losing state",
-                caption: "The game-over state displays the revealed word and allows the player to start again.",
-            },
-        ],
-        githubUrl:
-            "https://github.com/Kingz00/Full-Stack-Developer-Projects/tree/210511a19f5c3aff945cb640162d91a5b8ceeeb2/Assembly%20Endgame%20-%20TypeScript",
-        liveUrl: "https://kingz-assembly-endgame-project.netlify.app/"
-    },
-
-    {
-        id: "vanlife",
-        title: "VanLife",
-        slug: "vanlife",
-        description:
-            "A responsive van-rental application with customer browsing, authentication, dynamic van pages, and a protected host dashboard.",
-        longDescription:
-            "VanLife is a responsive van-rental web application built with React and React Router. It provides a customer-facing experience for browsing and exploring vans alongside an authenticated host dashboard for managing van information. The project focuses heavily on React Router's data APIs, nested routes, dynamic routes, loaders, actions, protected routes, and error handling.",
-        image: "/projects/vanlife-hero-section.png",
-        technologies: [
-            "React",
-            "React Router",
-            "JavaScript",
-            "Vite",
-            "CSS",
-            "MirageJS",
-            "Firebase",
-        ],
-        featuredTechnologies: ["React", "React Router", "Firebase", "CSS"],
-        features: [
-            "Browse van listings",
-            "Search and filter vans",
-            "Dynamic van detail pages",
-            "User login",
-            "Protected host routes",
-            "Host dashboard",
-            "Host van management",
-            "Loading and error states",
-            "Responsive interface",
-        ],
-        highlights: [
-            "React Router data APIs",
-            "Nested routes",
-            "Dynamic routes",
-            "Route loaders and actions",
-            "Protected routes",
-            "Authentication flow",
-            "Mock API integration",
-        ],
-        technicalDetails: {
-            frontend: "React with React Router and CSS",
-            backend: "MirageJS mock API",
-            other:
-                "React Router loaders, actions, nested routes, dynamic routes, protected routes, Firebase authentication, and Vite",
-        },
-        challenges: [
-            "Structuring the application around React Router's data-router APIs.",
-            "Managing nested routes for the host dashboard and individual van pages.",
-            "Protecting host routes so authenticated functionality is separated from the public application.",
-            "Using loaders and actions to coordinate data fetching and form-related interactions.",
-            "Handling loading and error states across multiple routes.",
-        ],
-        screenshots: [
-            {
-                src: "/projects/vanlife-hero-section.png",
-                alt: "VanLife homepage",
-                caption: "The customer-facing landing page for discovering and renting vans.",
-            },
-            {
-                src: "/projects/vanlife-individual-van.png",
-                alt: "VanLife individual van details",
-                caption: "A dynamic van detail page with specifications, pricing, and a rental action.",
-            },
-            {
-                src: "/projects/vanlife-host-dashboard.png",
-                alt: "VanLife host dashboard",
-                caption: "The protected host dashboard for viewing income, reviews, and listed vans.",
-            },
-        ],
-        githubUrl:
-            "https://github.com/Kingz00/Full-Stack-Developer-Projects/tree/main/VanLife",
-        liveUrl: "https://kingz-vanlife-project.netlify.app/",
-    },
-
-    {
         id: "print-forge",
         title: "Print Forge",
         slug: "print-forge",
@@ -295,5 +154,144 @@ export const projects: Project[] = [
         githubUrl:
             "https://github.com/Kingz00/Full-Stack-Developer-Projects/tree/main/Print%20Forge",
         liveUrl: "https://kingz-print-forge.netlify.app/",
+    },
+    {
+        id: "vanlife",
+        title: "VanLife",
+        slug: "vanlife",
+        description:
+            "A responsive van-rental application with customer browsing, authentication, dynamic van pages, and a protected host dashboard.",
+        longDescription:
+            "VanLife is a responsive van-rental web application built with React and React Router. It provides a customer-facing experience for browsing and exploring vans alongside an authenticated host dashboard for managing van information. The project focuses heavily on React Router's data APIs, nested routes, dynamic routes, loaders, actions, protected routes, and error handling.",
+        image: "/projects/vanlife-hero-section.png",
+        technologies: [
+            "React",
+            "React Router",
+            "JavaScript",
+            "Vite",
+            "CSS",
+            "MirageJS",
+            "Firebase",
+        ],
+        featuredTechnologies: ["React", "React Router", "Firebase", "CSS"],
+        features: [
+            "Browse van listings",
+            "Search and filter vans",
+            "Dynamic van detail pages",
+            "User login",
+            "Protected host routes",
+            "Host dashboard",
+            "Host van management",
+            "Loading and error states",
+            "Responsive interface",
+        ],
+        highlights: [
+            "React Router data APIs",
+            "Nested routes",
+            "Dynamic routes",
+            "Route loaders and actions",
+            "Protected routes",
+            "Authentication flow",
+            "Mock API integration",
+        ],
+        technicalDetails: {
+            frontend: "React with React Router and CSS",
+            backend: "MirageJS mock API",
+            other:
+                "React Router loaders, actions, nested routes, dynamic routes, protected routes, Firebase authentication, and Vite",
+        },
+        challenges: [
+            "Structuring the application around React Router's data-router APIs.",
+            "Managing nested routes for the host dashboard and individual van pages.",
+            "Protecting host routes so authenticated functionality is separated from the public application.",
+            "Using loaders and actions to coordinate data fetching and form-related interactions.",
+            "Handling loading and error states across multiple routes.",
+        ],
+        screenshots: [
+            {
+                src: "/projects/vanlife-hero-section.png",
+                alt: "VanLife homepage",
+                caption: "The customer-facing landing page for discovering and renting vans.",
+            },
+            {
+                src: "/projects/vanlife-individual-van.png",
+                alt: "VanLife individual van details",
+                caption: "A dynamic van detail page with specifications, pricing, and a rental action.",
+            },
+            {
+                src: "/projects/vanlife-host-dashboard.png",
+                alt: "VanLife host dashboard",
+                caption: "The protected host dashboard for viewing income, reviews, and listed vans.",
+            },
+        ],
+        githubUrl:
+            "https://github.com/Kingz00/Full-Stack-Developer-Projects/tree/main/VanLife",
+        liveUrl: "https://kingz-vanlife-project.netlify.app/",
+    },
+    {
+        id: "assembly-endgame",
+        title: "Assembly Endgame",
+        slug: "assembly-endgame",
+        description:
+            "A word-guessing game where players try to save the programming world before all eight programming languages are eliminated.",
+        longDescription:
+            "Assembly Endgame is an interactive word-guessing game built with React. Players attempt to reveal a hidden word while incorrect guesses progressively eliminate programming languages from the game. The application includes visual game states, keyboard interaction, win and loss conditions, and a new-game flow.",
+        image: "/projects/assembly-endgame.png",
+        technologies: [
+            "React",
+            "TypeScript",
+            "Vite",
+            "CSS",
+            "React Confetti",
+            "clsx",
+        ],
+        featuredTechnologies: ["React", "TypeScript", "Vite", "CSS"],
+        features: [
+            "Interactive word guessing",
+            "On-screen keyboard",
+            "Progressive language elimination",
+            "Win and loss states",
+            "New game functionality",
+            "Confetti celebration on victory",
+            "Responsive interface",
+        ],
+        highlights: [
+            "React state management",
+            "Conditional rendering",
+            "Reusable components",
+            "Interactive game logic",
+            "Dynamic UI states",
+        ],
+        technicalDetails: {
+            frontend: "React with TypeScript and CSS",
+            other:
+                "Vite, React Confetti, clsx, React state management, conditional rendering, and reusable components",
+        },
+        challenges: [
+            "Managing the different states of the game as players make guesses.",
+            "Tracking guessed letters and determining when a word has been completed.",
+            "Progressively eliminating programming languages based on incorrect guesses.",
+            "Providing clear visual feedback for active, winning, and losing game states.",
+        ],
+        screenshots: [
+            {
+                src: "/projects/assembly-endgame-main.png",
+                alt: "Assembly Endgame gameplay interface",
+                caption: "The main gameplay interface with the word board and on-screen keyboard.",
+            },
+            {
+                src: "/projects/assembly-endgame-winning-state.png",
+                alt: "Assembly Endgame winning state",
+                caption: "Winning the game triggers a celebration state with a new-game option.",
+            },
+            {
+                src: "/projects/assembly-endgame-losing-state.png",
+                alt: "Assembly Endgame losing state",
+                caption: "The game-over state displays the revealed word and allows the player to start again.",
+            },
+        ],
+        githubUrl:
+            "https://github.com/Kingz00/Full-Stack-Developer-Projects/tree/210511a19f5c3aff945cb640162d91a5b8ceeeb2/Assembly%20Endgame%20-%20TypeScript",
+        liveUrl: "https://kingz-assembly-endgame-project.netlify.app/"
     },
 ]
