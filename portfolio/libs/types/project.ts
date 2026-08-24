@@ -5,6 +5,7 @@ export type Project = {
     number?: string
     description: string
     longDescription: string
+    featureSectionTitle?: string
     image: string
     technologies: string[]
     featuredTechnologies: string[]

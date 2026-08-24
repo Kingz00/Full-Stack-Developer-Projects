@@ -2,6 +2,84 @@ import type { Project } from "@/libs/types/project"
 
 export const projects: Project[] = [
     {
+        id: "spiral-sounds",
+        title: "Spiral Sounds",
+        slug: "spiral-sounds",
+        description:
+            "A full-stack vinyl store originally built during my developer training, later revisited and substantially improved with stronger authentication, inventory-aware business logic, transactional checkout, and persistent order management.",
+        longDescription:
+            "Spiral Sounds is a full-stack e-commerce vinyl store application originally developed as part of my Full Stack Developer learning path. After gaining more experience with backend architecture, database design, authentication, and production practices, I revisited the project to identify limitations in the original implementation and strengthen its reliability.\nThe revised version introduces more robust authentication and session handling, inventory-aware cart and checkout logic, transactional order processing, persistent order history, stronger database integrity, centralized error handling, and improved frontend feedback for loading and failure states.",
+        image: "/projects/spiral-sounds.png",
+        technologies: [
+            "Node.js",
+            "Express",
+            "JavaScript",
+            "SQLite",
+            "REST APIs",
+            "Express Session",
+            "bcryptjs",
+            "Validator",
+        ],
+        featuredTechnologies: ["Node.js", "Express", "JavaScript", "SQLite"],
+        features: [
+            "Secure authentication and session handling",
+            "Inventory-aware shopping cart",
+            "Transactional checkout",
+            "Persistent orders and order history",
+            "Centralized error handling",
+        ],
+        featureSectionTitle: "What I changed",
+        highlights: [
+            "Database transactions",
+            "Inventory validation",
+            "Foreign key constraints",
+            "Database integrity constraints",
+            "Session-based authentication",
+            "HTTP-only cookies",
+            "Password hashing",
+            "Centralized error handling",
+            "REST API design",
+        ],
+        technicalDetails: {
+            frontend:
+                "Vanilla JavaScript storefront with client-side state, API integration, loading states, and user-facing error feedback.",
+            backend:
+                "Node.js and Express REST APIs organized with routes, controllers, middleware, and database access layers.",
+            database:
+                "SQLite using sqlite3 and sqlite with foreign keys, integrity constraints, relational order data, and transactional checkout.",
+            other:
+                "Express Session, bcryptjs, Validator, dotenv, HTTP-only cookies, authentication middleware, centralized error handling, and environment-aware session configuration.",
+        },
+        challenges: [
+            "Strengthening inventory consistency by validating available stock when products are added to the cart and again during checkout, preventing purchases from exceeding current inventory.",
+            "Making checkout atomic by using a database transaction so order creation, order items, inventory updates, and cart cleanup either all succeed or roll back together.",
+            "Separating completed purchases from the active cart by introducing persistent order and order-item records while preserving the price paid at the time of checkout.",
+            "Centralizing error handling so expected application errors produce consistent API responses while unexpected server errors are handled without exposing internal implementation details.",
+            "Improving authentication and session handling through input validation, password hashing, authentication middleware, HTTP-only cookies, and environment-aware session configuration.",
+            "Revisiting Spiral Sounds gave me the opportunity to apply what I'd learned since the original implementation and turn a functional learning project into a more robust full-stack application.",
+        ],
+        screenshots: [
+            {
+                src: "/projects/spiral-sounds-product-catalogue.png",
+                alt: "Spiral Sounds vinyl catalogue",
+                caption: "The storefront catalogue provides product browsing, genre filtering, search, pricing, and cart actions.",
+            },
+            {
+                src: "/projects/spiral-sounds-shopping-cart.png",
+                alt: "Spiral Sounds shopping cart",
+                caption: "The inventory-aware shopping cart validates quantities against available stock.",
+            },
+            {
+                src: "/projects/spiral-sounds-orders-history.png",
+                alt: "Spiral Sounds orders history showing completed purchases, order details, and purchase totals.",
+                caption: "Completed purchases are persisted as orders, allowing users to review their previous purchases after checkout.",
+            },
+        ],
+        githubUrl:
+            "https://github.com/Kingz00/Full-Stack-Developer-Projects/tree/main/Spiral%20Sounds",
+        liveUrl: "https://spiral-sounds-408t.onrender.com",
+    },
+    {
         id: "assembly-endgame",
         title: "Assembly Endgame",
         slug: "assembly-endgame",
@@ -217,84 +295,5 @@ export const projects: Project[] = [
         githubUrl:
             "https://github.com/Kingz00/Full-Stack-Developer-Projects/tree/main/Print%20Forge",
         liveUrl: "https://kingz-print-forge.netlify.app/",
-    },
-
-    {
-        id: "spiral-sounds",
-        title: "Spiral Sounds",
-        slug: "spiral-sounds",
-        description:
-            "A full-stack vinyl record store with a product catalog, search, genre filtering, authentication, and persistent shopping cart.",
-        longDescription:
-            "Spiral Sounds is a full-stack online vinyl record store built with Node.js, Express, SQLite, and JavaScript. The application exposes REST-style APIs for products, authentication, user information, and shopping-cart operations while providing a storefront for browsing and purchasing vinyl records.",
-        image: "/projects/spiral-sounds.png",
-        technologies: [
-            "Node.js",
-            "Express",
-            "JavaScript",
-            "SQLite",
-            "REST APIs",
-            "Express Session",
-            "bcryptjs",
-            "Validator",
-        ],
-        featuredTechnologies: ["Node.js", "Express", "JavaScript", "SQLite"],
-        features: [
-            "Browse vinyl records",
-            "Product search",
-            "Genre filtering",
-            "User registration",
-            "User login and logout",
-            "Session-based authentication",
-            "Password hashing",
-            "Shopping cart",
-            "Cart quantity management",
-            "Cart totals",
-        ],
-        highlights: [
-            "REST API design",
-            "Express routing",
-            "SQLite database integration",
-            "Authentication",
-            "Password hashing",
-            "Session management",
-            "HTTP-only cookies",
-            "CRUD operations",
-            "Shopping-cart logic",
-        ],
-        technicalDetails: {
-            frontend: "JavaScript-based storefront",
-            backend: "Node.js and Express REST APIs",
-            database: "SQLite using sqlite3 and sqlite",
-            other:
-                "Express Session, bcryptjs, HTTP-only cookies, Validator, dotenv, CRUD operations, and RESTful route organization",
-        },
-        challenges: [
-            "Designing a clear REST API structure for products, authentication, users, and cart operations.",
-            "Implementing session-based authentication while keeping session cookies HTTP-only.",
-            "Hashing user passwords with bcryptjs rather than storing credentials directly.",
-            "Managing shopping-cart operations including quantities, totals, additions, removals, and clearing the cart.",
-            "Separating controllers, routes, middleware, database access, and SQL into a maintainable backend structure.",
-        ],
-        screenshots: [
-            {
-                src: "/projects/spiral-sounds-product-catalogue.png",
-                alt: "Spiral Sounds vinyl catalogue",
-                caption: "The storefront catalogue with vinyl records, genres, pricing, and cart actions.",
-            },
-            {
-                src: "/projects/spiral-sounds-filtered-results.png",
-                alt: "Spiral Sounds filtered catalogue",
-                caption: "Products can be filtered by genre while browsing the vinyl catalogue.",
-            },
-            {
-                src: "/projects/spiral-sounds-shopping-cart.png",
-                alt: "Spiral Sounds shopping cart",
-                caption: "The persistent shopping cart displays selected records, quantities, and the running total.",
-            },
-        ],
-        githubUrl:
-            "https://github.com/Kingz00/Full-Stack-Developer-Projects/tree/main/Spiral%20Sounds",
-        liveUrl: "https://spiral-sounds-408t.onrender.com",
     },
 ]
