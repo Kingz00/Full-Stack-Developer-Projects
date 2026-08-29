@@ -1,7 +1,7 @@
-import { firebaseApp } from "./firebase"
-import { getFirestore, collection, getDocs, doc, getDoc, query, where } from 'firebase/firestore/lite';
+import { db, auth } from "./firebase"
+import { getFirestore, collection, getDocs, doc, getDoc, setDoc, query, where } from 'firebase/firestore/lite';
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth"
 
-const db = getFirestore(firebaseApp)
 
 const vanCollectionRef = collection(db, "vans")
 
@@ -37,6 +37,24 @@ export async function getVan(id) {
 //     })
 //     return dataArr
 // }
+
+export async function registerUser({ name, email, password }) {
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password)
+
+    const { user } = userCredential
+
+    await updateProfile(user, {
+        displayName: name
+    })
+
+    await setDoc(doc(db, "users", user.uid), {
+        name,
+        email: user.email,
+        role: "host"
+    })
+
+    return user
+}
 
 
 /* Mirage JS functions*/
