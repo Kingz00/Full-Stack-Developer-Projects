@@ -1,6 +1,6 @@
 import { db, auth } from "./firebase"
 import { getFirestore, collection, getDocs, doc, getDoc, setDoc, query, where } from 'firebase/firestore/lite';
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth"
+import { createUserWithEmailAndPassword, updateProfile, signInWithEmailAndPassword, signOut } from "firebase/auth"
 
 
 const vanCollectionRef = collection(db, "vans")
@@ -56,6 +56,16 @@ export async function registerUser({ name, email, password }) {
     return user
 }
 
+export async function loginUser({ email, password }) {
+    const userCredential = await signInWithEmailAndPassword(auth, email, password)
+
+    return userCredential.user
+}
+
+export async function logoutUser() {
+    await signOut(auth)
+}
+
 
 /* Mirage JS functions*/
 
@@ -87,19 +97,19 @@ export async function getHostVans(id) {
     return data.vans
 }
 
-export async function loginUser(creds) {
-    const res = await fetch("/api/login",
-        { method: "post", body: JSON.stringify(creds) }
-    )
-    const data = await res.json()
+// export async function loginUser(creds) {
+//     const res = await fetch("/api/login",
+//         { method: "post", body: JSON.stringify(creds) }
+//     )
+//     const data = await res.json()
 
-    if (!res.ok) {
-        throw {
-            message: data.message,
-            statusText: res.statusText,
-            status: res.status
-        }
-    }
+//     if (!res.ok) {
+//         throw {
+//             message: data.message,
+//             statusText: res.statusText,
+//             status: res.status
+//         }
+//     }
 
-    return data
-}
+//     return data
+// }
