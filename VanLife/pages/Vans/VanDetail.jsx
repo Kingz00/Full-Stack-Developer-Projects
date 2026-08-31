@@ -1,9 +1,26 @@
 import React from "react"
-import { Link, useParams, useLocation, useLoaderData, defer, Await } from "react-router-dom"
-import { getVan } from "../../api"
+import { Link, useParams, useLocation, useLoaderData, defer, Await, redirect, Form } from "react-router-dom"
+import { getVan, addHostVan, isHostVan } from "../../api"
+import { requireAuth } from "../../utils"
 
 export function loader({ params }) {
     return defer({ vanDetail: getVan(params.id) })
+}
+
+export async function action({ request, params }) {
+    try {
+        await requireAuth(request)
+        await addHostVan(params.id)
+
+        return redirect(`/vans/${params.id}`)
+    } catch (error) {
+        if (error instanceof Response) {
+            throw error
+        }
+
+        console.error("Add host van error:", error)
+        return null
+    }
 }
 
 export default function VanDetail() {
@@ -31,7 +48,11 @@ export default function VanDetail() {
                             <h2>{van.name}</h2>
                             <p className="van-price"><span>${van.price}</span>/day</p>
                             <p>{van.description}</p>
-                            <button className="link-button">Rent this van</button>
+                            <Form method="post">
+                                <button className="link-button" type="submit">
+                                    Add to my vans
+                                </button>
+                            </Form>
                         </div>)
                     }}
                 </Await>

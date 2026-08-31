@@ -10,7 +10,6 @@
   "dependencies": {
     "dotenv": "^17.4.2",
     "firebase": "^12.16.0",
-    "miragejs": "0.1.46",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-icons": "^5.7.0",

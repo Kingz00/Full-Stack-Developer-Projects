@@ -1,11 +1,22 @@
 import React from "react"
-import { useParams, Link, NavLink, Outlet, useLoaderData, defer, Await } from "react-router-dom"
-import { getHostVans } from "../../api"
+import { Link, NavLink, Outlet, useLoaderData, defer, Await, Form, redirect } from "react-router-dom"
+import { getHostVan, removeHostVan } from "../../api"
 import { requireAuth } from "../../utils"
 
 export async function loader({ params, request }) {
     await requireAuth(request)
-    return defer({ hostVanDetail: getHostVans(params.id) })
+    return defer({ hostVanDetail: getHostVan(params.id) })
+}
+
+export async function action({ params }) {
+    try {
+        await removeHostVan(params.id)
+
+        return redirect("/host")
+    } catch (error) {
+        console.error("Remove host van error:", error)
+        return null
+    }
 }
 
 export default function HostVanDetail() {
@@ -65,6 +76,11 @@ export default function HostVanDetail() {
                                     </NavLink>
                                 </nav>
                                 <Outlet context={{ currentVan }} />
+                                <Form method="post">
+                                    <button type="submit" className="link-button">
+                                        Remove from my vans
+                                    </button>
+                                </Form>
                             </div>)
                     }}
                 </Await>
