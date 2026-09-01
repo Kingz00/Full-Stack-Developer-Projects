@@ -1,5 +1,5 @@
 import React from "react"
-import { Link, NavLink, Outlet, useLoaderData, defer, Await, Form, redirect } from "react-router-dom"
+import { Link, NavLink, Outlet, useLoaderData, defer, Await, Form, redirect, useNavigation, useActionData } from "react-router-dom"
 import { getHostVan, removeHostVan } from "../../api"
 import { requireAuth } from "../../utils"
 
@@ -15,12 +15,18 @@ export async function action({ params }) {
         return redirect("/host")
     } catch (error) {
         console.error("Remove host van error:", error)
-        return null
+        return {
+            error: "Unable to remove this van. Please try again."
+        }
     }
 }
 
 export default function HostVanDetail() {
     const currentVanPromise = useLoaderData()
+    const navigation = useNavigation()
+    const actionData = useActionData()
+
+    const isSubmitting = navigation.state === "submitting"
 
     const activeStyles = {
         fontWeight: "bold",
@@ -77,10 +83,19 @@ export default function HostVanDetail() {
                                 </nav>
                                 <Outlet context={{ currentVan }} />
                                 <Form method="post">
-                                    <button type="submit" className="link-button">
-                                        Remove from my vans
+                                    <button
+                                        className="link-button"
+                                        type="submit"
+                                        disabled={isSubmitting}
+                                    >
+                                        {isSubmitting ? "Removing..." : "Remove from my vans"}
                                     </button>
                                 </Form>
+                                {actionData?.error && (
+                                    <p className="error-message">
+                                        {actionData.error}
+                                    </p>
+                                )}
                             </div>)
                     }}
                 </Await>

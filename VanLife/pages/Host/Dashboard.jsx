@@ -25,9 +25,17 @@ export default function Dashboard() {
         ))
 
         return (
-            <div className="host-vans-list">
-                <section>{hostVansEls}</section>
-            </div>
+            vans.length > 0 ? (
+                <section className="host-dashboard-vans">
+                    <div className="top">
+                        <h2>Your listed vans</h2>
+                        <Link to="vans">View all</Link>
+                    </div>
+                    <div className="host-vans-list">
+                        <section>{hostVansEls}</section>
+                    </div>
+                </section>
+            ) : null
         )
     }
 
@@ -49,15 +57,9 @@ export default function Dashboard() {
                 </p>
                 <Link to="reviews">Details</Link>
             </section>
-            <section className="host-dashboard-vans">
-                <div className="top">
-                    <h2>Your listed vans</h2>
-                    <Link to="vans">View all</Link>
-                </div>
-                <React.Suspense fallback={<h3>Loading...</h3>}>
-                    <Await resolve={loaderData.vans}>{renderVanElements}</Await>
-                </React.Suspense>
-            </section>
+            <React.Suspense fallback={<h3>Loading...</h3>}>
+                <Await resolve={loaderData.vans}>{renderVanElements}</Await>
+            </React.Suspense>
         </>
     )
 }
