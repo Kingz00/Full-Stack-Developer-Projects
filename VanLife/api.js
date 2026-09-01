@@ -35,7 +35,10 @@ export async function getHostVans() {
     const user = auth.currentUser
 
     if (!user) {
-        throw new Error("You must be logged in to view your host vans.")
+        throw new Response("Unauthorized", {
+            status: 401,
+            statusText: "You must be logged in to view your host vans."
+        })
     }
 
     const hostVansRef = collection(
@@ -62,7 +65,10 @@ export async function getHostVan(id) {
     const user = auth.currentUser
 
     if (!user) {
-        throw new Error("You must be logged in to view this van.")
+        throw new Response("Unauthorized", {
+            status: 401,
+            statusText: "You must be logged in to view your host vans."
+        })
     }
 
     // Check whether this van is part of the current user's host vans
@@ -78,7 +84,8 @@ export async function getHostVan(id) {
 
     if (!hostVanSnapshot.exists()) {
         throw new Response("Van not found.", {
-            status: 404
+            status: 404,
+            statusText: "This van is not in your host collection."
         })
     }
 

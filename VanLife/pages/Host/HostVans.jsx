@@ -29,23 +29,36 @@ export default function HostVans() {
         ))
 
         return (
-
-            <div className="host-vans-list">
+            vans.length > 0 ? (
                 <section>
-                    {hostVansEls}
+                    <h1 className="host-vans-title">Your listed vans</h1>
+                    <div className="host-vans-list">
+                        <section>
+                            {hostVansEls}
+                        </section>
+                    </div>
                 </section>
-            </div>
+            ) : (
+                <section className="host-vans-empty">
+                    <h2>You don't have any vans yet.</h2>
+
+                    <p>
+                        Browse the available vans and add one to your host collection.
+                    </p>
+
+                    <Link to="/vans" className="link-button">
+                        Browse vans
+                    </Link>
+                </section>
+            )
         )
     }
 
     return (
-        <section>
-            <h1 className="host-vans-title">Your listed vans</h1>
-            <React.Suspense fallback={<h2>Loading host vans...</h2>}>
-                <Await resolve={hostVansPromise.hostVans}>
-                    {renderHostVans}
-                </Await>
-            </React.Suspense>
-        </section>
+        <React.Suspense fallback={<h2>Loading host vans...</h2>}>
+            <Await resolve={hostVansPromise.hostVans}>
+                {renderHostVans}
+            </Await>
+        </React.Suspense>
     )
 }

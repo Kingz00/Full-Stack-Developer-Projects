@@ -119,6 +119,11 @@ footer {
     transform: translate(1px, 1px);
 }
 
+.link-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
 /*** HOME PAGE ***/
 .home-container {
     background: linear-gradient(0deg, rgba(0, 0, 0, 0.46), rgba(0, 0, 0, 0.46)), url("./assets/images/home-hero.png") no-repeat center center;
