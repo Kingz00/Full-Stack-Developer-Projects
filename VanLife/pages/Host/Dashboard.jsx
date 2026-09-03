@@ -41,23 +41,43 @@ export default function Dashboard() {
 
     return (
         <>
-            <section className="host-dashboard-earnings">
+            {/* <section className="host-dashboard-earnings">
                 <div className="info">
                     <h1>Welcome!</h1>
                     <p>Income last <span>30 days</span></p>
                     <h2>$2,260</h2>
                 </div>
                 <Link to="income">Details</Link>
+            </section> */}
+            <section className="host-dashboard-earnings">
+                <div className="host-dashboard-section-content">
+                    <div className="info">
+                        <h1>Welcome!</h1>
+                        <p>Income last <span>30 days</span></p>
+                        <h2>$2,260</h2>
+                    </div>
+                    <Link to="income">Details</Link>
+                </div>
             </section>
-            <section className="host-dashboard-reviews">
+            {/* <section className="host-dashboard-reviews">
                 <h2>Review score</h2>
                 <BsStarFill className="star" />
                 <p>
                     <span>5.0</span>/5
                 </p>
                 <Link to="reviews">Details</Link>
+            </section> */}
+            <section className="host-dashboard-reviews">
+                <div className="host-dashboard-section-content">
+                    <h2>Review score</h2>
+                    <BsStarFill className="star" />
+                    <p>
+                        <span>5.0</span>/5
+                    </p>
+                    <Link to="reviews">Details</Link>
+                </div>
             </section>
-            <React.Suspense fallback={<h3>Loading...</h3>}>
+            <React.Suspense fallback={<div className="loading">Loading</div>}>
                 <Await resolve={loaderData.vans}>{renderVanElements}</Await>
             </React.Suspense>
         </>

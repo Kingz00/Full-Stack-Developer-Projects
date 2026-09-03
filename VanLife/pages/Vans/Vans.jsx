@@ -80,9 +80,25 @@ export default function Vans() {
                     ) : null}
 
                 </div>
-                <div className="van-list">
-                    {vanElements}
-                </div>
+                {displayedVans.length > 0 ? (
+                    <div className="van-list">
+                        {vanElements}
+                    </div>
+                ) : (
+                    <div className="van-list-empty">
+                        <h2>No vans found</h2>
+                        <p>
+                            There are no vans available for this filter.
+                        </p>
+
+                        <button
+                            onClick={() => handleFilterChange("type", null)}
+                            className="van-type clear-filters"
+                        >
+                            View all vans
+                        </button>
+                    </div>
+                )}
             </>
         )
     }
@@ -90,7 +106,7 @@ export default function Vans() {
     return (
         <div className="van-list-container">
             <h1>Explore our van options</h1>
-            <React.Suspense fallback={<h1>Loading vans data...</h1>}>
+            <React.Suspense fallback={<div className="loading">Loading vans data</div>}>
                 <Await resolve={deferredVans.vans}>
                     {renderVanElements}
                 </Await>
