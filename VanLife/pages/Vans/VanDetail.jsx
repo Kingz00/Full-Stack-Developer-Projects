@@ -43,7 +43,7 @@ export default function VanDetail() {
                 relative="path"
                 className="back-button"
             >&larr; <span>Back to {type} vans</span></Link>
-            <React.Suspense fallback={<h2>Loading van detail...</h2>}>
+            <React.Suspense fallback={<div className="loading">Loading van detail</div>}>
                 <Await resolve={vanPromise.vanDetail}>
                     {(van) => (
                         <Await resolve={vanPromise.isHostVan}>
@@ -51,35 +51,45 @@ export default function VanDetail() {
                                 return (
                                     <div className="van-detail">
                                         <img src={van.imageUrl} />
-                                        <i className={`van-type ${van.type} selected`}>
-                                            {van.type}
-                                        </i>
-                                        <h2>{van.name}</h2>
-                                        <p className="van-price"><span>${van.price}</span>/day</p>
-                                        <p>{van.description}</p>
-                                        {alreadyAdded ? (
-                                            <button
-                                                className="link-button"
-                                                disabled
-                                            >
-                                                Added to my vans
-                                            </button>
-                                        ) : (
-                                            <Form method="post">
+
+                                        <div className="van-detail-info">
+                                            <i className={`van-type ${van.type} selected`}>
+                                                {van.type}
+                                            </i>
+
+                                            <h2>{van.name}</h2>
+
+                                            <p className="van-price">
+                                                <span>${van.price}</span>/day
+                                            </p>
+
+                                            <p>{van.description}</p>
+
+                                            {alreadyAdded ? (
                                                 <button
                                                     className="link-button"
-                                                    type="submit"
-                                                    disabled={isSubmitting}
+                                                    disabled
                                                 >
-                                                    {isSubmitting ? "Adding..." : "Add to my vans"}
+                                                    Added to my vans
                                                 </button>
-                                            </Form>
-                                        )}
-                                        {actionData?.error && (
-                                            <p className="error-message">
-                                                {actionData.error}
-                                            </p>
-                                        )}
+                                            ) : (
+                                                <Form method="post">
+                                                    <button
+                                                        className="link-button"
+                                                        type="submit"
+                                                        disabled={isSubmitting}
+                                                    >
+                                                        {isSubmitting ? "Adding..." : "Add to my vans"}
+                                                    </button>
+                                                </Form>
+                                            )}
+
+                                            {actionData?.error && (
+                                                <p className="error-message">
+                                                    {actionData.error}
+                                                </p>
+                                            )}
+                                        </div>
                                     </div>
                                 )
                             }}
