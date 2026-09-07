@@ -30,7 +30,7 @@ export default function HostVans() {
 
         return (
             vans.length > 0 ? (
-                <section>
+                <section className="host-vans">
                     <h1 className="host-vans-title">Your listed vans</h1>
                     <div className="host-vans-list">
                         <section>
@@ -55,7 +55,7 @@ export default function HostVans() {
     }
 
     return (
-        <React.Suspense fallback={<h2>Loading host vans...</h2>}>
+        <React.Suspense fallback={<div className="loading">Loading host vans</div>}>
             <Await resolve={hostVansPromise.hostVans}>
                 {renderHostVans}
             </Await>

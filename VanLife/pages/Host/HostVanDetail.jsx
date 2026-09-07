@@ -35,18 +35,18 @@ export default function HostVanDetail() {
     }
 
     return (
-        <section>
+        <section className="host-van-detail-layout-container">
             <Link
                 to=".."
                 relative="path"
                 className="back-button"
             >&larr; <span>Back to all vans</span></Link>
 
-            <React.Suspense fallback={<h2>Loading host van detail...</h2>}>
+            <React.Suspense fallback={<div className="loading">Loading host van detail</div>}>
                 <Await resolve={currentVanPromise.hostVanDetail}>
                     {(currentVan) => {
                         return (
-                            <div className="host-van-detail-layout-container">
+                            <>
                                 <div className="host-van-detail">
                                     <img src={currentVan.imageUrl} />
                                     <div className="host-van-detail-info-text">
@@ -96,7 +96,7 @@ export default function HostVanDetail() {
                                         {actionData.error}
                                     </p>
                                 )}
-                            </div>)
+                            </>)
                     }}
                 </Await>
             </React.Suspense>

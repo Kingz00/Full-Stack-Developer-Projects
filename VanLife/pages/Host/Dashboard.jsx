@@ -26,60 +26,57 @@ export default function Dashboard() {
 
         return (
             vans.length > 0 ? (
-                <section className="host-dashboard-vans">
-                    <div className="top">
-                        <h2>Your listed vans</h2>
-                        <Link to="vans">View all</Link>
-                    </div>
-                    <div className="host-vans-list">
-                        <section>{hostVansEls}</section>
-                    </div>
+                <>
+                    <section className="host-dashboard-earnings">
+                        <div className="host-dashboard-section-content">
+                            <div className="info">
+                                <h1>Welcome!</h1>
+                                <p>Income last <span>30 days</span></p>
+                                <h2>$2,260</h2>
+                            </div>
+                            <Link to="income">Details</Link>
+                        </div>
+                    </section>
+                    <section className="host-dashboard-reviews">
+                        <div className="host-dashboard-section-content">
+                            <h2>Review score</h2>
+                            <BsStarFill className="star" />
+                            <p>
+                                <span>5.0</span>/5
+                            </p>
+                            <Link to="reviews">Details</Link>
+                        </div>
+                    </section>
+                    <section className="host-dashboard-vans">
+                        <div className="top">
+                            <h2>Your listed vans</h2>
+                            <Link to="vans">View all</Link>
+                        </div>
+                        <div className="host-vans-list">
+                            <section>{hostVansEls}</section>
+                        </div>
+                    </section>
+                </>
+            ) : (
+                <section className="host-vans-empty">
+                    <h2>You don't have any vans yet.</h2>
+
+                    <p>
+                        Browse the available vans and add one to your host collection.
+                    </p>
+
+                    <Link to="/vans" className="link-button">
+                        Browse vans
+                    </Link>
                 </section>
-            ) : null
+            )
         )
     }
 
     return (
-        <>
-            {/* <section className="host-dashboard-earnings">
-                <div className="info">
-                    <h1>Welcome!</h1>
-                    <p>Income last <span>30 days</span></p>
-                    <h2>$2,260</h2>
-                </div>
-                <Link to="income">Details</Link>
-            </section> */}
-            <section className="host-dashboard-earnings">
-                <div className="host-dashboard-section-content">
-                    <div className="info">
-                        <h1>Welcome!</h1>
-                        <p>Income last <span>30 days</span></p>
-                        <h2>$2,260</h2>
-                    </div>
-                    <Link to="income">Details</Link>
-                </div>
-            </section>
-            {/* <section className="host-dashboard-reviews">
-                <h2>Review score</h2>
-                <BsStarFill className="star" />
-                <p>
-                    <span>5.0</span>/5
-                </p>
-                <Link to="reviews">Details</Link>
-            </section> */}
-            <section className="host-dashboard-reviews">
-                <div className="host-dashboard-section-content">
-                    <h2>Review score</h2>
-                    <BsStarFill className="star" />
-                    <p>
-                        <span>5.0</span>/5
-                    </p>
-                    <Link to="reviews">Details</Link>
-                </div>
-            </section>
-            <React.Suspense fallback={<div className="loading">Loading</div>}>
-                <Await resolve={loaderData.vans}>{renderVanElements}</Await>
-            </React.Suspense>
-        </>
+
+        <React.Suspense fallback={<div className="loading">Loading</div>}>
+            <Await resolve={loaderData.vans}>{renderVanElements}</Await>
+        </React.Suspense>
     )
 }
