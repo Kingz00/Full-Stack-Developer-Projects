@@ -1,72 +1,91 @@
 # VanLife
 
-VanLife is a responsive van-rental web application built with React and React Router.
+VanLife is a responsive van-rental web application built with **React** and **React Router**.
 
-The application allows users to browse available vans, view individual vehicle details, and access a host dashboard for managing van-related information.
+Users can browse and filter available vans, view individual van details, create an account, log in, and access a protected host dashboard for managing their van collection.
 
 ## Overview
 
-VanLife was built to explore modern React Router patterns, including nested routes, dynamic routes, route loaders, route actions, protected routes, and error handling.
+VanLife was originally built to explore modern React Router patterns and has since been expanded with **Firebase Authentication**, **Cloud Firestore**, improved authentication flows, responsive UI polish, and more robust loading, error, and empty states.
 
 The application contains two main experiences:
 
-* A customer-facing van rental interface
-* A host dashboard for managing and viewing van information
+- A customer-facing van rental interface
+- An authenticated host dashboard
 
-The project uses MirageJS to provide a mock API/data layer during development.
+The application uses **Firebase Authentication and Cloud Firestore** for authentication and application data.
 
 ## Features
 
 ### Customer Experience
 
-* Browse available vans
-* Filter and explore van listings
-* View individual van details
-* Navigate between application pages
-* Login functionality
-* Loading and error states
-* Responsive user interface
+- Browse available vans
+- Filter vans by type
+- View individual van details
+- Create a user account
+- Log in and log out
+- Responsive navigation
+- Loading states
+- Error states
+- Empty states for unavailable filter results
 
 ### Host Dashboard
 
 Authenticated hosts can access:
 
-* Dashboard
-* Income information
-* Reviews
-* Van listings
-* Individual van information
-* Van pricing information
-* Van photos
+- Dashboard
+- Income information
+- Reviews
+- Host van listings
+- Individual host van information
+- Van pricing information
+- Van photos
 
-The host section uses protected routes so authenticated functionality cannot be accessed without authorization.
+Host routes are protected and require authentication.
+
+Host van ownership is also verified against the authenticated user's Firestore data before host-specific van information is displayed.
+
+## Authentication & Data
+
+VanLife uses **Firebase Authentication** for user registration and login and **Cloud Firestore** for application data.
+
+When a user registers:
+
+1. Firebase Authentication creates the account.
+2. The user's profile is updated with their display name.
+3. A corresponding user document is created in Firestore.
+4. The user can access the protected host experience.
+
+Firestore stores the application's van catalogue as well as user and host-van data.
+
+Firestore security rules ensure that authenticated users can only access their own user and host-van data.
 
 ## Tech Stack
 
 ### Frontend
 
-* React
-* React Router DOM
-* React Icons
-* CSS
+- React
+- React Router DOM
+- React Icons
+- CSS
+- JavaScript
 
-### Application / Data
+### Authentication & Data
 
-* React Router loaders
-* React Router actions
-* MirageJS
-* Firebase
-* Environment variables with `dotenv`
+- Firebase Authentication
+- Cloud Firestore
+- React Router loaders
+- React Router actions
 
 ### Development
 
-* Vite
-* JavaScript
-* npm
+- Vite
+- npm
+- Environment variables
 
 ## Application Architecture
 
-The application uses React Router's data-router APIs.
+The application uses React Router's data-router APIs with nested and dynamic routes.
 
 A simplified route structure is:
 
@@ -75,6 +94,7 @@ A simplified route structure is:
 ├── Home
 ├── About
 ├── Login
+├── Register
 ├── Vans
 │   └── Vans/:id
 │
@@ -82,37 +102,37 @@ A simplified route structure is:
     ├── Dashboard
     ├── Income
     ├── Reviews
-    ├── Vans
-    │   └── Vans/:id
-    │       ├── Info
-    │       ├── Pricing
-    │       └── Photos
+    └── Vans
+        └── Vans/:id
+            ├── Info
+            ├── Pricing
+            └── Photos
 ```
 
-The application uses nested routes for the host dashboard and individual host van pages.
+Nested routes allow related pages to share layouts and routing context while dynamic route parameters are used for individual van pages.
 
 ## React Router
 
-One of the primary goals of this project was to gain practical experience with React Router's data APIs.
+One of the primary goals of the project was to gain practical experience with React Router's data APIs.
 
 The application uses:
 
-* `createBrowserRouter`
-* `createRoutesFromElements`
-* Nested routes
-* Dynamic route parameters
-* Route loaders
-* Route actions
-* Protected routes
-* Error elements
+- `createBrowserRouter`
+- `createRoutesFromElements`
+- Nested routes
+- Dynamic route parameters
+- Route loaders
+- Route actions
+- Protected routes
+- Error elements
 
-For example, van detail pages use dynamic route parameters:
+For example, customer van detail pages use:
 
 ```text
 /vans/:id
 ```
 
-while host van pages use nested routes:
+while host van pages use:
 
 ```text
 /host/vans/:id
@@ -120,66 +140,84 @@ while host van pages use nested routes:
 /host/vans/:id/photos
 ```
 
-This structure allows related pages to share layouts and routing context.
+This routing structure keeps related functionality organized while allowing each route to load and handle its own data.
 
-## Authentication and Protected Routes
+## Authentication & Protected Routes
 
-The host dashboard contains routes that require authentication.
+The host dashboard is protected using Firebase Authentication.
 
-Protected routes use an authentication utility before allowing access to certain pages.
+Unauthenticated users cannot access protected host functionality.
 
-This pattern was used to practice separating public application routes from authenticated application functionality.
+The application also checks the authenticated user's identity when working with host-specific Firestore data. This ensures that a user can only access the host-van records associated with their own account.
+
+Firestore security rules reinforce this ownership model at the database level.
 
 ## Data Loading
 
 React Router loaders are used to retrieve data before rendering specific routes.
 
-This allows route components to receive the data they need without manually coordinating every data request through component state.
+The application retrieves its data from **Cloud Firestore**, with route loaders handling data retrieval for the relevant pages.
 
-The project also uses route actions for form-related interactions such as login.
+Route actions handle form-related operations such as authentication.
 
-## Mock API
+This approach keeps data loading and mutations closely associated with the routes that use them instead of managing every request through component-level state.
 
-MirageJS provides a mock API environment for development.
+## UI & Responsive Design
 
-This allows the frontend to behave as though it were communicating with a backend API while keeping the project self-contained.
+The interface was designed to provide a consistent experience across desktop, tablet, and mobile screen sizes.
+
+The project includes dedicated:
+
+- Loading states
+- Error states
+- Empty states
+- Responsive layouts
+- Authentication forms
+- Navigation and mobile navigation
+- Van listing and detail views
+- Host dashboard views
+
+The authentication pages use a compact, consistent form treatment, while the broader application maintains a responsive layout across customer and host experiences.
 
 ## What I Learned
 
-Building VanLife gave me practical experience with:
+Building and refining VanLife gave me practical experience with:
 
-* React Router's data APIs
-* Nested routing
-* Dynamic routes
-* Route loaders
-* Route actions
-* Protected routes
-* Authentication flows
-* Error handling
-* Mock API development
-* Reusable React components
-* Responsive frontend development
+- React Router's data APIs
+- Nested routing
+- Dynamic routes
+- Route loaders
+- Route actions
+- Protected routes
+- Firebase Authentication
+- Cloud Firestore
+- Firestore security rules
+- Authentication flows
+- Asynchronous data handling
+- Error and loading states
+- Responsive frontend development
+- Reusable React components
 
 ## Future Improvements
 
-Potential improvements include:
+Potential future improvements include:
 
-* Replace the mock API with a production backend
-* Add persistent user accounts
-* Add real van booking functionality
-* Add payment processing
-* Add host CRUD functionality
-* Add image uploads
-* Add booking history
-* Add availability calendars
-* Add improved form validation
+- Add full host CRUD functionality
+- Add real van booking functionality
+- Add payment processing
+- Add image uploads
+- Add booking history
+- Add availability calendars
+- Expand form validation
+- Add more comprehensive user profile functionality
 
 ## Getting Started
 
 ### Prerequisites
 
-* Node.js
-* npm
+- Node.js
+- npm
+- Firebase project
 
 ### Installation
 
@@ -197,7 +235,7 @@ Install dependencies:
 npm install
 ```
 
-Start the development server:
+Configure the required Firebase environment variables, then start the development server:
 
 ```bash
 npm run dev
@@ -229,19 +267,26 @@ Previews the production build locally.
 
 *Homepage*
 
-<img width="549" height="574" alt="vanlife-intro-page" src="https://github.com/user-attachments/assets/46e9d801-a3f1-4f8e-92d5-8287c4a558b4" />
+<img width="1143" height="954" alt="vanlife-intro-page" src="https://github.com/user-attachments/assets/fb18a287-a37e-49b5-8147-730056fab0aa" />
+
 
 *Van Listing*
 
-<img width="549" height="1452" alt="vanlife-product-list" src="https://github.com/user-attachments/assets/48103dd2-5844-4d70-95d0-1860c8f7e4ce" />
+<img width="1138" height="946" alt="vanlife-product-list" src="https://github.com/user-attachments/assets/29e41f88-5ae0-44dd-a40c-59d43728c404" />
+
 
 *Van Detail Page*
 
-<img width="549" height="1260" alt="vanlife-product-detail" src="https://github.com/user-attachments/assets/ac843205-4f91-483a-8e68-f5c126914635" />
+<img width="1142" height="955" alt="vanlife-product-detail" src="https://github.com/user-attachments/assets/98da6b0c-cf3c-4714-8e1d-4f2c53ea271d" />
+
 
 *Host Dashboard*
 
-<img width="548" height="1096" alt="vanlife-host-page" src="https://github.com/user-attachments/assets/cafeac4f-1513-441d-a656-2af65dca83ec" />
+<img width="1138" height="949" alt="vanlife-host-dashboard" src="https://github.com/user-attachments/assets/73050018-3fa0-458a-bf0b-9909f8177647" />
+
+*Host Van Detail Page*
+
+<img width="1136" height="945" alt="vanlife-host-van-detail-page" src="https://github.com/user-attachments/assets/13d615bb-c688-486b-a025-4e90b9195a16" />
 
 
 ## Live Demo
