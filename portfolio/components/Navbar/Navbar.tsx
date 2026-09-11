@@ -17,6 +17,11 @@ const navigation = [
     },
     {
         number: "03",
+        label: "Certificates",
+        href: "/certificates",
+    },
+    {
+        number: "04",
         label: "Contact",
         href: "/#contact",
     },
