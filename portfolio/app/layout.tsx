@@ -4,7 +4,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar/Navbar";
 import Footer from "@/components/Footer/Footer";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://kingsley-onwupeluonye.netlify.app";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.kingsleyonwupeluonye.dev";
 
 const inter = Inter({
   variable: "--font-inter",

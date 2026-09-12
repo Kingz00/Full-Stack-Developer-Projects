@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { projects } from "@/libs/data/projects";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://kingsley-onwupeluonye.netlify.app";
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.kingsleyonwupeluonye.dev";
 
     return [
         {
