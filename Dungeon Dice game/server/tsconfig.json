@@ -11,15 +11,12 @@
     "skipLibCheck": true,
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": true,
-    "jsx": "react-jsx",
     "verbatimModuleSyntax": true,
     "isolatedModules": true,
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
     // Other Outputs
     "sourceMap": true,
-    "declaration": true,
-    "declarationMap": true,
   },
   "include": [
     "src"
