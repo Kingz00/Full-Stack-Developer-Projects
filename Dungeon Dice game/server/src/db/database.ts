@@ -2,15 +2,24 @@ import Database from 'better-sqlite3';
 import fs from 'node:fs';
 import path from 'node:path';
 
-const dataDirectory = path.resolve(process.cwd(), 'data');
+export function createDatabase(databasePath: string): Database.Database {
+    const directory = path.dirname(databasePath);
 
-fs.mkdirSync(dataDirectory, { recursive: true });
+    fs.mkdirSync(directory, { recursive: true });
 
-const databasePath = path.join(dataDirectory, 'dungeon-dice.db');
+    const db = new Database(databasePath);
 
-const db = new Database(databasePath);
+    db.pragma('journal_mode = WAL');
+    db.pragma('foreign_keys = ON');
 
-db.pragma('journal_mode = WAL');
-db.pragma('foreign_keys = ON');
+    return db;
+}
+
+const databasePath = path.resolve(
+    process.cwd(),
+    'data/dungeon-dice.db',
+);
+
+const db = createDatabase(databasePath);
 
 export default db;
