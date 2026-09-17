@@ -9,16 +9,10 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
-    "noUncheckedIndexedAccess": true,
-    "exactOptionalPropertyTypes": true,
-    "verbatimModuleSyntax": true,
-    "isolatedModules": true,
-    "noUncheckedSideEffectImports": true,
-    "moduleDetection": "force",
-    // Other Outputs
-    "sourceMap": true,
+    "noUncheckedIndexedAccess": true
   },
   "include": [
-    "src"
+    "src/**/*.ts",
+    "src/**/*.d.ts"
   ]
 }
