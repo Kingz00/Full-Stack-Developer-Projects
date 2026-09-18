@@ -1,19 +1,18 @@
-import type { Session, SessionData } from 'express-session';
-
-type AppSession = Session & Partial<SessionData>
+import type { Request } from 'express';
+import type { Session } from 'express-session';
 
 export class SessionService {
-    create(session: AppSession, userId: number): Promise<void> {
+    create(req: Request, userId: number): Promise<void> {
         return new Promise((resolve, reject) => {
-            session.regenerate((error) => {
+            req.session.regenerate((error) => {
                 if (error) {
                     reject(error);
                     return;
                 }
 
-                session.userId = userId;
+                req.session.userId = userId;
 
-                session.save((saveError) => {
+                req.session.save((saveError) => {
                     if (saveError) {
                         reject(saveError);
                         return;

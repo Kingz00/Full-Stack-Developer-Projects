@@ -1,29 +1,36 @@
-import type { Session, SessionData } from 'express-session';
+import type { Request } from 'express';
+import type { Session } from 'express-session';
 import { describe, expect, it, vi } from 'vitest';
 
 import { SessionService } from './sessionService.js';
 
-type AppSession = Session & Partial<SessionData>
-
 describe('SessionService', () => {
     it('creates an authenticated session', async () => {
-        const session: AppSession = {
-            userId: undefined,
+        const originalSession = {
             regenerate: vi.fn((callback) => {
-                callback(null);
-            }),
-            save: vi.fn((callback) => {
+                req.session = regeneratedSession;
                 callback(null);
             }),
         } as unknown as Session;
 
+        const regeneratedSession = {
+            userId: undefined,
+            save: vi.fn((callback) => {
+                callback(null);
+            }),
+        } as unknown as Session & { userId?: number };
+
+        const req = {
+            session: originalSession
+        } as unknown as Request;
+
         const service = new SessionService();
 
-        await service.create(session, 123);
+        await service.create(req, 123);
 
-        expect(session.regenerate).toHaveBeenCalledOnce();
-        expect(session.userId).toBe(123);
-        expect(session.save).toHaveBeenCalledOnce();
+        expect(originalSession.regenerate).toHaveBeenCalledOnce();
+        expect(regeneratedSession.userId).toBe(123);
+        expect(regeneratedSession.save).toHaveBeenCalledOnce();
     });
 
     it('rejects when session regeneration fails', async () => {
@@ -36,10 +43,12 @@ describe('SessionService', () => {
             save: vi.fn(),
         } as unknown as Session;
 
+        const req = { session } as unknown as Request;
+
         const service = new SessionService();
 
         await expect(
-            service.create(session, 123),
+            service.create(req, 123),
         ).rejects.toBe(error);
 
         expect(session.save).not.toHaveBeenCalled();
@@ -57,10 +66,12 @@ describe('SessionService', () => {
             }),
         } as unknown as Session;
 
+        const req = { session } as unknown as Request;
+
         const service = new SessionService();
 
         await expect(
-            service.create(session, 123),
+            service.create(req, 123),
         ).rejects.toBe(error);
     });
 
