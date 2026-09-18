@@ -20,7 +20,7 @@ export class AuthController {
 
             const user = await this.authService.register(credentials);
 
-            await this.sessionService.create(req.session, user.id);
+            await this.sessionService.create(req, user.id);
 
             res.status(201).json({
                 user: toAuthUser(user),
@@ -36,7 +36,7 @@ export class AuthController {
 
             const user = await this.authService.login(credentials);
 
-            await this.sessionService.create(req.session, user.id);
+            await this.sessionService.create(req, user.id);
 
             res.status(200).json({
                 user: toAuthUser(user),
