@@ -10,6 +10,14 @@ import { SessionService } from './services/sessionService.js';
 import { UserRepository } from './repositories/userRepository.js';
 import { createSessionMiddleware } from './config/session.js';
 
+import { BattleController } from './controllers/battleController.js';
+import { BattleRepository } from './repositories/battleRepository.js';
+import { GameRunRepository } from './repositories/gameRunRepository.js';
+import { HeroRepository } from './repositories/heroRepository.js';
+import { BattleEngine } from './domain/battle/battleEngine.js';
+import { BattleService } from './services/battleService.js';
+import { createBattleRoutes } from './routes/battleRoutes.js';
+
 export function createApp(db: Database.Database) {
     const app = express();
 
@@ -17,6 +25,7 @@ export function createApp(db: Database.Database) {
     app.use(createSessionMiddleware());
 
     // Dependency composition
+    // Authentication
     const userRepository = new UserRepository(db);
     const authService = new AuthService(userRepository);
     const sessionService = new SessionService();
@@ -27,8 +36,25 @@ export function createApp(db: Database.Database) {
         userRepository
     );
 
+    // Battle Service
+    const gameRunRepository = new GameRunRepository(db);
+    const heroRepository = new HeroRepository(db);
+    const battleRepository = new BattleRepository(db);
+
+    const battleEngine = new BattleEngine();
+
+    const battleService = new BattleService(
+        gameRunRepository,
+        heroRepository,
+        battleRepository,
+        battleEngine
+    );
+
+    const battleController = new BattleController(battleService);
+
     // Routes
     app.use('/api/auth', createAuthRoutes(authController));
+    app.use('/api', createBattleRoutes(battleController));
 
     app.get('/api/health', (req, res) => {
         res.json({
