@@ -29,3 +29,36 @@ export interface BattleRoundResult {
     state: BattleState;
     round: RoundResult;
 }
+
+export interface Battle {
+    id: number;
+    runId: number;
+    heroId: number;
+
+    playerHealth: number;
+    playerMaxHealth: number;
+
+    enemyName: string;
+    enemyHealth: number;
+    enemyMaxHealth: number;
+    enemyAttack: number;
+    enemyDefense: number;
+
+    status: BattleStatus;
+    startedAt: string;
+    completedAt: string | null;
+}
+
+export interface BattleRound {
+    id: number;
+    battleId: number;
+    roundNumber: number;
+    playerRoll: number;
+    enemyRoll: number;
+    playerDamage: number;
+    enemyDamage: number;
+    playerHealthAfter: number;
+    enemyHealthAfter: number;
+    outcome: 'active' | 'win' | 'loss' | 'draw';
+    createdAt: string;
+}

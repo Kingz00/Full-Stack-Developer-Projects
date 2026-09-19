@@ -14,7 +14,7 @@ export function createAuthRoutes(controller: AuthController): Router {
         controller.login(req, res, next),
     );
 
-    router.post('/logout', requireAuth, (req, res, next) =>
+    router.post('/logout', (req, res, next) =>
         controller.logout(req, res, next),
     );
 

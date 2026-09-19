@@ -22,7 +22,7 @@ CREATE TABLE battle_rounds (
         CHECK (enemy_health_after >= 0),
 
     outcome TEXT NOT NULL
-        CHECK (outcome IN ('win', 'loss', 'draw')),
+        CHECK (outcome IN ('active', 'win', 'loss', 'draw')),
 
     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
 

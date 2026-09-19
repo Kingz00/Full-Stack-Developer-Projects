@@ -16,6 +16,12 @@ CREATE TABLE battles (
 
     enemy_max_health INTEGER NOT NULL
         CHECK (enemy_max_health > 0),
+    
+    enemy_attack INTEGER NOT NULL 
+        CHECK (enemy_attack > 0),
+
+    enemy_defense INTEGER NOT NULL 
+        CHECK (enemy_defense >= 0),
 
     status TEXT NOT NULL DEFAULT 'active'
         CHECK (status IN ('active', 'won', 'lost', 'draw')),
