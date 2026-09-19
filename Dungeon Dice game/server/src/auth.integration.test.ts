@@ -159,6 +159,24 @@ describe('Authentication API', () => {
         });
     });
 
+    it('allows an authenticated user to access /me', async () => {
+        const agent = request.agent(app);
+
+        await agent
+            .post('/api/auth/register')
+            .send({
+                username: 'testuser',
+                password: 'password123',
+            });
+
+        const response = await agent
+            .get('/api/auth/me');
+
+        expect(response.status).toBe(200);
+
+        expect(response.body.user.username).toBe('testuser');
+    });
+
     it('logs out an authenticated user', async () => {
         const agent = request.agent(app);
 
