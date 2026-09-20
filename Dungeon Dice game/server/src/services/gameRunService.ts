@@ -53,4 +53,30 @@ export class GameRunService {
 
         return updatedGameRun;
     }
+
+    completeRun(userId: number, runId: number): GameRun {
+        const gameRun = this.gameRunRepository.findByIdForUser(
+            runId,
+            userId
+        );
+
+        if (!gameRun) {
+            throw new AppError(404, 'Game run not found.');
+        }
+
+        if (gameRun.status !== 'active') {
+            throw new AppError(409, 'Game run is not active.');
+        }
+
+        const updatedGameRun = this.gameRunRepository.updateStatus(
+            runId,
+            'completed'
+        );
+
+        if (!updatedGameRun) {
+            throw new AppError(404, 'Game run not found.');
+        }
+
+        return updatedGameRun;
+    }
 }

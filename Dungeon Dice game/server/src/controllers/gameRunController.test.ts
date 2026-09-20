@@ -76,6 +76,8 @@ describe('GameRunController', () => {
                 selectedHeroId: 2
             });
 
+        expect(req.session.runId).toBe(gameRun.id);
+
         expect(res.status)
             .toHaveBeenCalledWith(201);
 
@@ -157,6 +159,7 @@ describe('GameRunController', () => {
         } = createController();
 
         req.session.userId = 10;
+        req.session.runId = 1;
         req.params = {
             runId: '1'
         };
@@ -168,6 +171,8 @@ describe('GameRunController', () => {
 
         expect(gameRunService.abandonRun)
             .toHaveBeenCalledWith(10, 1);
+
+        expect(req.session.runId).toBeUndefined();
 
         expect(res.status)
             .toHaveBeenCalledWith(200);
@@ -238,5 +243,35 @@ describe('GameRunController', () => {
             statusCode: 400,
             message: 'A valid game run ID is required.',
         });
+    });
+
+    it('does not clear a different active session run when abandoning another run', () => {
+        const {
+            controller,
+            gameRunService,
+            req,
+            res,
+            next
+        } = createController();
+
+        req.session.userId = 10;
+        req.session.runId = 2;
+        req.params = {
+            runId: '1',
+        };
+
+        vi.mocked(gameRunService.abandonRun)
+            .mockReturnValue(abandonedGameRun);
+
+        controller.abandonRun(req, res, next);
+
+        expect(gameRunService.abandonRun)
+            .toHaveBeenCalledWith(10, 1);
+
+        expect(req.session.runId)
+            .toBe(2);
+
+        expect(next)
+            .not.toHaveBeenCalled();
     });
 });
