@@ -177,27 +177,14 @@ describe('battle integration', () => {
                 4,
             );
 
-        const user = db
-            .prepare(`
-                        SELECT id FROM users
-                        WHERE username = ?
-                    `)
-            .get('battle-player') as { id: number };
+        const runResponse = await agent
+            .post('/api/runs')
+            .send({
+                selectedHeroId: Number(selectedHero.lastInsertRowid),
+            })
+            .expect(201);
 
-        const run = db
-            .prepare(`
-                        INSERT INTO game_runs (
-                            user_id,
-                            selected_hero_id
-                        )
-                        VALUES (?, ?)
-                    `)
-            .run(
-                user.id,
-                Number(selectedHero.lastInsertRowid),
-            );
-
-        const runId = Number(run.lastInsertRowid);
+        const runId = runResponse.body.run.id;
 
         const response = await agent
             .post(`/api/runs/${runId}/battles`)
@@ -213,7 +200,7 @@ describe('battle integration', () => {
             enemyMaxHealth: 80,
             enemyAttack: 12,
             enemyDefense: 4,
-            status: 'active',
+            status: 'active'
         });
     });
 
@@ -278,27 +265,14 @@ describe('battle integration', () => {
             4,
         );
 
-        const userOne = db
-            .prepare(`
-                SELECT id FROM users
-                WHERE username = ?
-            `)
-            .get('player-one') as { id: number };
+        const runResponse = await playerOne
+            .post('/api/runs')
+            .send({
+                selectedHeroId: Number(heroResult.lastInsertRowid),
+            })
+            .expect(201);
 
-        const run = db
-            .prepare(`
-                INSERT INTO game_runs (
-                    user_id,
-                    selected_hero_id
-                )
-                VALUES (?, ?)
-            `)
-            .run(
-                userOne.id,
-                Number(heroResult.lastInsertRowid),
-            );
-
-        const runId = Number(run.lastInsertRowid);
+        const runId = runResponse.body.run.id;
 
         // User 1 creates the battle.
         const battleResponse = await playerOne
@@ -366,27 +340,14 @@ describe('battle integration', () => {
             4,
         );
 
-        const user = db
-            .prepare(`
-                SELECT id FROM users
-                WHERE username = ?
-            `)
-            .get('round-player') as { id: number };
+        const runResponse = await agent
+            .post('/api/runs')
+            .send({
+                selectedHeroId: Number(heroResult.lastInsertRowid),
+            })
+            .expect(201);
 
-        const run = db
-            .prepare(`
-                INSERT INTO game_runs (
-                    user_id,
-                    selected_hero_id
-                )
-                VALUES (?, ?)
-            `)
-            .run(
-                user.id,
-                Number(heroResult.lastInsertRowid),
-            );
-
-        const runId = Number(run.lastInsertRowid);
+        const runId = runResponse.body.run.id;
 
         const battleResponse = await agent
             .post(`/api/runs/${runId}/battles`)
@@ -455,25 +416,14 @@ describe('battle integration', () => {
             4,
         );
 
-        const user = db
-            .prepare(`
-                SELECT id FROM users
-                WHERE username = ?
-            `)
-            .get('history-player') as { id: number };
+        const runResponse = await agent
+            .post('/api/runs')
+            .send({
+                selectedHeroId: Number(heroResult.lastInsertRowid),
+            })
+            .expect(201);
 
-        const run = db.prepare(`
-        INSERT INTO game_runs (
-            user_id,
-            selected_hero_id
-        )
-        VALUES (?, ?)
-        `).run(
-            user.id,
-            Number(heroResult.lastInsertRowid),
-        );
-
-        const runId = Number(run.lastInsertRowid);
+        const runId = runResponse.body.run.id;
 
         const battleResponse = await agent
             .post(`/api/runs/${runId}/battles`)
@@ -531,5 +481,331 @@ describe('battle integration', () => {
                         ? 'loss'
                         : 'draw',
         });
+    });
+
+    it('keeps the game run active after a battle ends and allows another battle', async () => {
+        const agent = request.agent(app);
+
+        await agent
+            .post('/api/auth/register')
+            .send({
+                username: 'continuous-run-player',
+                password: 'password123',
+            })
+            .expect(201);
+
+        const heroResult = db.prepare(`
+        INSERT INTO heroes (
+            name,
+            description,
+            image_url,
+            health,
+            attack,
+            defense
+        )
+        VALUES (?, ?, ?, ?, ?, ?)
+        `).run(
+            'Knight',
+            'A balanced warrior.',
+            '/images/knight.png',
+            100,
+            15,
+            8,
+        );
+
+        db.prepare(`
+        INSERT INTO heroes (
+            name,
+            description,
+            image_url,
+            health,
+            attack,
+            defense
+        )
+        VALUES (?, ?, ?, ?, ?, ?)
+        `).run(
+            'Orc',
+            'A powerful enemy.',
+            '/images/orc.png',
+            80,
+            12,
+            4,
+        );
+
+        const runResponse = await agent
+            .post('/api/runs')
+            .send({
+                selectedHeroId: Number(heroResult.lastInsertRowid),
+            })
+            .expect(201);
+
+        const runId = runResponse.body.run.id;
+
+        const firstBattleResponse = await agent
+            .post(`/api/runs/${runId}/battles`)
+            .expect(201);
+
+        const firstBattleId = firstBattleResponse.body.battle.id;
+
+        // Make the first battle deterministic:
+        // the player's next attack will definitely reduce the enemy to 0 HP.
+        db.prepare(`
+            UPDATE battles
+            SET enemy_health = 1
+            WHERE id = ?
+        `).run(firstBattleId);
+
+        const roundResponse = await agent
+            .post(`/api/battles/${firstBattleId}/rounds`)
+            .expect(200);
+
+        expect(roundResponse.body.round.status).toBe('won');
+
+        const firstBattle = db
+            .prepare(`
+                SELECT
+                    id,
+                    run_id,
+                    status,
+                    completed_at
+                FROM battles
+                WHERE id = ?
+            `)
+            .get(firstBattleId) as {
+                id: number;
+                run_id: number;
+                status: string;
+                completed_at: string | null;
+            };
+
+        expect(firstBattle).toMatchObject({
+            id: firstBattleId,
+            run_id: runId,
+            status: 'won',
+        });
+
+        expect(firstBattle.completed_at)
+            .toEqual(expect.any(String));
+
+        const run = db
+            .prepare(`
+                SELECT
+                    id,
+                    status,
+                    completed_at
+                FROM game_runs
+                WHERE id = ?
+            `)
+            .get(runId) as {
+                id: number;
+                status: string;
+                completed_at: string | null;
+            };
+
+        expect(run).toMatchObject({
+            id: runId,
+            status: 'active',
+            completed_at: null,
+        });
+
+        // The same active run must be able to start another battle.
+        const secondBattleResponse = await agent
+            .post(`/api/runs/${runId}/battles`)
+            .expect(201);
+
+        expect(secondBattleResponse.body.battle).toMatchObject({
+            runId,
+            status: 'active',
+        });
+
+        expect(secondBattleResponse.body.battle.id)
+            .not.toBe(firstBattleId);
+    });
+
+    it('rejects rounds after the parent game run is reset', async () => {
+        const agent = request.agent(app);
+
+        await agent
+            .post('/api/auth/register')
+            .send({
+                username: 'reset-battle-player',
+                password: 'password123',
+            })
+            .expect(201);
+
+        const heroResult = db.prepare(`
+        INSERT INTO heroes (
+            name,
+            description,
+            image_url,
+            health,
+            attack,
+            defense
+        )
+        VALUES (?, ?, ?, ?, ?, ?)
+        `).run(
+            'Reset Knight',
+            'A hero used for reset testing.',
+            '/images/reset-knight.png',
+            100,
+            15,
+            8,
+        );
+
+        db.prepare(`
+        INSERT INTO heroes (
+            name,
+            description,
+            image_url,
+            health,
+            attack,
+            defense
+        )
+        VALUES (?, ?, ?, ?, ?, ?)
+        `).run(
+            'Reset Orc',
+            'An enemy used for reset testing.',
+            '/images/reset-orc.png',
+            80,
+            12,
+            4,
+        );
+
+        const runResponse = await agent
+            .post('/api/runs')
+            .send({
+                selectedHeroId: Number(heroResult.lastInsertRowid),
+            })
+            .expect(201);
+
+        const runId = runResponse.body.run.id;
+
+        const battleResponse = await agent
+            .post(`/api/runs/${runId}/battles`)
+            .expect(201);
+
+        const battleId = battleResponse.body.battle.id;
+
+        await agent
+            .post(`/api/runs/${runId}/reset`)
+            .expect(200);
+
+        const roundResponse = await agent
+            .post(`/api/battles/${battleId}/rounds`)
+            .expect(409);
+
+        expect(roundResponse.body).toEqual({
+            error: 'Game run is not active.',
+        });
+
+        const roundCount = db
+            .prepare(`
+                SELECT COUNT(*) AS count
+                FROM battle_rounds
+                WHERE battle_id = ?
+            `)
+            .get(battleId) as {
+                count: number;
+            };
+
+        expect(roundCount.count).toBe(0);
+
+        const battle = db
+            .prepare(`
+                SELECT
+                    status,
+                    completed_at
+                FROM battles
+                WHERE id = ?
+            `)
+            .get(battleId) as {
+                status: string;
+                completed_at: string | null;
+            };
+
+        expect(battle).toEqual({
+            status: 'active',
+            completed_at: null,
+        });
+    });
+
+    it('rejects starting a new battle after the parent game run is reset', async () => {
+        const agent = request.agent(app);
+
+        await agent
+            .post('/api/auth/register')
+            .send({
+                username: 'reset-start-battle-player',
+                password: 'password123',
+            })
+            .expect(201);
+
+        const heroResult = db.prepare(`
+        INSERT INTO heroes (
+            name,
+            description,
+            image_url,
+            health,
+            attack,
+            defense
+        )
+        VALUES (?, ?, ?, ?, ?, ?)
+        `).run(
+            'Reset Start Knight',
+            'A hero used for reset testing.',
+            '/images/reset-start-knight.png',
+            100,
+            15,
+            8,
+        );
+
+        const runResponse = await agent
+            .post('/api/runs')
+            .send({
+                selectedHeroId: Number(heroResult.lastInsertRowid),
+            })
+            .expect(201);
+
+        const runId = runResponse.body.run.id;
+
+        await agent
+            .post(`/api/runs/${runId}/reset`)
+            .expect(200);
+
+        const run = db
+            .prepare(`
+                SELECT
+                    status,
+                    completed_at
+                FROM game_runs
+                WHERE id = ?
+            `)
+            .get(runId) as {
+                status: string;
+                completed_at: string | null;
+            };
+
+        expect(run.status).toBe('abandoned');
+        expect(run.completed_at).toEqual(expect.any(String));
+
+        const battleResponse = await agent
+            .post(`/api/runs/${runId}/battles`)
+            .expect(409);
+
+        expect(battleResponse.body).toEqual({
+            error: 'Game run is not active.',
+        });
+
+        const battles = db
+            .prepare(`
+                SELECT COUNT(*) AS count
+                FROM battles
+                WHERE run_id = ?
+            `)
+            .get(runId) as {
+                count: number;
+            };
+
+        expect(battles.count).toBe(0);
     });
 });
