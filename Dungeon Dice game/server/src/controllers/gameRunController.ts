@@ -20,6 +20,8 @@ export class GameRunController {
                 }
             );
 
+            req.session.runId = gameRun.id;
+
             res.status(201).json({
                 run: gameRun
             });
@@ -37,6 +39,10 @@ export class GameRunController {
                 userId,
                 runId
             );
+
+            if (req.session.runId === gameRun.id) {
+                delete req.session.runId;
+            }
 
             res.status(200).json({
                 run: gameRun

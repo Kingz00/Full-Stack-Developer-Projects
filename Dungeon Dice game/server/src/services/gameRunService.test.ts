@@ -190,4 +190,94 @@ describe('GameRunService', () => {
                 .not.toHaveBeenCalled();
         });
     });
+
+    describe('completeRun', () => {
+        it('completes an active game run belonging to the user', () => {
+            const {
+                service,
+                gameRunRepository,
+            } = createService();
+
+            const completedGameRun: GameRun = {
+                ...createdGameRun,
+                status: 'completed',
+                completedAt: '2026-09-20 05:00:00',
+            };
+
+            vi.mocked(gameRunRepository.findByIdForUser)
+                .mockReturnValue(createdGameRun);
+
+            vi.mocked(gameRunRepository.updateStatus)
+                .mockReturnValue(completedGameRun);
+
+            const gameRun = service.completeRun(10, 1);
+
+            expect(gameRun).toEqual(completedGameRun);
+
+            expect(gameRunRepository.findByIdForUser)
+                .toHaveBeenCalledWith(1, 10);
+
+            expect(gameRunRepository.updateStatus)
+                .toHaveBeenCalledWith(1, 'completed');
+        });
+
+        it('throws when the game run does not exist or belong to the user', () => {
+            const {
+                service,
+                gameRunRepository,
+            } = createService();
+
+            vi.mocked(gameRunRepository.findByIdForUser)
+                .mockReturnValue(null);
+
+            expect(() =>
+                service.completeRun(10, 999),
+            ).toThrow('Game run not found.');
+
+            expect(gameRunRepository.updateStatus)
+                .not.toHaveBeenCalled();
+        });
+
+        it('throws when the game run is already completed', () => {
+            const {
+                service,
+                gameRunRepository,
+            } = createService();
+
+            vi.mocked(gameRunRepository.findByIdForUser)
+                .mockReturnValue({
+                    ...createdGameRun,
+                    status: 'completed',
+                    completedAt: '2026-09-20 05:00:00',
+                });
+
+            expect(() =>
+                service.completeRun(10, 1),
+            ).toThrow('Game run is not active.');
+
+            expect(gameRunRepository.updateStatus)
+                .not.toHaveBeenCalled();
+        });
+
+        it('throws when the game run is already abandoned', () => {
+            const {
+                service,
+                gameRunRepository,
+            } = createService();
+
+            vi.mocked(gameRunRepository.findByIdForUser)
+                .mockReturnValue({
+                    ...createdGameRun,
+                    status: 'abandoned',
+                    completedAt: '2026-09-20 05:00:00',
+                });
+
+            expect(() =>
+                service.completeRun(10, 1),
+            ).toThrow('Game run is not active.');
+
+            expect(gameRunRepository.updateStatus)
+                .not.toHaveBeenCalled();
+        });
+    })
 });

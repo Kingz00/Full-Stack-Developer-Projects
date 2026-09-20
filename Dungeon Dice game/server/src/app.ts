@@ -29,18 +29,7 @@ export function createApp(db: Database.Database) {
     app.use(createSessionMiddleware());
 
     // Dependency composition
-    // Authentication
-    const userRepository = new UserRepository(db);
-    const authService = new AuthService(userRepository);
-    const sessionService = new SessionService();
-
-    const authController = new AuthController(
-        authService,
-        sessionService,
-        userRepository
-    );
-
-    // GameRun and Battle Service
+    // GameRun Service
     const gameRunRepository = new GameRunRepository(db);
     const heroRepository = new HeroRepository(db);
     const battleRepository = new BattleRepository(db);
@@ -52,6 +41,19 @@ export function createApp(db: Database.Database) {
 
     const gameRunController = new GameRunController(gameRunService);
 
+    // Authentication
+    const userRepository = new UserRepository(db);
+    const authService = new AuthService(userRepository);
+    const sessionService = new SessionService();
+
+    const authController = new AuthController(
+        authService,
+        sessionService,
+        userRepository,
+        gameRunService
+    );
+
+    // Battle Service
     const battleEngine = new BattleEngine();
 
     const battleService = new BattleService(

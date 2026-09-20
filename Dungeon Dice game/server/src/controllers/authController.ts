@@ -6,12 +6,14 @@ import { AppError } from '../errors/AppError.js';
 import { AuthService } from '../services/authService.js';
 import { SessionService } from '../services/sessionService.js';
 import { UserRepository } from '../repositories/userRepository.js';
+import { GameRunService } from '../services/gameRunService.js';
 
 export class AuthController {
     constructor(
         private readonly authService: AuthService,
         private readonly sessionService: SessionService,
         private readonly userRepository: UserRepository,
+        private readonly gameRunService: GameRunService
     ) { }
 
     async register(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -48,6 +50,13 @@ export class AuthController {
 
     async logout(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
+            const userId = req.session.userId;
+            const runId = req.session.runId;
+
+            if (userId !== undefined && runId !== undefined) {
+                this.gameRunService.completeRun(userId, runId);
+            }
+
             await this.sessionService.destroy(req.session);
 
             res.status(204).send();
