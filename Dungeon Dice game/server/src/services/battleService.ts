@@ -75,11 +75,24 @@ export class BattleService {
     playRound(userId: number, battleId: number): BattleRoundResult {
         const battle = this.battleRepository.findByIdForUser(
             battleId,
-            userId,
+            userId
         );
 
         if (!battle) {
             throw new AppError(404, 'Battle not found.');
+        }
+
+        const gameRun = this.gameRunRepository.findByIdForUser(
+            battle.runId,
+            userId
+        );
+
+        if (!gameRun) {
+            throw new AppError(404, 'Game run not found.');
+        }
+
+        if (gameRun.status !== 'active') {
+            throw new AppError(409, 'Game run is not active.');
         }
 
         if (battle.status !== 'active') {
@@ -130,7 +143,7 @@ export class BattleService {
         this.battleRepository.updateState(battle.id, {
             playerHealth: result.state.player.health,
             enemyHealth: result.state.enemy.health,
-            status: result.state.status,
+            status: result.state.status
         });
 
         return result;

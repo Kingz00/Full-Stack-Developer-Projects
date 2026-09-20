@@ -10,6 +10,10 @@ import { SessionService } from './services/sessionService.js';
 import { UserRepository } from './repositories/userRepository.js';
 import { createSessionMiddleware } from './config/session.js';
 
+import { GameRunController } from './controllers/gameRunController.js';
+import { createGameRunRoutes } from './routes/gameRunRoutes.js';
+import { GameRunService } from './services/gameRunService.js';
+
 import { BattleController } from './controllers/battleController.js';
 import { BattleRepository } from './repositories/battleRepository.js';
 import { GameRunRepository } from './repositories/gameRunRepository.js';
@@ -36,10 +40,17 @@ export function createApp(db: Database.Database) {
         userRepository
     );
 
-    // Battle Service
+    // GameRun and Battle Service
     const gameRunRepository = new GameRunRepository(db);
     const heroRepository = new HeroRepository(db);
     const battleRepository = new BattleRepository(db);
+
+    const gameRunService = new GameRunService(
+        gameRunRepository,
+        heroRepository
+    );
+
+    const gameRunController = new GameRunController(gameRunService);
 
     const battleEngine = new BattleEngine();
 
@@ -54,6 +65,7 @@ export function createApp(db: Database.Database) {
 
     // Routes
     app.use('/api/auth', createAuthRoutes(authController));
+    app.use('/api/runs', createGameRunRoutes(gameRunController));
     app.use('/api', createBattleRoutes(battleController));
 
     app.get('/api/health', (req, res) => {

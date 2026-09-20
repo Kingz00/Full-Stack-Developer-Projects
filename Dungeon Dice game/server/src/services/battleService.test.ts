@@ -93,7 +93,9 @@ describe('BattleService', () => {
 
     function createService() {
         const gameRunRepository = {
-            findByIdForUser: vi.fn(),
+            findByIdForUser: vi.fn()
+                .mockReturnValue(gameRun),
+            updateStatus: vi.fn()
         } as unknown as GameRunRepository;
 
         const heroRepository = {
@@ -338,6 +340,7 @@ describe('BattleService', () => {
         it('plays a round and persists the updated battle state', () => {
             const {
                 service,
+                gameRunRepository,
                 heroRepository,
                 battleRepository,
                 battleEngine,
@@ -360,6 +363,9 @@ describe('BattleService', () => {
             expect(result).toEqual(activeRoundResult);
 
             expect(battleRepository.findByIdForUser)
+                .toHaveBeenCalledWith(1, 10);
+
+            expect(gameRunRepository.findByIdForUser)
                 .toHaveBeenCalledWith(1, 10);
 
             expect(heroRepository.findById)
@@ -709,5 +715,179 @@ describe('BattleService', () => {
                 service.playRound(10, 1),
             ).toThrow('Battle hero not found.');
         });
+
+        it('does not complete the game run when a battle ends', () => {
+            const {
+                service,
+                gameRunRepository,
+                heroRepository,
+                battleRepository,
+                battleEngine,
+            } = createService();
+
+            vi.mocked(battleRepository.findByIdForUser)
+                .mockReturnValue(activeBattle);
+
+            vi.mocked(heroRepository.findById)
+                .mockReturnValue(selectedHero);
+
+            vi.mocked(battleRepository.findRounds)
+                .mockReturnValue([]);
+
+            vi.mocked(battleEngine.playRound)
+                .mockReturnValue({
+                    state: {
+                        player: {
+                            health: 100,
+                            maxHealth: 100,
+                            attack: 15,
+                            defense: 8,
+                        },
+                        enemy: {
+                            health: 0,
+                            maxHealth: 80,
+                            attack: 12,
+                            defense: 4,
+                        },
+                        status: 'won',
+                    },
+                    round: {
+                        playerRoll: 5,
+                        enemyRoll: 2,
+                        playerDamage: 20,
+                        enemyDamage: 80,
+                        playerHealthAfter: 100,
+                        enemyHealthAfter: 0,
+                        status: 'won',
+                    },
+                });
+
+            const result = service.playRound(10, activeBattle.id);
+
+            expect(result.round.status).toBe('won');
+
+            expect(gameRunRepository.updateStatus)
+                .not.toHaveBeenCalled();
+        });
+
+        it('does not complete the game run when the battle remains active', () => {
+            const {
+                service,
+                gameRunRepository,
+                heroRepository,
+                battleRepository,
+                battleEngine,
+            } = createService();
+
+            vi.mocked(battleRepository.findByIdForUser)
+                .mockReturnValue(activeBattle);
+
+            vi.mocked(heroRepository.findById)
+                .mockReturnValue(selectedHero);
+
+            vi.mocked(battleRepository.findRounds)
+                .mockReturnValue([]);
+
+            vi.mocked(battleEngine.playRound)
+                .mockReturnValue({
+                    state: {
+                        player: {
+                            health: 90,
+                            maxHealth: 100,
+                            attack: 15,
+                            defense: 8,
+                        },
+                        enemy: {
+                            health: 70,
+                            maxHealth: 80,
+                            attack: 12,
+                            defense: 4,
+                        },
+                        status: 'active',
+                    },
+                    round: {
+                        playerRoll: 5,
+                        enemyRoll: 4,
+                        playerDamage: 10,
+                        enemyDamage: 10,
+                        playerHealthAfter: 90,
+                        enemyHealthAfter: 70,
+                        status: 'active',
+                    },
+                });
+
+            service.playRound(10, activeBattle.id);
+
+            expect(gameRunRepository.updateStatus)
+                .not.toHaveBeenCalled();
+        });
+
+        it('throws when the parent game run does not exist or does not belong to the user', () => {
+            const {
+                service,
+                gameRunRepository,
+                battleRepository,
+                battleEngine,
+            } = createService();
+
+            vi.mocked(battleRepository.findByIdForUser)
+                .mockReturnValue(activeBattle);
+
+            vi.mocked(gameRunRepository.findByIdForUser)
+                .mockReturnValue(null);
+
+            expect(() =>
+                service.playRound(10, activeBattle.id),
+            ).toThrow('Game run not found.');
+
+            expect(battleEngine.playRound)
+                .not.toHaveBeenCalled();
+
+            expect(battleRepository.addRound)
+                .not.toHaveBeenCalled();
+
+            expect(battleRepository.updateState)
+                .not.toHaveBeenCalled();
+        });
+
+        it('throws when the parent game run is abandoned', () => {
+            const {
+                service,
+                gameRunRepository,
+                battleRepository,
+                battleEngine,
+            } = createService();
+
+            vi.mocked(battleRepository.findByIdForUser)
+                .mockReturnValue(activeBattle);
+
+            vi.mocked(gameRunRepository.findByIdForUser)
+                .mockReturnValue({
+                    ...gameRun,
+                    status: 'abandoned',
+                    completedAt: '2026-09-20T06:00:00.000Z',
+                });
+
+            expect(() =>
+                service.playRound(10, activeBattle.id),
+            ).toThrow('Game run is not active.');
+
+            expect(gameRunRepository.findByIdForUser)
+                .toHaveBeenCalledWith(
+                    activeBattle.runId,
+                    10,
+                );
+
+            expect(battleEngine.playRound)
+                .not.toHaveBeenCalled();
+
+            expect(battleRepository.addRound)
+                .not.toHaveBeenCalled();
+
+            expect(battleRepository.updateState)
+                .not.toHaveBeenCalled();
+        });
+
+
     });
 });
