@@ -33,6 +33,17 @@ export class BattleService {
             throw new AppError(409, 'Game run is not active.');
         }
 
+        const activeBattle = this.battleRepository.findActiveByRunId(
+            gameRun.id
+        );
+
+        if (activeBattle) {
+            throw new AppError(
+                409,
+                'An active battle already exists for this game run.',
+            );
+        }
+
         const selectedHero = this.heroRepository.findById(
             gameRun.selectedHeroId
         );
@@ -128,23 +139,24 @@ export class BattleService {
         const rounds = this.battleRepository.findRounds(battle.id);
         const roundNumber = rounds.length + 1;
 
-        this.battleRepository.addRound({
-            battleId: battle.id,
-            roundNumber,
-            playerRoll: result.round.playerRoll,
-            enemyRoll: result.round.enemyRoll,
-            playerDamage: result.round.playerDamage,
-            enemyDamage: result.round.enemyDamage,
-            playerHealthAfter: result.round.playerHealthAfter,
-            enemyHealthAfter: result.round.enemyHealthAfter,
-            outcome: this.toRoundOutcome(result.round.status),
-        });
-
-        this.battleRepository.updateState(battle.id, {
-            playerHealth: result.state.player.health,
-            enemyHealth: result.state.enemy.health,
-            status: result.state.status
-        });
+        this.battleRepository.persistRound(
+            {
+                battleId: battle.id,
+                roundNumber,
+                playerRoll: result.round.playerRoll,
+                enemyRoll: result.round.enemyRoll,
+                playerDamage: result.round.playerDamage,
+                enemyDamage: result.round.enemyDamage,
+                playerHealthAfter: result.round.playerHealthAfter,
+                enemyHealthAfter: result.round.enemyHealthAfter,
+                outcome: this.toRoundOutcome(result.round.status),
+            },
+            {
+                playerHealth: result.state.player.health,
+                enemyHealth: result.state.enemy.health,
+                status: result.state.status,
+            }
+        );
 
         return result;
     }

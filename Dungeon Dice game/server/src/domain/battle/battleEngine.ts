@@ -1,9 +1,5 @@
 import { rollDie, type RandomNumberGenerator } from './dice.js';
-import type {
-    BattleRoundResult,
-    BattleState,
-    BattleStatus,
-} from './types.js';
+import type { BattleRoundResult, BattleState, BattleRoundStatus } from './types.js';
 
 export class BattleEngine {
     constructor(
@@ -70,7 +66,7 @@ export class BattleEngine {
         };
     }
 
-    private determineStatus(playerHealth: number, enemyHealth: number): BattleStatus {
+    private determineStatus(playerHealth: number, enemyHealth: number): BattleRoundStatus {
 
         if (playerHealth === 0 && enemyHealth === 0) {
             return 'draw';

@@ -36,7 +36,9 @@ export function createApp(db: Database.Database) {
 
     const gameRunService = new GameRunService(
         gameRunRepository,
-        heroRepository
+        heroRepository,
+        battleRepository,
+        db
     );
 
     const gameRunController = new GameRunController(gameRunService);

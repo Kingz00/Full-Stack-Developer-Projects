@@ -133,6 +133,38 @@ export class BattleRepository {
         return this.toBattleDomain(row);
     }
 
+    findActiveByRunId(runId: number): Battle | null {
+        const row = this.db
+            .prepare(`
+                SELECT
+                    id,
+                    run_id,
+                    hero_id,
+                    player_health,
+                    player_max_health,
+                    enemy_name,
+                    enemy_health,
+                    enemy_max_health,
+                    enemy_attack,
+                    enemy_defense,
+                    status,
+                    started_at,
+                    completed_at
+                FROM battles
+                WHERE run_id = ?
+                AND status = 'active'
+                ORDER BY id DESC
+                LIMIT 1
+            `)
+            .get(runId);
+
+        if (!row) {
+            return null;
+        }
+
+        return this.toBattleDomain(row);
+    }
+
     addRound(input: CreateBattleRoundInput): BattleRound {
         const result = this.db
             .prepare(`
@@ -234,6 +266,42 @@ export class BattleRepository {
             );
 
         return this.findById(id);
+    }
+
+    persistRound(roundInput: CreateBattleRoundInput, stateInput: UpdateBattleStateInput): BattleRound {
+        const transaction = this.db.transaction(() => {
+            const round = this.addRound(roundInput);
+
+            const battle = this.updateState(
+                roundInput.battleId,
+                stateInput
+            );
+
+            if (!battle) {
+                throw new Error('Failed to update battle state.');
+            }
+
+            return round;
+        });
+
+        return transaction();
+    }
+
+    abandonActiveByRunId(runId: number): Battle | null {
+        const activeBattle = this.findActiveByRunId(runId);
+
+        if (!activeBattle) {
+            return null;
+        }
+
+        return this.updateState(
+            activeBattle.id,
+            {
+                playerHealth: activeBattle.playerHealth,
+                enemyHealth: activeBattle.enemyHealth,
+                status: 'abandoned',
+            },
+        );
     }
 
     private toBattleDomain(row: unknown): Battle {
