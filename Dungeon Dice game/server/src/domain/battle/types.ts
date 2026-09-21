@@ -1,6 +1,8 @@
-export type BattleStatus = 'active' | 'won' | 'lost' | 'draw';
+export type BattleStatus = 'active' | 'won' | 'lost' | 'draw' | 'abandoned';
 
 export type RunStatus = 'active' | 'completed' | 'abandoned';
+
+export type BattleRoundStatus = 'active' | 'won' | 'lost' | 'draw';
 
 export interface BattleCombatant {
     health: number;
@@ -22,7 +24,7 @@ export interface RoundResult {
     enemyDamage: number;
     playerHealthAfter: number;
     enemyHealthAfter: number;
-    status: BattleStatus;
+    status: BattleRoundStatus;
 }
 
 export interface BattleRoundResult {

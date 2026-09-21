@@ -106,9 +106,9 @@ describe('BattleService', () => {
         const battleRepository = {
             createBattle: vi.fn(),
             findByIdForUser: vi.fn(),
+            findActiveByRunId: vi.fn(),
             findRounds: vi.fn(),
-            addRound: vi.fn(),
-            updateState: vi.fn(),
+            persistRound: vi.fn()
         } as unknown as BattleRepository;
 
         const battleEngine = {
@@ -156,9 +156,15 @@ describe('BattleService', () => {
             vi.mocked(battleRepository.createBattle)
                 .mockReturnValue(createdBattle);
 
+            vi.mocked(battleRepository.findActiveByRunId)
+                .mockReturnValue(null);
+
             const battle = service.startBattle(10, {
                 runId: 1,
             });
+
+            expect(battleRepository.findActiveByRunId)
+                .toHaveBeenCalledWith(1);
 
             expect(battle).toEqual(createdBattle);
 
@@ -183,6 +189,44 @@ describe('BattleService', () => {
                     enemyAttack: 12,
                     enemyDefense: 4,
                 });
+        });
+
+        it('rejects starting a battle when the game run already has an active battle', () => {
+            const {
+                service,
+                gameRunRepository,
+                battleRepository,
+                heroRepository,
+            } = createService();
+
+            vi.mocked(gameRunRepository.findByIdForUser)
+                .mockReturnValue(gameRun);
+
+            vi.mocked(battleRepository.findActiveByRunId)
+                .mockReturnValue(activeBattle);
+
+            expect(() =>
+                service.startBattle(10, {
+                    runId: 1,
+                }),
+            ).toThrow(
+                expect.objectContaining({
+                    statusCode: 409,
+                    message: 'An active battle already exists for this game run.',
+                }),
+            );
+
+            expect(battleRepository.findActiveByRunId)
+                .toHaveBeenCalledWith(1);
+
+            expect(heroRepository.findById)
+                .not.toHaveBeenCalled();
+
+            expect(heroRepository.findAll)
+                .not.toHaveBeenCalled();
+
+            expect(battleRepository.createBattle)
+                .not.toHaveBeenCalled();
         });
 
         it('does not select the player hero as the enemy', () => {
@@ -391,25 +435,25 @@ describe('BattleService', () => {
             expect(battleRepository.findRounds)
                 .toHaveBeenCalledWith(1);
 
-            expect(battleRepository.addRound)
-                .toHaveBeenCalledWith({
-                    battleId: 1,
-                    roundNumber: 1,
-                    playerRoll: 5,
-                    enemyRoll: 3,
-                    playerDamage: 8,
-                    enemyDamage: 6,
-                    playerHealthAfter: 94,
-                    enemyHealthAfter: 72,
-                    outcome: 'active',
-                });
-
-            expect(battleRepository.updateState)
-                .toHaveBeenCalledWith(1, {
-                    playerHealth: 94,
-                    enemyHealth: 72,
-                    status: 'active',
-                });
+            expect(battleRepository.persistRound)
+                .toHaveBeenCalledWith(
+                    {
+                        battleId: 1,
+                        roundNumber: 1,
+                        playerRoll: 5,
+                        enemyRoll: 3,
+                        playerDamage: 8,
+                        enemyDamage: 6,
+                        playerHealthAfter: 94,
+                        enemyHealthAfter: 72,
+                        outcome: 'active',
+                    },
+                    {
+                        playerHealth: 94,
+                        enemyHealth: 72,
+                        status: 'active',
+                    },
+                );
         });
 
         it('records a win when the player wins the round', () => {
@@ -461,25 +505,25 @@ describe('BattleService', () => {
 
             expect(result.round.status).toBe('won');
 
-            expect(battleRepository.addRound)
-                .toHaveBeenCalledWith({
-                    battleId: 1,
-                    roundNumber: 1,
-                    playerRoll: 6,
-                    enemyRoll: 2,
-                    playerDamage: 12,
-                    enemyDamage: 6,
-                    playerHealthAfter: 94,
-                    enemyHealthAfter: 0,
-                    outcome: 'win',
-                });
-
-            expect(battleRepository.updateState)
-                .toHaveBeenCalledWith(1, {
-                    playerHealth: 94,
-                    enemyHealth: 0,
-                    status: 'won',
-                });
+            expect(battleRepository.persistRound)
+                .toHaveBeenCalledWith(
+                    {
+                        battleId: 1,
+                        roundNumber: 1,
+                        playerRoll: 6,
+                        enemyRoll: 2,
+                        playerDamage: 12,
+                        enemyDamage: 6,
+                        playerHealthAfter: 94,
+                        enemyHealthAfter: 0,
+                        outcome: 'win',
+                    },
+                    {
+                        playerHealth: 94,
+                        enemyHealth: 0,
+                        status: 'won',
+                    },
+                );
         });
 
         it('records a loss when the player loses the round', () => {
@@ -531,25 +575,25 @@ describe('BattleService', () => {
 
             expect(result.round.status).toBe('lost');
 
-            expect(battleRepository.addRound)
-                .toHaveBeenCalledWith({
-                    battleId: 1,
-                    roundNumber: 1,
-                    playerRoll: 2,
-                    enemyRoll: 6,
-                    playerDamage: 8,
-                    enemyDamage: 100,
-                    playerHealthAfter: 0,
-                    enemyHealthAfter: 72,
-                    outcome: 'loss',
-                });
-
-            expect(battleRepository.updateState)
-                .toHaveBeenCalledWith(1, {
-                    playerHealth: 0,
-                    enemyHealth: 72,
-                    status: 'lost',
-                });
+            expect(battleRepository.persistRound)
+                .toHaveBeenCalledWith(
+                    {
+                        battleId: 1,
+                        roundNumber: 1,
+                        playerRoll: 2,
+                        enemyRoll: 6,
+                        playerDamage: 8,
+                        enemyDamage: 100,
+                        playerHealthAfter: 0,
+                        enemyHealthAfter: 72,
+                        outcome: 'loss',
+                    },
+                    {
+                        playerHealth: 0,
+                        enemyHealth: 72,
+                        status: 'lost',
+                    },
+                );
         });
 
         it('records a draw when both combatants reach zero health', () => {
@@ -601,25 +645,25 @@ describe('BattleService', () => {
 
             expect(result.round.status).toBe('draw');
 
-            expect(battleRepository.addRound)
-                .toHaveBeenCalledWith({
-                    battleId: 1,
-                    roundNumber: 1,
-                    playerRoll: 4,
-                    enemyRoll: 4,
-                    playerDamage: 80,
-                    enemyDamage: 100,
-                    playerHealthAfter: 0,
-                    enemyHealthAfter: 0,
-                    outcome: 'draw',
-                });
-
-            expect(battleRepository.updateState)
-                .toHaveBeenCalledWith(1, {
-                    playerHealth: 0,
-                    enemyHealth: 0,
-                    status: 'draw',
-                });
+            expect(battleRepository.persistRound)
+                .toHaveBeenCalledWith(
+                    {
+                        battleId: 1,
+                        roundNumber: 1,
+                        playerRoll: 4,
+                        enemyRoll: 4,
+                        playerDamage: 80,
+                        enemyDamage: 100,
+                        playerHealthAfter: 0,
+                        enemyHealthAfter: 0,
+                        outcome: 'draw',
+                    },
+                    {
+                        playerHealth: 0,
+                        enemyHealth: 0,
+                        status: 'draw',
+                    },
+                );
         });
 
         it('increments the round number for subsequent rounds', () => {
@@ -658,12 +702,13 @@ describe('BattleService', () => {
 
             service.playRound(10, 1);
 
-            expect(battleRepository.addRound)
+            expect(battleRepository.persistRound)
                 .toHaveBeenCalledWith(
                     expect.objectContaining({
                         battleId: 1,
                         roundNumber: 2,
                     }),
+                    expect.any(Object),
                 );
         });
 
@@ -843,10 +888,7 @@ describe('BattleService', () => {
             expect(battleEngine.playRound)
                 .not.toHaveBeenCalled();
 
-            expect(battleRepository.addRound)
-                .not.toHaveBeenCalled();
-
-            expect(battleRepository.updateState)
+            expect(battleRepository.persistRound)
                 .not.toHaveBeenCalled();
         });
 
@@ -881,10 +923,7 @@ describe('BattleService', () => {
             expect(battleEngine.playRound)
                 .not.toHaveBeenCalled();
 
-            expect(battleRepository.addRound)
-                .not.toHaveBeenCalled();
-
-            expect(battleRepository.updateState)
+            expect(battleRepository.persistRound)
                 .not.toHaveBeenCalled();
         });
 

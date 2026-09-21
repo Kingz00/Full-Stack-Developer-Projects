@@ -2,6 +2,8 @@ import type { GameRun } from '../domain/gameRun/types.js';
 import { AppError } from '../errors/AppError.js';
 import { GameRunRepository } from '../repositories/gameRunRepository.js';
 import { HeroRepository } from '../repositories/heroRepository.js';
+import { BattleRepository } from '../repositories/battleRepository.js';
+import type Database from 'better-sqlite3';
 
 export interface CreateGameRunInput {
     selectedHeroId: number;
@@ -11,6 +13,8 @@ export class GameRunService {
     constructor(
         private readonly gameRunRepository: GameRunRepository,
         private readonly heroRepository: HeroRepository,
+        private readonly battleRepository: BattleRepository,
+        private readonly db: Database.Database
     ) { }
 
     createRun(userId: number, input: CreateGameRunInput): GameRun {
@@ -42,16 +46,22 @@ export class GameRunService {
             throw new AppError(409, 'Game run is not active.');
         }
 
-        const updatedGameRun = this.gameRunRepository.updateStatus(
-            runId,
-            'abandoned'
-        );
+        const transaction = this.db.transaction(() => {
+            this.battleRepository.abandonActiveByRunId(runId);
 
-        if (!updatedGameRun) {
-            throw new AppError(404, 'Game run not found.');
-        }
+            const updatedGameRun = this.gameRunRepository.updateStatus(
+                runId,
+                'abandoned'
+            );
 
-        return updatedGameRun;
+            if (!updatedGameRun) {
+                throw new AppError(404, 'Game run not found.');
+            }
+
+            return updatedGameRun;
+        });
+
+        return transaction();
     }
 
     completeRun(userId: number, runId: number): GameRun {

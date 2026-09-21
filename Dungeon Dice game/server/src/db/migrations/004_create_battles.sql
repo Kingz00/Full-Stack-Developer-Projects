@@ -24,7 +24,7 @@ CREATE TABLE battles (
         CHECK (enemy_defense >= 0),
 
     status TEXT NOT NULL DEFAULT 'active'
-        CHECK (status IN ('active', 'won', 'lost', 'draw')),
+        CHECK (status IN ('active', 'won', 'lost', 'draw', 'abandoned')),
 
     started_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     completed_at TEXT,

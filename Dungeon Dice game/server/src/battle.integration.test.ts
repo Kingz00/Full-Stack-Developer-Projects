@@ -65,7 +65,7 @@ describe('battle integration', () => {
             enemy_defense INTEGER NOT NULL
                 CHECK (enemy_defense >= 0),
             status TEXT NOT NULL DEFAULT 'active'
-                CHECK (status IN ('active', 'won', 'lost', 'draw')),
+                CHECK (status IN ('active', 'won', 'lost', 'draw', 'abandoned')),
             started_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
             completed_at TEXT,
 
@@ -483,6 +483,106 @@ describe('battle integration', () => {
         });
     });
 
+    it('rejects starting another battle while the current battle is active', async () => {
+        const agent = request.agent(app);
+
+        await agent
+            .post('/api/auth/register')
+            .send({
+                username: 'active-battle-player',
+                password: 'password123',
+            })
+            .expect(201);
+
+        const heroResult = db.prepare(`
+        INSERT INTO heroes (
+            name,
+            description,
+            image_url,
+            health,
+            attack,
+            defense
+        )
+        VALUES (?, ?, ?, ?, ?, ?)
+        `).run(
+            'Knight',
+            'A balanced warrior.',
+            '/images/knight.png',
+            100,
+            15,
+            8,
+        );
+
+        db.prepare(`
+        INSERT INTO heroes (
+            name,
+            description,
+            image_url,
+            health,
+            attack,
+            defense
+        )
+        VALUES (?, ?, ?, ?, ?, ?)
+        `).run(
+            'Orc',
+            'A powerful enemy.',
+            '/images/orc.png',
+            80,
+            12,
+            4,
+        );
+
+        const runResponse = await agent
+            .post('/api/runs')
+            .send({
+                selectedHeroId: Number(heroResult.lastInsertRowid),
+            })
+            .expect(201);
+
+        const runId = runResponse.body.run.id;
+
+        // Start the first battle.
+        const firstBattleResponse = await agent
+            .post(`/api/runs/${runId}/battles`)
+            .expect(201);
+
+        expect(firstBattleResponse.body.battle).toMatchObject({
+            runId,
+            status: 'active',
+        });
+
+        // The run already has an active battle, so another
+        // battle must not be started.
+        const response = await agent
+            .post(`/api/runs/${runId}/battles`)
+            .expect(409);
+
+        expect(response.body).toEqual({
+            error: 'An active battle already exists for this game run.',
+        });
+
+        const battles = db
+            .prepare(`
+                SELECT id, run_id, status
+                FROM battles
+                WHERE run_id = ?
+                ORDER BY id
+            `)
+            .all(runId) as {
+                id: number;
+                run_id: number;
+                status: string;
+            }[];
+
+        expect(battles).toHaveLength(1);
+
+        expect(battles[0]).toMatchObject({
+            id: firstBattleResponse.body.battle.id,
+            run_id: runId,
+            status: 'active',
+        });
+    });
+
     it('keeps the game run active after a battle ends and allows another battle', async () => {
         const agent = request.agent(app);
 
@@ -724,8 +824,8 @@ describe('battle integration', () => {
             };
 
         expect(battle).toEqual({
-            status: 'active',
-            completed_at: null,
+            status: 'abandoned',
+            completed_at: expect.any(String),
         });
     });
 
