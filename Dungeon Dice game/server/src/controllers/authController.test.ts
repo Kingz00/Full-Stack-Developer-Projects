@@ -145,6 +145,277 @@ describe('AuthController', () => {
             expect(res.status)
                 .not.toHaveBeenCalled();
         });
+
+        it('rejects registration when username is missing', async () => {
+            const {
+                controller,
+                authService,
+                req,
+                res,
+                next,
+            } = createController();
+
+            req.body = {
+                password: 'password123',
+            };
+
+            await controller.register(req, res, next);
+
+            expect(next)
+                .toHaveBeenCalledWith(
+                    expect.objectContaining({
+                        statusCode: 400,
+                    }),
+                );
+
+            expect(authService.register)
+                .not.toHaveBeenCalled();
+
+            expect(res.status)
+                .not.toHaveBeenCalled();
+        });
+
+        it('rejects registration when password is missing', async () => {
+            const {
+                controller,
+                authService,
+                req,
+                res,
+                next,
+            } = createController();
+
+            req.body = {
+                username: 'testuser',
+            };
+
+            await controller.register(req, res, next);
+
+            expect(next)
+                .toHaveBeenCalledWith(
+                    expect.objectContaining({
+                        statusCode: 400,
+                    }),
+                );
+
+            expect(authService.register)
+                .not.toHaveBeenCalled();
+
+            expect(res.status)
+                .not.toHaveBeenCalled();
+        });
+
+        it('rejects registration when username is not a string', async () => {
+            const {
+                controller,
+                authService,
+                req,
+                res,
+                next,
+            } = createController();
+
+            req.body = {
+                username: 123,
+                password: 'password123',
+            };
+
+            await controller.register(req, res, next);
+
+            expect(next)
+                .toHaveBeenCalledWith(
+                    expect.objectContaining({
+                        statusCode: 400,
+                    }),
+                );
+
+            expect(authService.register)
+                .not.toHaveBeenCalled();
+
+            expect(res.status)
+                .not.toHaveBeenCalled();
+        });
+
+        it('rejects registration when password is not a string', async () => {
+            const {
+                controller,
+                authService,
+                req,
+                res,
+                next,
+            } = createController();
+
+            req.body = {
+                username: 'testuser',
+                password: 123,
+            };
+
+            await controller.register(req, res, next);
+
+            expect(next)
+                .toHaveBeenCalledWith(
+                    expect.objectContaining({
+                        statusCode: 400,
+                    }),
+                );
+
+            expect(authService.register)
+                .not.toHaveBeenCalled();
+
+            expect(res.status)
+                .not.toHaveBeenCalled();
+        });
+
+        it('rejects registration when username is empty', async () => {
+            const {
+                controller,
+                authService,
+                req,
+                res,
+                next,
+            } = createController();
+
+            req.body = {
+                username: '',
+                password: 'password123',
+            };
+
+            await controller.register(req, res, next);
+
+            expect(next)
+                .toHaveBeenCalledWith(
+                    expect.objectContaining({
+                        statusCode: 400,
+                    }),
+                );
+
+            expect(authService.register)
+                .not.toHaveBeenCalled();
+
+            expect(res.status)
+                .not.toHaveBeenCalled();
+        });
+
+        it('rejects registration when username contains only whitespace', async () => {
+            const {
+                controller,
+                authService,
+                req,
+                res,
+                next,
+            } = createController();
+
+            req.body = {
+                username: '   ',
+                password: 'password123',
+            };
+
+            await controller.register(req, res, next);
+
+            expect(next)
+                .toHaveBeenCalledWith(
+                    expect.objectContaining({
+                        statusCode: 400,
+                    }),
+                );
+
+            expect(authService.register)
+                .not.toHaveBeenCalled();
+
+            expect(res.status)
+                .not.toHaveBeenCalled();
+        });
+
+        it('rejects registration when username contains invalid characters', async () => {
+            const {
+                controller,
+                authService,
+                req,
+                res,
+                next,
+            } = createController();
+
+            req.body = {
+                username: 'test user!',
+                password: 'password123',
+            };
+
+            await controller.register(req, res, next);
+
+            expect(next)
+                .toHaveBeenCalledWith(
+                    expect.objectContaining({
+                        statusCode: 400,
+                    }),
+                );
+
+            expect(authService.register)
+                .not.toHaveBeenCalled();
+
+            expect(res.status)
+                .not.toHaveBeenCalled();
+        });
+
+        it('rejects registration when username is longer than 20 characters', async () => {
+            const {
+                controller,
+                authService,
+                req,
+                res,
+                next,
+            } = createController();
+
+            req.body = {
+                username: 'thisusernameiswaytoolong',
+                password: 'password123',
+            };
+
+            await controller.register(req, res, next);
+
+            expect(next)
+                .toHaveBeenCalledWith(
+                    expect.objectContaining({
+                        statusCode: 400,
+                    }),
+                );
+
+            expect(authService.register)
+                .not.toHaveBeenCalled();
+
+            expect(res.status)
+                .not.toHaveBeenCalled();
+        });
+
+        it('trims the username before registering without modifying the password', async () => {
+            const {
+                controller,
+                authService,
+                sessionService,
+                req,
+                res,
+                next,
+            } = createController();
+
+            req.body = {
+                username: '  testuser  ',
+                password: ' password123 ',
+            };
+
+            vi.mocked(authService.register)
+                .mockResolvedValue(user);
+
+            vi.mocked(sessionService.create)
+                .mockResolvedValue();
+
+            await controller.register(req, res, next);
+
+            expect(authService.register)
+                .toHaveBeenCalledWith({
+                    username: 'testuser',
+                    password: ' password123 ',
+                });
+
+            expect(next)
+                .not.toHaveBeenCalled();
+        });
     });
 
     describe('login', () => {
@@ -221,6 +492,217 @@ describe('AuthController', () => {
                 .toHaveBeenCalledWith(error);
 
             expect(res.status)
+                .not.toHaveBeenCalled();
+        });
+
+        it('rejects login when username is missing', async () => {
+            const {
+                controller,
+                authService,
+                req,
+                res,
+                next,
+            } = createController();
+
+            req.body = {
+                password: 'password123',
+            };
+
+            await controller.login(req, res, next);
+
+            expect(next)
+                .toHaveBeenCalledWith(
+                    expect.objectContaining({
+                        statusCode: 400,
+                    }),
+                );
+
+            expect(authService.login)
+                .not.toHaveBeenCalled();
+
+            expect(res.status)
+                .not.toHaveBeenCalled();
+        });
+
+        it('rejects login when password is missing', async () => {
+            const {
+                controller,
+                authService,
+                req,
+                res,
+                next,
+            } = createController();
+
+            req.body = {
+                username: 'testuser',
+            };
+
+            await controller.login(req, res, next);
+
+            expect(next)
+                .toHaveBeenCalledWith(
+                    expect.objectContaining({
+                        statusCode: 400,
+                    }),
+                );
+
+            expect(authService.login)
+                .not.toHaveBeenCalled();
+
+            expect(res.status)
+                .not.toHaveBeenCalled();
+        });
+
+        it('rejects login when username is not a string', async () => {
+            const {
+                controller,
+                authService,
+                req,
+                res,
+                next,
+            } = createController();
+
+            req.body = {
+                username: 123,
+                password: 'password123',
+            };
+
+            await controller.login(req, res, next);
+
+            expect(next)
+                .toHaveBeenCalledWith(
+                    expect.objectContaining({
+                        statusCode: 400,
+                    }),
+                );
+
+            expect(authService.login)
+                .not.toHaveBeenCalled();
+
+            expect(res.status)
+                .not.toHaveBeenCalled();
+        });
+
+        it('rejects login when password is not a string', async () => {
+            const {
+                controller,
+                authService,
+                req,
+                res,
+                next,
+            } = createController();
+
+            req.body = {
+                username: 'testuser',
+                password: 123,
+            };
+
+            await controller.login(req, res, next);
+
+            expect(next)
+                .toHaveBeenCalledWith(
+                    expect.objectContaining({
+                        statusCode: 400,
+                    }),
+                );
+
+            expect(authService.login)
+                .not.toHaveBeenCalled();
+
+            expect(res.status)
+                .not.toHaveBeenCalled();
+        });
+
+        it('rejects login when username is empty', async () => {
+            const {
+                controller,
+                authService,
+                req,
+                res,
+                next,
+            } = createController();
+
+            req.body = {
+                username: '',
+                password: 'password123',
+            };
+
+            await controller.login(req, res, next);
+
+            expect(next)
+                .toHaveBeenCalledWith(
+                    expect.objectContaining({
+                        statusCode: 400,
+                    }),
+                );
+
+            expect(authService.login)
+                .not.toHaveBeenCalled();
+
+            expect(res.status)
+                .not.toHaveBeenCalled();
+        });
+
+        it('rejects login when username contains only whitespace', async () => {
+            const {
+                controller,
+                authService,
+                req,
+                res,
+                next,
+            } = createController();
+
+            req.body = {
+                username: '   ',
+                password: 'password123',
+            };
+
+            await controller.login(req, res, next);
+
+            expect(next)
+                .toHaveBeenCalledWith(
+                    expect.objectContaining({
+                        statusCode: 400,
+                    }),
+                );
+
+            expect(authService.login)
+                .not.toHaveBeenCalled();
+
+            expect(res.status)
+                .not.toHaveBeenCalled();
+        });
+
+        it('trims the username before logging in without modifying the password', async () => {
+            const {
+                controller,
+                authService,
+                sessionService,
+                req,
+                res,
+                next,
+            } = createController();
+
+            req.body = {
+                username: '  testuser  ',
+                password: ' password123 ',
+            };
+
+            vi.mocked(authService.login)
+                .mockResolvedValue(user);
+
+            vi.mocked(sessionService.create)
+                .mockResolvedValue();
+
+            await controller.login(req, res, next);
+
+            expect(authService.login)
+                .toHaveBeenCalledWith({
+                    username: 'testuser',
+                    password: ' password123 ',
+                });
+
+            expect(next)
                 .not.toHaveBeenCalled();
         });
     });

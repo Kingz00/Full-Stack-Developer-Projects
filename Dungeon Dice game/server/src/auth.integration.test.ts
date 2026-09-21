@@ -415,4 +415,275 @@ describe('Authentication API', () => {
             error: 'Username already exists.',
         });
     });
+
+    it('rejects registration when username is missing', async () => {
+        const response = await request(app)
+            .post('/api/auth/register')
+            .send({
+                password: 'password123',
+            });
+
+        expect(response.status).toBe(400);
+
+        expect(response.body).toEqual({
+            error: 'Username and password are required.',
+        });
+    });
+
+    it('rejects registration when password is missing', async () => {
+        const response = await request(app)
+            .post('/api/auth/register')
+            .send({
+                username: 'testuser',
+            });
+
+        expect(response.status).toBe(400);
+
+        expect(response.body).toEqual({
+            error: 'Username and password are required.',
+        });
+    });
+
+    it('rejects registration when username is empty', async () => {
+        const response = await request(app)
+            .post('/api/auth/register')
+            .send({
+                username: '',
+                password: 'password123',
+            });
+
+        expect(response.status).toBe(400);
+
+        expect(response.body).toEqual({
+            error: 'Username and password are required.'
+        });
+    });
+
+    it('rejects registration when username contains only whitespace', async () => {
+        const response = await request(app)
+            .post('/api/auth/register')
+            .send({
+                username: '   ',
+                password: 'password123',
+            });
+
+        expect(response.status).toBe(400);
+
+        expect(response.body).toEqual({
+            error: 'Username and password are required.'
+        });
+    });
+
+    it('rejects registration when username contains invalid characters', async () => {
+        const response = await request(app)
+            .post('/api/auth/register')
+            .send({
+                username: 'test.user',
+                password: 'password123',
+            });
+
+        expect(response.status).toBe(400);
+
+        expect(response.body).toEqual({
+            error: 'Username must be 1–20 characters, using letters, numbers, _ or -.',
+        });
+    });
+
+    it('rejects registration when username is longer than 20 characters', async () => {
+        const response = await request(app)
+            .post('/api/auth/register')
+            .send({
+                username: 'thisusernameiswaytoolong',
+                password: 'password123',
+            });
+
+        expect(response.status).toBe(400);
+
+        expect(response.body).toEqual({
+            error: 'Username must be 1–20 characters, using letters, numbers, _ or -.',
+        });
+    });
+
+    it('trims whitespace from the username during registration', async () => {
+        const response = await request(app)
+            .post('/api/auth/register')
+            .send({
+                username: '  testuser  ',
+                password: 'password123',
+            });
+
+        expect(response.status).toBe(201);
+
+        expect(response.body).toMatchObject({
+            user: {
+                username: 'testuser',
+            },
+        });
+
+        const user = db
+            .prepare(`
+                SELECT username
+                FROM users
+                WHERE id = ?
+            `)
+            .get(response.body.user.id) as {
+                username: string;
+            };
+
+        expect(user.username).toBe('testuser');
+    });
+
+    it('rejects login when username is missing', async () => {
+        const response = await request(app)
+            .post('/api/auth/login')
+            .send({
+                password: 'password123',
+            });
+
+        expect(response.status).toBe(400);
+
+        expect(response.body).toEqual({
+            error: 'Username and password are required.',
+        });
+    });
+
+    it('rejects login when password is missing', async () => {
+        const response = await request(app)
+            .post('/api/auth/login')
+            .send({
+                username: 'testuser',
+            });
+
+        expect(response.status).toBe(400);
+
+        expect(response.body).toEqual({
+            error: 'Username and password are required.',
+        });
+    });
+
+    it('rejects login when username is empty', async () => {
+        const response = await request(app)
+            .post('/api/auth/login')
+            .send({
+                username: '',
+                password: 'password123',
+            });
+
+        expect(response.status).toBe(400);
+
+        expect(response.body).toEqual({
+            error: 'Username and password are required.'
+        });
+    });
+
+    it('rejects login when username contains only whitespace', async () => {
+        const response = await request(app)
+            .post('/api/auth/login')
+            .send({
+                username: '   ',
+                password: 'password123',
+            });
+
+        expect(response.status).toBe(400);
+
+        expect(response.body).toEqual({
+            error: 'Username and password are required.'
+        });
+    });
+
+    it('trims whitespace from the username during login', async () => {
+        await request(app)
+            .post('/api/auth/register')
+            .send({
+                username: 'testuser',
+                password: 'password123',
+            })
+            .expect(201);
+
+        const response = await request(app)
+            .post('/api/auth/login')
+            .send({
+                username: '  testuser  ',
+                password: 'password123',
+            });
+
+        expect(response.status).toBe(200);
+
+        expect(response.body).toMatchObject({
+            user: {
+                username: 'testuser',
+            },
+        });
+    });
+
+    it('keeps authentication sessions isolated between clients', async () => {
+        const firstAgent = request.agent(app);
+        const secondAgent = request.agent(app);
+
+        await firstAgent
+            .post('/api/auth/register')
+            .send({
+                username: 'firstuser',
+                password: 'password123',
+            })
+            .expect(201);
+
+        await secondAgent
+            .post('/api/auth/register')
+            .send({
+                username: 'seconduser',
+                password: 'password123',
+            })
+            .expect(201);
+
+        const firstMe = await firstAgent
+            .get('/api/auth/me');
+
+        expect(firstMe.status).toBe(200);
+        expect(firstMe.body.user.username).toBe('firstuser');
+
+        const secondMe = await secondAgent
+            .get('/api/auth/me');
+
+        expect(secondMe.status).toBe(200);
+        expect(secondMe.body.user.username).toBe('seconduser');
+    });
+
+    it('logs out one client without affecting another authenticated session', async () => {
+        const firstAgent = request.agent(app);
+        const secondAgent = request.agent(app);
+
+        await firstAgent
+            .post('/api/auth/register')
+            .send({
+                username: 'firstuser',
+                password: 'password123',
+            })
+            .expect(201);
+
+        await secondAgent
+            .post('/api/auth/register')
+            .send({
+                username: 'seconduser',
+                password: 'password123',
+            })
+            .expect(201);
+
+        await firstAgent
+            .post('/api/auth/logout')
+            .expect(204);
+
+        const firstMe = await firstAgent
+            .get('/api/auth/me');
+
+        expect(firstMe.status).toBe(401);
+
+        const secondMe = await secondAgent
+            .get('/api/auth/me');
+
+        expect(secondMe.status).toBe(200);
+
+        expect(secondMe.body.user.username)
+            .toBe('seconduser');
+    });
 });
