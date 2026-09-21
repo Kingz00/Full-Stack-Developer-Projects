@@ -316,7 +316,7 @@ describe('Game Run integration', () => {
         await agent
             .post('/api/auth/register')
             .send({
-                username: 'invalid-run-id-player',
+                username: 'invalid-runId-player',
                 password: 'password123',
             })
             .expect(201);

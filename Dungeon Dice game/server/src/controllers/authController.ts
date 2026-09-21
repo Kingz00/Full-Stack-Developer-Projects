@@ -92,7 +92,9 @@ export class AuthController {
 
         if (
             typeof username !== 'string' ||
-            typeof password !== 'string'
+            typeof password !== 'string' ||
+            username.trim() === '' ||
+            password === ''
         ) {
             throw new AppError(
                 400,
@@ -100,9 +102,22 @@ export class AuthController {
             );
         }
 
+        const normalizedUsername = username.trim();
+        const regex = /^[A-Za-z0-9_-]+$/
+
+        if (
+            normalizedUsername.length > 20 ||
+            !regex.test(normalizedUsername)
+        ) {
+            throw new AppError(
+                400,
+                'Username must be 1–20 characters, using letters, numbers, _ or -.',
+            );
+        }
+
         return {
-            username,
-            password,
+            username: normalizedUsername,
+            password
         };
     }
 }

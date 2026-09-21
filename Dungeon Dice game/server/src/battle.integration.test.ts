@@ -489,7 +489,7 @@ describe('battle integration', () => {
         await agent
             .post('/api/auth/register')
             .send({
-                username: 'continuous-run-player',
+                username: 'continuous-player',
                 password: 'password123',
             })
             .expect(201);
@@ -735,7 +735,7 @@ describe('battle integration', () => {
         await agent
             .post('/api/auth/register')
             .send({
-                username: 'reset-start-battle-player',
+                username: 'reset-battle-player',
                 password: 'password123',
             })
             .expect(201);
