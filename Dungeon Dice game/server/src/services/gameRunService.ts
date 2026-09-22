@@ -26,6 +26,15 @@ export class GameRunService {
             throw new AppError(404, 'Selected hero not found.');
         }
 
+        const activeRun = this.gameRunRepository.findActiveByUserId(userId);
+
+        if (activeRun) {
+            throw new AppError(
+                409,
+                'An active game run already exists.',
+            );
+        }
+
         return this.gameRunRepository.create({
             userId,
             selectedHeroId: hero.id
@@ -78,15 +87,21 @@ export class GameRunService {
             throw new AppError(409, 'Game run is not active.');
         }
 
-        const updatedGameRun = this.gameRunRepository.updateStatus(
-            runId,
-            'completed'
-        );
+        const transaction = this.db.transaction(() => {
+            this.battleRepository.abandonActiveByRunId(runId);
 
-        if (!updatedGameRun) {
-            throw new AppError(404, 'Game run not found.');
-        }
+            const updatedGameRun = this.gameRunRepository.updateStatus(
+                runId,
+                'completed'
+            );
 
-        return updatedGameRun;
+            if (!updatedGameRun) {
+                throw new AppError(404, 'Game run not found.');
+            }
+
+            return updatedGameRun;
+        });
+
+        return transaction();
     }
 }

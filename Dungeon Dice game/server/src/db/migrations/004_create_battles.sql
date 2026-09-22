@@ -39,3 +39,7 @@ CREATE TABLE battles (
 
 CREATE INDEX idx_battles_run_id
 ON battles(run_id);
+
+CREATE UNIQUE INDEX idx_battles_one_active_per_run
+ON battles(run_id)
+WHERE status = 'active';

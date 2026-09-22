@@ -15,10 +15,14 @@ describe('SessionService', () => {
 
         const regeneratedSession = {
             userId: undefined,
+            runId: 42,
             save: vi.fn((callback) => {
                 callback(null);
             }),
-        } as unknown as Session & { userId?: number };
+        } as unknown as Session & {
+            userId?: number;
+            runId?: number;
+        };
 
         const req = {
             session: originalSession
@@ -30,6 +34,7 @@ describe('SessionService', () => {
 
         expect(originalSession.regenerate).toHaveBeenCalledOnce();
         expect(regeneratedSession.userId).toBe(123);
+        expect(regeneratedSession.runId).toBeUndefined();
         expect(regeneratedSession.save).toHaveBeenCalledOnce();
     });
 

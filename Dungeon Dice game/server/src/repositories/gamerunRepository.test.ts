@@ -159,6 +159,53 @@ describe('GameRunRepository', () => {
         ).toBeNull();
     });
 
+    it('finds the active game run for a user', () => {
+        const createdGameRun = repository.create({
+            userId: 1,
+            selectedHeroId: 1,
+        });
+
+        expect(
+            repository.findActiveByUserId(1),
+        ).toEqual(createdGameRun);
+    });
+
+    it('returns null when a user has no active game run', () => {
+        const createdGameRun = repository.create({
+            userId: 1,
+            selectedHeroId: 1,
+        });
+
+        repository.updateStatus(
+            createdGameRun.id,
+            'completed',
+        );
+
+        expect(
+            repository.findActiveByUserId(1),
+        ).toBeNull();
+    });
+
+    it('does not return another user\'s active game run', () => {
+        const userOneRun = repository.create({
+            userId: 1,
+            selectedHeroId: 1,
+        });
+
+        const userTwoRun = repository.create({
+            userId: 2,
+            selectedHeroId: 1,
+        });
+
+        expect(
+            repository.findActiveByUserId(1),
+        ).toEqual(userOneRun);
+
+        expect(
+            repository.findActiveByUserId(2),
+        ).toEqual(userTwoRun);
+    });
+
     it('marks an active game run as completed', () => {
         const createdGameRun = repository.create({
             userId: 1,
@@ -195,6 +242,64 @@ describe('GameRunRepository', () => {
         });
 
         expect(gameRun?.completedAt).toBeTruthy();
+    });
+
+    it('returns null when updating a completed game run', () => {
+        const createdGameRun = repository.create({
+            userId: 1,
+            selectedHeroId: 1,
+        });
+
+        const completedGameRun = repository.updateStatus(
+            createdGameRun.id,
+            'completed',
+        );
+
+        expect(completedGameRun?.status).toBe('completed');
+
+        expect(
+            repository.updateStatus(
+                createdGameRun.id,
+                'abandoned',
+            ),
+        ).toBeNull();
+
+        const persistedRun = repository.findById(
+            createdGameRun.id,
+        );
+
+        expect(persistedRun).toMatchObject({
+            status: 'completed',
+        });
+    });
+
+    it('returns null when updating an abandoned game run', () => {
+        const createdGameRun = repository.create({
+            userId: 1,
+            selectedHeroId: 1,
+        });
+
+        const abandonedGameRun = repository.updateStatus(
+            createdGameRun.id,
+            'abandoned',
+        );
+
+        expect(abandonedGameRun?.status).toBe('abandoned');
+
+        expect(
+            repository.updateStatus(
+                createdGameRun.id,
+                'completed',
+            ),
+        ).toBeNull();
+
+        const persistedRun = repository.findById(
+            createdGameRun.id,
+        );
+
+        expect(persistedRun).toMatchObject({
+            status: 'abandoned',
+        });
     });
 
     it('returns null when updating a nonexistent game run', () => {

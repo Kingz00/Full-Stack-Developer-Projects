@@ -86,6 +86,13 @@ describe('BattleRepository', () => {
                     REFERENCES heroes(id)
             );
 
+            CREATE INDEX idx_battles_run_id
+                ON battles(run_id);
+
+            CREATE UNIQUE INDEX idx_battles_one_active_per_run
+                ON battles(run_id)
+                WHERE status = 'active';
+
             CREATE TABLE battle_rounds (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 battle_id INTEGER NOT NULL,
@@ -544,6 +551,66 @@ describe('BattleRepository', () => {
             });
     });
 
+    it('rolls back the battle state when inserting the round fails', () => {
+        const battle = repository.createBattle({
+            runId: 1,
+            heroId: 1,
+            playerHealth: 100,
+            playerMaxHealth: 100,
+            enemyName: 'Goblin',
+            enemyHealth: 50,
+            enemyMaxHealth: 50,
+            enemyAttack: 8,
+            enemyDefense: 3,
+        });
+
+        repository.addRound({
+            battleId: battle.id,
+            roundNumber: 1,
+            playerRoll: 8,
+            enemyRoll: 5,
+            playerDamage: 3,
+            enemyDamage: 0,
+            playerHealthAfter: 100,
+            enemyHealthAfter: 47,
+            outcome: 'active',
+        });
+
+        expect(() =>
+            repository.persistRound(
+                {
+                    battleId: battle.id,
+                    roundNumber: 1,
+                    playerRoll: 9,
+                    enemyRoll: 4,
+                    playerDamage: 4,
+                    enemyDamage: 0,
+                    playerHealthAfter: 100,
+                    enemyHealthAfter: 0,
+                    outcome: 'win',
+                },
+                {
+                    playerHealth: 100,
+                    enemyHealth: 0,
+                    status: 'won',
+                },
+            ),
+        ).toThrow(
+            /UNIQUE constraint failed: battle_rounds\.battle_id, battle_rounds\.round_number/,
+        );
+
+        expect(repository.findRounds(battle.id))
+            .toHaveLength(1);
+
+        expect(repository.findById(battle.id))
+            .toMatchObject({
+                playerHealth: 100,
+                enemyHealth: 50,
+                status: 'active',
+                completedAt: null,
+            });
+    });
+
     it('finds the active battle for a game run', () => {
         const battle = repository.createBattle({
             runId: 1,
@@ -595,6 +662,120 @@ describe('BattleRepository', () => {
         expect(
             repository.findActiveByRunId(battle.runId),
         ).toBeNull();
+    });
+
+    it('rejects a second active battle for the same game run', () => {
+        repository.createBattle({
+            runId: 1,
+            heroId: 1,
+            playerHealth: 100,
+            playerMaxHealth: 100,
+            enemyName: 'Goblin',
+            enemyHealth: 50,
+            enemyMaxHealth: 50,
+            enemyAttack: 8,
+            enemyDefense: 3,
+        });
+
+        expect(() =>
+            repository.createBattle({
+                runId: 1,
+                heroId: 1,
+                playerHealth: 100,
+                playerMaxHealth: 100,
+                enemyName: 'Orc',
+                enemyHealth: 60,
+                enemyMaxHealth: 60,
+                enemyAttack: 10,
+                enemyDefense: 4,
+            }),
+        ).toThrow(
+            /UNIQUE constraint failed: battles\.run_id/,
+        );
+    });
+
+    it('allows a new active battle after the previous battle is completed', () => {
+        const firstBattle = repository.createBattle({
+            runId: 1,
+            heroId: 1,
+            playerHealth: 100,
+            playerMaxHealth: 100,
+            enemyName: 'Goblin',
+            enemyHealth: 50,
+            enemyMaxHealth: 50,
+            enemyAttack: 8,
+            enemyDefense: 3,
+        });
+
+        const completedBattle = repository.updateState(
+            firstBattle.id,
+            {
+                playerHealth: 100,
+                enemyHealth: 0,
+                status: 'won',
+            },
+        );
+
+        expect(completedBattle?.status).toBe('won');
+
+        const secondBattle = repository.createBattle({
+            runId: 1,
+            heroId: 1,
+            playerHealth: 100,
+            playerMaxHealth: 100,
+            enemyName: 'Orc',
+            enemyHealth: 60,
+            enemyMaxHealth: 60,
+            enemyAttack: 10,
+            enemyDefense: 4,
+        });
+
+        expect(secondBattle).toMatchObject({
+            runId: 1,
+            status: 'active',
+        });
+    });
+
+    it('allows a new active battle after the previous battle is abandoned', () => {
+        const firstBattle = repository.createBattle({
+            runId: 1,
+            heroId: 1,
+            playerHealth: 100,
+            playerMaxHealth: 100,
+            enemyName: 'Goblin',
+            enemyHealth: 50,
+            enemyMaxHealth: 50,
+            enemyAttack: 8,
+            enemyDefense: 3,
+        });
+
+        const abandonedBattle = repository.updateState(
+            firstBattle.id,
+            {
+                playerHealth: firstBattle.playerHealth,
+                enemyHealth: firstBattle.enemyHealth,
+                status: 'abandoned',
+            },
+        );
+
+        expect(abandonedBattle?.status).toBe('abandoned');
+
+        const secondBattle = repository.createBattle({
+            runId: 1,
+            heroId: 1,
+            playerHealth: 100,
+            playerMaxHealth: 100,
+            enemyName: 'Orc',
+            enemyHealth: 60,
+            enemyMaxHealth: 60,
+            enemyAttack: 10,
+            enemyDefense: 4,
+        });
+
+        expect(secondBattle).toMatchObject({
+            runId: 1,
+            status: 'active',
+        });
     });
 
     it('persists an abandoned battle and excludes it from active battles', () => {
@@ -701,4 +882,282 @@ describe('BattleRepository', () => {
             enemyHealth: 0,
         });
     });
+
+    it('rejects round persistence for an abandoned battle', () => {
+        const battle = repository.createBattle({
+            runId: 1,
+            heroId: 1,
+            playerHealth: 100,
+            playerMaxHealth: 100,
+            enemyName: 'Goblin',
+            enemyHealth: 50,
+            enemyMaxHealth: 50,
+            enemyAttack: 8,
+            enemyDefense: 3,
+        });
+
+        repository.updateState(
+            battle.id,
+            {
+                playerHealth: 100,
+                enemyHealth: 50,
+                status: 'abandoned',
+            },
+        );
+
+        expect(() =>
+            repository.persistRound(
+                {
+                    battleId: battle.id,
+                    roundNumber: 1,
+                    playerRoll: 8,
+                    enemyRoll: 5,
+                    playerDamage: 3,
+                    enemyDamage: 0,
+                    playerHealthAfter: 100,
+                    enemyHealthAfter: 50,
+                    outcome: 'active',
+                },
+                {
+                    playerHealth: 100,
+                    enemyHealth: 50,
+                    status: 'active',
+                },
+            ),
+        ).toThrow(
+            'Cannot persist a round for an inactive battle or run.',
+        );
+
+        expect(repository.findRounds(battle.id))
+            .toHaveLength(0);
+    });
+
+    it('rejects round persistence for a terminal battle', () => {
+        const battle = repository.createBattle({
+            runId: 1,
+            heroId: 1,
+            playerHealth: 100,
+            playerMaxHealth: 100,
+            enemyName: 'Goblin',
+            enemyHealth: 50,
+            enemyMaxHealth: 50,
+            enemyAttack: 8,
+            enemyDefense: 3,
+        });
+
+        repository.updateState(
+            battle.id,
+            {
+                playerHealth: 100,
+                enemyHealth: 0,
+                status: 'won',
+            },
+        );
+
+        expect(() =>
+            repository.persistRound(
+                {
+                    battleId: battle.id,
+                    roundNumber: 1,
+                    playerRoll: 8,
+                    enemyRoll: 5,
+                    playerDamage: 3,
+                    enemyDamage: 0,
+                    playerHealthAfter: 100,
+                    enemyHealthAfter: 0,
+                    outcome: 'win',
+                },
+                {
+                    playerHealth: 100,
+                    enemyHealth: 0,
+                    status: 'won',
+                },
+            ),
+        ).toThrow(
+            'Cannot persist a round for an inactive battle or run.',
+        );
+
+        expect(repository.findRounds(battle.id))
+            .toHaveLength(0);
+    });
+
+    it('rejects round persistence when the parent game run is completed', () => {
+        const battle = repository.createBattle({
+            runId: 1,
+            heroId: 1,
+            playerHealth: 100,
+            playerMaxHealth: 100,
+            enemyName: 'Goblin',
+            enemyHealth: 50,
+            enemyMaxHealth: 50,
+            enemyAttack: 8,
+            enemyDefense: 3,
+        });
+
+        db.prepare(`
+            UPDATE game_runs
+            SET status = 'completed',
+                completed_at = CURRENT_TIMESTAMP
+            WHERE id = ?
+        `).run(1);
+
+        expect(() =>
+            repository.persistRound(
+                {
+                    battleId: battle.id,
+                    roundNumber: 1,
+                    playerRoll: 8,
+                    enemyRoll: 5,
+                    playerDamage: 3,
+                    enemyDamage: 0,
+                    playerHealthAfter: 100,
+                    enemyHealthAfter: 47,
+                    outcome: 'active',
+                },
+                {
+                    playerHealth: 100,
+                    enemyHealth: 47,
+                    status: 'active',
+                },
+            ),
+        ).toThrow(
+            'Cannot persist a round for an inactive battle or run.',
+        );
+
+        expect(repository.findRounds(battle.id))
+            .toHaveLength(0);
+
+        expect(repository.findById(battle.id))
+            .toMatchObject({
+                playerHealth: 100,
+                enemyHealth: 50,
+                status: 'active',
+                completedAt: null,
+            });
+    });
+
+    it('rejects round persistence when the parent game run is abandoned', () => {
+        const battle = repository.createBattle({
+            runId: 1,
+            heroId: 1,
+            playerHealth: 100,
+            playerMaxHealth: 100,
+            enemyName: 'Goblin',
+            enemyHealth: 50,
+            enemyMaxHealth: 50,
+            enemyAttack: 8,
+            enemyDefense: 3,
+        });
+
+        db.prepare(`
+            UPDATE game_runs
+            SET status = 'abandoned',
+                completed_at = CURRENT_TIMESTAMP
+            WHERE id = ?
+        `).run(1);
+
+        expect(() =>
+            repository.persistRound(
+                {
+                    battleId: battle.id,
+                    roundNumber: 1,
+                    playerRoll: 8,
+                    enemyRoll: 5,
+                    playerDamage: 3,
+                    enemyDamage: 0,
+                    playerHealthAfter: 100,
+                    enemyHealthAfter: 47,
+                    outcome: 'active',
+                },
+                {
+                    playerHealth: 100,
+                    enemyHealth: 47,
+                    status: 'active',
+                },
+            ),
+        ).toThrow(
+            'Cannot persist a round for an inactive battle or run.',
+        );
+
+        expect(repository.findRounds(battle.id))
+            .toHaveLength(0);
+
+        expect(repository.findById(battle.id))
+            .toMatchObject({
+                playerHealth: 100,
+                enemyHealth: 50,
+                status: 'active',
+                completedAt: null,
+            });
+    });
+
+    describe('update state test', () => {
+        it.each([
+            ['won', 'active'],
+            ['won', 'lost'],
+            ['won', 'draw'],
+            ['won', 'abandoned'],
+            ['lost', 'active'],
+            ['lost', 'won'],
+            ['lost', 'draw'],
+            ['lost', 'abandoned'],
+            ['draw', 'active'],
+            ['draw', 'won'],
+            ['draw', 'lost'],
+            ['draw', 'abandoned'],
+            ['abandoned', 'active'],
+            ['abandoned', 'won'],
+            ['abandoned', 'lost'],
+            ['abandoned', 'draw'],
+        ] as const)(
+            'rejects %s → %s after a battle reaches a terminal state',
+            (initialStatus, attemptedStatus) => {
+                const battle = repository.createBattle({
+                    runId: 1,
+                    heroId: 1,
+                    playerHealth: 100,
+                    playerMaxHealth: 100,
+                    enemyName: 'Goblin',
+                    enemyHealth: 50,
+                    enemyMaxHealth: 50,
+                    enemyAttack: 8,
+                    enemyDefense: 3,
+                });
+
+                const terminalBattle = repository.updateState(
+                    battle.id,
+                    {
+                        playerHealth: initialStatus === 'lost' ? 0 : 100,
+                        enemyHealth: initialStatus === 'won' ? 0 : 50,
+                        status: initialStatus,
+                    },
+                );
+
+                expect(terminalBattle?.status)
+                    .toBe(initialStatus);
+
+                const completedAt = terminalBattle?.completedAt;
+
+                const result = repository.updateState(
+                    battle.id,
+                    {
+                        playerHealth: 100,
+                        enemyHealth: 50,
+                        status: attemptedStatus,
+                    },
+                );
+
+                expect(result).toBeNull();
+
+                const unchangedBattle =
+                    repository.findById(battle.id);
+
+                expect(unchangedBattle?.status)
+                    .toBe(initialStatus);
+
+                expect(unchangedBattle?.completedAt)
+                    .toBe(completedAt);
+            },
+        );
+    })
 });

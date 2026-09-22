@@ -93,6 +93,10 @@ describe('Game Run integration', () => {
 
             CREATE INDEX idx_battles_run_id
                 ON battles(run_id);
+
+            CREATE UNIQUE INDEX idx_battles_one_active_per_run
+                ON battles(run_id)
+                WHERE status = 'active';
         `);
 
         app = createApp(db);
@@ -193,6 +197,80 @@ describe('Game Run integration', () => {
         }
     });
 
+    it('rejects creating a second active game run for the same user', async () => {
+        const agent = request.agent(app);
+
+        await agent
+            .post('/api/auth/register')
+            .send({
+                username: 'duplicate-active-run',
+                password: 'password123',
+            })
+            .expect(201);
+
+        const heroResult = db
+            .prepare(`
+                INSERT INTO heroes (
+                    name,
+                    description,
+                    image_url,
+                    health,
+                    attack,
+                    defense
+                )
+                VALUES (?, ?, ?, ?, ?, ?)
+            `)
+            .run(
+                'Duplicate Run Knight',
+                'A hero used for duplicate active run testing.',
+                '/images/duplicate-run-knight.png',
+                100,
+                15,
+                8
+            );
+
+        const heroId = Number(heroResult.lastInsertRowid);
+
+        const firstRunResponse = await agent
+            .post('/api/runs')
+            .send({
+                selectedHeroId: heroId,
+            })
+            .expect(201);
+
+        const firstRunId = firstRunResponse.body.run.id;
+
+        const secondRunResponse = await agent
+            .post('/api/runs')
+            .send({
+                selectedHeroId: heroId,
+            })
+            .expect(409);
+
+        expect(secondRunResponse.body).toEqual({
+            error: 'An active game run already exists.',
+        });
+
+        const activeRuns = db
+            .prepare(`
+                SELECT id, status
+                FROM game_runs
+                WHERE user_id = ?
+                AND status = 'active'
+            `)
+            .all(firstRunResponse.body.run.userId) as {
+                id: number;
+                status: string;
+            }[];
+
+        expect(activeRuns).toHaveLength(1);
+
+        expect(activeRuns[0]).toEqual({
+            id: firstRunId,
+            status: 'active'
+        });
+    });
+
     it('returns 404 when the selected hero does not exist', async () => {
         const agent = request.agent(app);
 
@@ -250,16 +328,16 @@ describe('Game Run integration', () => {
 
         const heroResult = db
             .prepare(`
-            INSERT INTO heroes (
-                name,
-                description,
-                image_url,
-                health,
-                attack,
-                defense
-            )
-            VALUES (?, ?, ?, ?, ?, ?)
-        `)
+                INSERT INTO heroes (
+                    name,
+                    description,
+                    image_url,
+                    health,
+                    attack,
+                    defense
+                )
+                VALUES (?, ?, ?, ?, ?, ?)
+            `)
             .run(
                 'Reset Knight',
                 'A hero used for reset testing.',
@@ -295,15 +373,15 @@ describe('Game Run integration', () => {
 
         const run = db
             .prepare(`
-            SELECT
-                id,
-                user_id,
-                selected_hero_id,
-                status,
-                completed_at
-            FROM game_runs
-            WHERE id = ?
-        `)
+                SELECT
+                    id,
+                    user_id,
+                    selected_hero_id,
+                    status,
+                    completed_at
+                FROM game_runs
+                WHERE id = ?
+            `)
             .get(runId) as {
                 id: number;
                 user_id: number;
@@ -370,5 +448,572 @@ describe('Game Run integration', () => {
         expect(response.body).toEqual({
             error: 'A valid game run ID is required.',
         });
+    });
+
+    it('does not allow one user to reset another user\'s game run', async () => {
+        const playerOne = request.agent(app);
+        const playerTwo = request.agent(app);
+
+        await playerOne
+            .post('/api/auth/register')
+            .send({
+                username: 'run-owner',
+                password: 'password123',
+            })
+            .expect(201);
+
+        await playerTwo
+            .post('/api/auth/register')
+            .send({
+                username: 'run-attacker',
+                password: 'password123',
+            })
+            .expect(201);
+
+        const heroResult = db
+            .prepare(`
+                INSERT INTO heroes (
+                    name,
+                    description,
+                    image_url,
+                    health,
+                    attack,
+                    defense
+                )
+                VALUES (?, ?, ?, ?, ?, ?)
+            `)
+            .run(
+                'Ownership Knight',
+                'A hero used for ownership testing.',
+                '/images/ownership-knight.png',
+                100,
+                15,
+                8,
+            );
+
+        const heroId = Number(heroResult.lastInsertRowid);
+
+        const runResponse = await playerOne
+            .post('/api/runs')
+            .send({
+                selectedHeroId: heroId,
+            })
+            .expect(201);
+
+        const runId = runResponse.body.run.id;
+
+        const response = await playerTwo
+            .post(`/api/runs/${runId}/reset`)
+            .expect(404);
+
+        expect(response.body).toEqual({
+            error: 'Game run not found.',
+        });
+
+        const run = db
+            .prepare(`
+                SELECT status, completed_at
+                FROM game_runs
+                WHERE id = ?
+            `)
+            .get(runId) as {
+                status: string;
+                completed_at: string | null;
+            };
+
+        expect(run).toEqual({
+            status: 'active',
+            completed_at: null,
+        });
+    });
+
+    describe('game run lifecycle integrity', () => {
+
+        it('abandons the active battle when resetting an active game run', async () => {
+            const agent = request.agent(app);
+
+            await agent
+                .post('/api/auth/register')
+                .send({
+                    username: 'stage17-reset-player',
+                    password: 'password123',
+                })
+                .expect(201);
+
+            const heroResult = db
+                .prepare(`
+                INSERT INTO heroes (
+                    name,
+                    description,
+                    image_url,
+                    health,
+                    attack,
+                    defense
+                )
+                VALUES (?, ?, ?, ?, ?, ?)
+                `)
+                .run(
+                    'Stage 17 Reset Knight',
+                    'A hero used for Stage 17 reset testing.',
+                    '/images/stage17-reset-knight.png',
+                    100,
+                    15,
+                    8
+                );
+
+            const heroId = Number(heroResult.lastInsertRowid);
+
+            const runResponse = await agent
+                .post('/api/runs')
+                .send({
+                    selectedHeroId: heroId,
+                })
+                .expect(201);
+
+            const runId = runResponse.body.run.id;
+
+            const battleResult = db
+                .prepare(`
+                    INSERT INTO battles (
+                        run_id,
+                        hero_id,
+                        player_health,
+                        player_max_health,
+                        enemy_name,
+                        enemy_health,
+                        enemy_max_health,
+                        enemy_attack,
+                        enemy_defense
+                    )
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                `)
+                .run(
+                    runId,
+                    heroId,
+                    100,
+                    100,
+                    'Goblin',
+                    50,
+                    50,
+                    8,
+                    3
+                );
+
+            const battleId = Number(battleResult.lastInsertRowid);
+
+            const resetResponse = await agent
+                .post(`/api/runs/${runId}/reset`)
+                .expect(200);
+
+            expect(resetResponse.body.run).toMatchObject({
+                id: runId,
+                status: 'abandoned',
+            });
+
+            const battle = db
+                .prepare(`
+                    SELECT
+                        id,
+                        run_id,
+                        status,
+                        completed_at
+                    FROM battles
+                    WHERE id = ?
+                `)
+                .get(battleId) as {
+                    id: number;
+                    run_id: number;
+                    status: string;
+                    completed_at: string | null;
+                };
+
+            expect(battle).toMatchObject({
+                id: battleId,
+                run_id: runId,
+                status: 'abandoned',
+            });
+
+            expect(battle.completed_at)
+                .toEqual(expect.any(String));
+        });
+
+        it('completes the run and abandons its active battle when the user logs out', async () => {
+            const agent = request.agent(app);
+
+            await agent
+                .post('/api/auth/register')
+                .send({
+                    username: 'complete-player',
+                    password: 'password123',
+                })
+                .expect(201);
+
+            const heroResult = db
+                .prepare(`
+                    INSERT INTO heroes (
+                        name,
+                        description,
+                        image_url,
+                        health,
+                        attack,
+                        defense
+                    )
+                    VALUES (?, ?, ?, ?, ?, ?)
+                `)
+                .run(
+                    'Stage 17 Complete Knight',
+                    'A hero used for Stage 17 completion testing.',
+                    '/images/stage17-complete-knight.png',
+                    100,
+                    15,
+                    8,
+                );
+
+            const heroId = Number(heroResult.lastInsertRowid);
+
+            const runResponse = await agent
+                .post('/api/runs')
+                .send({
+                    selectedHeroId: heroId,
+                })
+                .expect(201);
+
+            const runId = runResponse.body.run.id;
+
+            const battleResult = db
+                .prepare(`
+                    INSERT INTO battles (
+                        run_id,
+                        hero_id,
+                        player_health,
+                        player_max_health,
+                        enemy_name,
+                        enemy_health,
+                        enemy_max_health,
+                        enemy_attack,
+                        enemy_defense
+                    )
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                `)
+                .run(
+                    runId,
+                    heroId,
+                    100,
+                    100,
+                    'Goblin',
+                    50,
+                    50,
+                    8,
+                    3,
+                );
+
+            const battleId = Number(battleResult.lastInsertRowid);
+
+            await agent
+                .post('/api/auth/logout')
+                .expect(204);
+
+            const run = db
+                .prepare(`
+                    SELECT
+                        id,
+                        status,
+                        completed_at
+                    FROM game_runs
+                    WHERE id = ?
+                `)
+                .get(runId) as {
+                    id: number;
+                    status: string;
+                    completed_at: string | null;
+                };
+
+            expect(run).toMatchObject({
+                id: runId,
+                status: 'completed',
+            });
+
+            expect(run.completed_at)
+                .toEqual(expect.any(String));
+
+            const battle = db
+                .prepare(`
+                    SELECT
+                        id,
+                        run_id,
+                        status,
+                        completed_at
+                    FROM battles
+                    WHERE id = ?
+                `)
+                .get(battleId) as {
+                    id: number;
+                    run_id: number;
+                    status: string;
+                    completed_at: string | null;
+                };
+
+            expect(battle).toMatchObject({
+                id: battleId,
+                run_id: runId,
+                status: 'abandoned',
+            });
+
+            expect(battle.completed_at)
+                .toEqual(expect.any(String));
+        });
+
+        it('clears the session run after resetting so a new run can be created', async () => {
+            const agent = request.agent(app);
+
+            await agent
+                .post('/api/auth/register')
+                .send({
+                    username: 'reset-session-player',
+                    password: 'password123',
+                })
+                .expect(201);
+
+            const heroResult = db
+                .prepare(`
+                    INSERT INTO heroes (
+                        name,
+                        description,
+                        image_url,
+                        health,
+                        attack,
+                        defense
+                    )
+                    VALUES (?, ?, ?, ?, ?, ?)
+                `)
+                .run(
+                    'Reset Session Knight',
+                    'A hero used for session reset testing.',
+                    '/images/reset-session-knight.png',
+                    100,
+                    15,
+                    8,
+                );
+
+            const heroId = Number(heroResult.lastInsertRowid);
+
+            const firstRunResponse = await agent
+                .post('/api/runs')
+                .send({
+                    selectedHeroId: heroId,
+                })
+                .expect(201);
+
+            const firstRunId = firstRunResponse.body.run.id;
+
+            await agent
+                .post(`/api/runs/${firstRunId}/reset`)
+                .expect(200);
+
+            const secondRunResponse = await agent
+                .post('/api/runs')
+                .send({
+                    selectedHeroId: heroId,
+                })
+                .expect(201);
+
+            const secondRunId = secondRunResponse.body.run.id;
+
+            expect(secondRunId).not.toBe(firstRunId);
+
+            const runs = db
+                .prepare(`
+                    SELECT
+                        id,
+                        status
+                    FROM game_runs
+                    WHERE id IN (?, ?)
+                    ORDER BY id
+                `)
+                .all(firstRunId, secondRunId) as {
+                    id: number;
+                    status: string;
+                }[];
+
+            expect(runs).toEqual([
+                {
+                    id: firstRunId,
+                    status: 'abandoned',
+                },
+                {
+                    id: secondRunId,
+                    status: 'active',
+                },
+            ]);
+        });
+
+        it('allows a new run after logout and login', async () => {
+            const agent = request.agent(app);
+
+            await agent
+                .post('/api/auth/register')
+                .send({
+                    username: 'new-run-after-login',
+                    password: 'password123',
+                })
+                .expect(201);
+
+            const heroResult = db
+                .prepare(`
+                    INSERT INTO heroes (
+                        name,
+                        description,
+                        image_url,
+                        health,
+                        attack,
+                        defense
+                    )
+                    VALUES (?, ?, ?, ?, ?, ?)
+                `)
+                .run(
+                    'Login Lifecycle Knight',
+                    'A hero used for login lifecycle testing.',
+                    '/images/login-lifecycle-knight.png',
+                    100,
+                    15,
+                    8,
+                );
+
+            const heroId = Number(heroResult.lastInsertRowid);
+
+            const firstRunResponse = await agent
+                .post('/api/runs')
+                .send({
+                    selectedHeroId: heroId,
+                })
+                .expect(201);
+
+            const firstRunId = firstRunResponse.body.run.id;
+
+            await agent
+                .post('/api/auth/logout')
+                .expect(204);
+
+            await agent
+                .post('/api/auth/login')
+                .send({
+                    username: 'new-run-after-login',
+                    password: 'password123',
+                })
+                .expect(200);
+
+            const secondRunResponse = await agent
+                .post('/api/runs')
+                .send({
+                    selectedHeroId: heroId,
+                })
+                .expect(201);
+
+            const secondRunId = secondRunResponse.body.run.id;
+
+            expect(secondRunId).not.toBe(firstRunId);
+
+            const runs = db
+                .prepare(`
+                    SELECT
+                        id,
+                        status
+                    FROM game_runs
+                    WHERE id IN (?, ?)
+                    ORDER BY id
+                `)
+                .all(firstRunId, secondRunId) as {
+                    id: number;
+                    status: string;
+                }[];
+
+            expect(runs).toEqual([
+                {
+                    id: firstRunId,
+                    status: 'completed',
+                },
+                {
+                    id: secondRunId,
+                    status: 'active',
+                },
+            ]);
+        });
+
+        it('rejects resetting a completed game run', async () => {
+            const agent = request.agent(app);
+
+            await agent
+                .post('/api/auth/register')
+                .send({
+                    username: 'completed-run-reset',
+                    password: 'password123',
+                })
+                .expect(201);
+
+            const heroResult = db
+                .prepare(`
+                    INSERT INTO heroes (
+                        name,
+                        description,
+                        image_url,
+                        health,
+                        attack,
+                        defense
+                    )
+                    VALUES (?, ?, ?, ?, ?, ?)
+                `)
+                .run(
+                    'Completed Reset Knight',
+                    'A hero used for completed run testing.',
+                    '/images/completed-reset-knight.png',
+                    100,
+                    15,
+                    8,
+                );
+
+            const runResponse = await agent
+                .post('/api/runs')
+                .send({
+                    selectedHeroId: Number(heroResult.lastInsertRowid),
+                })
+                .expect(201);
+
+            const runId = runResponse.body.run.id;
+
+            await agent
+                .post('/api/auth/logout')
+                .expect(204);
+
+            await agent
+                .post('/api/auth/login')
+                .send({
+                    username: 'completed-run-reset',
+                    password: 'password123',
+                })
+                .expect(200);
+
+            const response = await agent
+                .post(`/api/runs/${runId}/reset`)
+                .expect(409);
+
+            expect(response.body).toEqual({
+                error: 'Game run is not active.',
+            });
+
+            const run = db
+                .prepare(`
+                    SELECT status, completed_at
+                    FROM game_runs
+                    WHERE id = ?
+                `)
+                .get(runId) as {
+                    status: string;
+                    completed_at: string | null;
+                };
+
+            expect(run.status).toBe('completed');
+            expect(run.completed_at).toEqual(expect.any(String));
+        });
+
     });
 });

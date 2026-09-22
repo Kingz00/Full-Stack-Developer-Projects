@@ -11,6 +11,7 @@ export class SessionService {
                 }
 
                 req.session.userId = userId;
+                delete req.session.runId;
 
                 req.session.save((saveError) => {
                     if (saveError) {

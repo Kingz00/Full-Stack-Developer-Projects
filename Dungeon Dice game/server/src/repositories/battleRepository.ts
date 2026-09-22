@@ -244,7 +244,7 @@ export class BattleRepository {
     }
 
     updateState(id: number, input: UpdateBattleStateInput): Battle | null {
-        this.db
+        const result = this.db
             .prepare(`
                 UPDATE battles
                 SET
@@ -256,6 +256,13 @@ export class BattleRepository {
                         ELSE CURRENT_TIMESTAMP
                     END
                 WHERE id = ?
+                AND status = 'active'
+                AND EXISTS (
+                    SELECT 1
+                    FROM game_runs
+                    WHERE game_runs.id = battles.run_id
+                    AND game_runs.status = 'active'
+                )
             `)
             .run(
                 input.playerHealth,
@@ -265,23 +272,27 @@ export class BattleRepository {
                 id
             );
 
+        if (result.changes !== 1) {
+            return null;
+        }
+
         return this.findById(id);
     }
 
     persistRound(roundInput: CreateBattleRoundInput, stateInput: UpdateBattleStateInput): BattleRound {
         const transaction = this.db.transaction(() => {
-            const round = this.addRound(roundInput);
-
             const battle = this.updateState(
                 roundInput.battleId,
                 stateInput
             );
 
             if (!battle) {
-                throw new Error('Failed to update battle state.');
+                throw new Error(
+                    'Cannot persist a round for an inactive battle or run.'
+                );
             }
 
-            return round;
+            return this.addRound(roundInput);
         });
 
         return transaction();

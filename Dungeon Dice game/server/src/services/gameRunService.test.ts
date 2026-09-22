@@ -82,15 +82,7 @@ describe('GameRunService', () => {
                 CHECK (enemy_defense >= 0),
 
             status TEXT NOT NULL DEFAULT 'active'
-                CHECK (
-                    status IN (
-                        'active',
-                        'won',
-                        'lost',
-                        'draw',
-                        'abandoned'
-                    )
-                ),
+                CHECK (status IN ( 'active', 'won', 'lost', 'draw', 'abandoned')),
 
             started_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
             completed_at TEXT,
@@ -105,6 +97,10 @@ describe('GameRunService', () => {
 
         CREATE INDEX idx_battles_run_id
             ON battles(run_id);
+
+        CREATE UNIQUE INDEX idx_battles_one_active_per_run
+            ON battles(run_id)
+            WHERE status = 'active';
 
         CREATE TABLE battle_rounds (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -175,6 +171,7 @@ describe('GameRunService', () => {
         const gameRunRepository = {
             create: vi.fn(),
             findByIdForUser: vi.fn(),
+            findActiveByUserId: vi.fn(),
             updateStatus: vi.fn(),
         } as unknown as GameRunRepository;
 
@@ -231,6 +228,9 @@ describe('GameRunService', () => {
             vi.mocked(heroRepository.findById)
                 .mockReturnValue(selectedHero);
 
+            vi.mocked(gameRunRepository.findActiveByUserId)
+                .mockReturnValue(null);
+
             vi.mocked(gameRunRepository.create)
                 .mockReturnValue(createdGameRun);
 
@@ -265,6 +265,29 @@ describe('GameRunService', () => {
                     selectedHeroId: 999,
                 }),
             ).toThrow('Selected hero not found.');
+
+            expect(gameRunRepository.create)
+                .not.toHaveBeenCalled();
+        });
+
+        it('throws when the user already has an active game run', () => {
+            const {
+                service,
+                gameRunRepository,
+                heroRepository,
+            } = createService();
+
+            vi.mocked(heroRepository.findById)
+                .mockReturnValue(selectedHero);
+
+            vi.mocked(gameRunRepository.findActiveByUserId)
+                .mockReturnValue(createdGameRun);
+
+            expect(() =>
+                service.createRun(10, {
+                    selectedHeroId: 1,
+                }),
+            ).toThrow('An active game run already exists.');
 
             expect(gameRunRepository.create)
                 .not.toHaveBeenCalled();
@@ -620,10 +643,11 @@ describe('GameRunService', () => {
     });
 
     describe('completeRun', () => {
-        it('completes an active game run belonging to the user', () => {
+        it('completes an active game run and abandons its active battle', () => {
             const {
                 service,
                 gameRunRepository,
+                battleRepository,
             } = createService();
 
             const completedGameRun: GameRun = {
@@ -635,6 +659,9 @@ describe('GameRunService', () => {
             vi.mocked(gameRunRepository.findByIdForUser)
                 .mockReturnValue(createdGameRun);
 
+            vi.mocked(battleRepository.abandonActiveByRunId)
+                .mockReturnValue(null);
+
             vi.mocked(gameRunRepository.updateStatus)
                 .mockReturnValue(completedGameRun);
 
@@ -644,6 +671,42 @@ describe('GameRunService', () => {
 
             expect(gameRunRepository.findByIdForUser)
                 .toHaveBeenCalledWith(1, 10);
+
+            expect(battleRepository.abandonActiveByRunId)
+                .toHaveBeenCalledWith(1);
+
+            expect(gameRunRepository.updateStatus)
+                .toHaveBeenCalledWith(1, 'completed');
+        });
+
+        it('completes the game run when there is no active battle', () => {
+            const {
+                service,
+                gameRunRepository,
+                battleRepository,
+            } = createService();
+
+            const completedGameRun: GameRun = {
+                ...createdGameRun,
+                status: 'completed',
+                completedAt: '2026-09-20 05:00:00',
+            };
+
+            vi.mocked(gameRunRepository.findByIdForUser)
+                .mockReturnValue(createdGameRun);
+
+            vi.mocked(battleRepository.abandonActiveByRunId)
+                .mockReturnValue(null);
+
+            vi.mocked(gameRunRepository.updateStatus)
+                .mockReturnValue(completedGameRun);
+
+            const gameRun = service.completeRun(10, 1);
+
+            expect(gameRun).toEqual(completedGameRun);
+
+            expect(battleRepository.abandonActiveByRunId)
+                .toHaveBeenCalledWith(1);
 
             expect(gameRunRepository.updateStatus)
                 .toHaveBeenCalledWith(1, 'completed');
@@ -706,6 +769,224 @@ describe('GameRunService', () => {
 
             expect(gameRunRepository.updateStatus)
                 .not.toHaveBeenCalled();
+        });
+
+        it('persists completion of both the active battle and game run', () => {
+            const {
+                service,
+                gameRunRepository,
+                battleRepository,
+            } = createPersistenceService();
+
+            db.prepare(`
+            INSERT INTO users (
+                username,
+                password_hash
+            )
+            VALUES (?, ?)
+            `).run('testuser', 'hash');
+
+            db.prepare(`
+            INSERT INTO heroes (
+                name,
+                description,
+                image_url,
+                health,
+                attack,
+                defense
+            )
+            VALUES (?, ?, ?, ?, ?, ?)
+            `)
+                .run(
+                    'Warrior',
+                    'A strong warrior.',
+                    'warrior.png',
+                    100,
+                    15,
+                    8,
+                );
+
+            const gameRun = gameRunRepository.create({
+                userId: 1,
+                selectedHeroId: 1,
+            });
+
+            const battle = battleRepository.createBattle({
+                runId: gameRun.id,
+                heroId: 1,
+                playerHealth: 100,
+                playerMaxHealth: 100,
+                enemyName: 'Goblin',
+                enemyHealth: 50,
+                enemyMaxHealth: 50,
+                enemyAttack: 8,
+                enemyDefense: 3,
+            });
+
+            const result = service.completeRun(
+                1,
+                gameRun.id,
+            );
+
+            expect(result.status).toBe('completed');
+            expect(result.completedAt).toBeTruthy();
+
+            const persistedRun = gameRunRepository.findById(
+                gameRun.id,
+            );
+
+            expect(persistedRun?.status)
+                .toBe('completed');
+
+            expect(persistedRun?.completedAt)
+                .toBeTruthy();
+
+            const persistedBattle = db
+                .prepare(`
+                    SELECT
+                        status,
+                        player_health,
+                        enemy_health,
+                        completed_at
+                    FROM battles
+                    WHERE id = ?
+                `)
+                .get(battle.id) as {
+                    status: string;
+                    player_health: number;
+                    enemy_health: number;
+                    completed_at: string | null;
+                };
+
+            expect(persistedBattle).toMatchObject({
+                status: 'abandoned',
+                player_health: 100,
+                enemy_health: 50,
+            });
+
+            expect(persistedBattle.completed_at)
+                .toBeTruthy();
+
+            expect(
+                battleRepository.findActiveByRunId(
+                    gameRun.id,
+                ),
+            ).toBeNull();
+        });
+
+        it('rolls back battle abandonment when game run completion fails', () => {
+            const {
+                service,
+                gameRunRepository,
+                battleRepository,
+            } = createPersistenceService();
+
+            db.prepare(`
+                INSERT INTO users (
+                    username,
+                    password_hash
+                )
+                VALUES (?, ?)
+            `).run('testuser', 'hash');
+
+            db.prepare(`
+                INSERT INTO heroes (
+                    name,
+                    description,
+                    image_url,
+                    health,
+                    attack,
+                    defense
+                )
+                VALUES (?, ?, ?, ?, ?, ?)
+            `)
+                .run(
+                    'Warrior',
+                    'A strong warrior.',
+                    'warrior.png',
+                    100,
+                    15,
+                    8,
+                );
+
+            const gameRun = gameRunRepository.create({
+                userId: 1,
+                selectedHeroId: 1,
+            });
+
+            const battle = battleRepository.createBattle({
+                runId: gameRun.id,
+                heroId: 1,
+                playerHealth: 100,
+                playerMaxHealth: 100,
+                enemyName: 'Goblin',
+                enemyHealth: 50,
+                enemyMaxHealth: 50,
+                enemyAttack: 8,
+                enemyDefense: 3,
+            });
+
+            vi.spyOn(
+                gameRunRepository,
+                'updateStatus',
+            ).mockImplementation(() => {
+                throw new Error('Simulated persistence failure');
+            });
+
+            expect(() =>
+                service.completeRun(1, gameRun.id),
+            ).toThrow('Simulated persistence failure');
+
+            const persistedRun = db
+                .prepare(`
+                    SELECT
+                        status,
+                        completed_at
+                    FROM game_runs
+                    WHERE id = ?
+                `)
+                .get(gameRun.id) as {
+                    status: string;
+                    completed_at: string | null;
+                };
+
+            expect(persistedRun).toEqual({
+                status: 'active',
+                completed_at: null,
+            });
+
+            const persistedBattle = db
+                .prepare(`
+                    SELECT
+                        status,
+                        completed_at,
+                        player_health,
+                        enemy_health
+                    FROM battles
+                    WHERE id = ?
+                `)
+                .get(battle.id) as {
+                    status: string;
+                    completed_at: string | null;
+                    player_health: number;
+                    enemy_health: number;
+                };
+
+            expect(persistedBattle).toEqual({
+                status: 'active',
+                completed_at: null,
+                player_health: 100,
+                enemy_health: 50,
+            });
+
+            expect(
+                battleRepository.findActiveByRunId(
+                    gameRun.id,
+                ),
+            ).toMatchObject({
+                id: battle.id,
+                status: 'active',
+            });
         });
     })
 });

@@ -291,6 +291,97 @@ describe('battle integration', () => {
         });
     });
 
+    it('does not allow one user to create a battle on another user\'s game run', async () => {
+        const playerOne = request.agent(app);
+        const playerTwo = request.agent(app);
+
+        await playerOne
+            .post('/api/auth/register')
+            .send({
+                username: 'battle-run-owner',
+                password: 'password123',
+            })
+            .expect(201);
+
+        await playerTwo
+            .post('/api/auth/register')
+            .send({
+                username: 'battle-run-attacker',
+                password: 'password123',
+            })
+            .expect(201);
+
+        const heroResult = db
+            .prepare(`
+                INSERT INTO heroes (
+                    name,
+                    description,
+                    image_url,
+                    health,
+                    attack,
+                    defense
+                )
+                VALUES (?, ?, ?, ?, ?, ?)
+            `)
+            .run(
+                'Battle Ownership Knight',
+                'A hero used for battle ownership testing.',
+                '/images/battle-ownership-knight.png',
+                100,
+                15,
+                8,
+            );
+
+        const heroId = Number(heroResult.lastInsertRowid);
+
+        db.prepare(`
+            INSERT INTO heroes (
+                name,
+                description,
+                image_url,
+                health,
+                attack,
+                defense
+            )
+            VALUES (?, ?, ?, ?, ?, ?)
+        `)
+            .run(
+                'Battle Ownership Orc',
+                'An enemy used for battle ownership testing.',
+                '/images/battle-ownership-orc.png',
+                80,
+                12,
+                4,
+            );
+
+        const runResponse = await playerOne
+            .post('/api/runs')
+            .send({
+                selectedHeroId: heroId,
+            })
+            .expect(201);
+
+        const runId = runResponse.body.run.id;
+
+        const response = await playerTwo
+            .post(`/api/runs/${runId}/battles`)
+            .expect(404);
+
+        expect(response.body).toEqual({
+            error: 'Game run not found.',
+        });
+
+        const battles = db
+            .prepare(`
+            SELECT id
+            FROM battles
+            WHERE run_id = ?
+        `)
+            .all(runId);
+
+        expect(battles).toHaveLength(0);
+    });
+
     it('plays a round for an authenticated user', async () => {
         const agent = request.agent(app);
 
@@ -907,5 +998,246 @@ describe('battle integration', () => {
             };
 
         expect(battles.count).toBe(0);
+    });
+
+    it('rejects another round after a battle is completed', async () => {
+        const agent = request.agent(app);
+
+        await agent
+            .post('/api/auth/register')
+            .send({
+                username: 'completed-battle',
+                password: 'password123',
+            })
+            .expect(201);
+
+        const heroResult = db.prepare(`
+                INSERT INTO heroes (
+                    name,
+                    description,
+                    image_url,
+                    health,
+                    attack,
+                    defense
+                )
+                VALUES (?, ?, ?, ?, ?, ?)
+            `)
+            .run(
+                'Completed Battle Knight',
+                'A hero used for completed battle testing.',
+                '/images/completed-battle-knight.png',
+                100,
+                15,
+                8,
+            );
+
+        db.prepare(`
+                INSERT INTO heroes (
+                    name,
+                    description,
+                    image_url,
+                    health,
+                    attack,
+                    defense
+                )
+                VALUES (?, ?, ?, ?, ?, ?)
+            `)
+            .run(
+                'Completed Battle Orc',
+                'An enemy used for completed battle testing.',
+                '/images/completed-battle-orc.png',
+                80,
+                12,
+                4,
+            );
+
+        const runResponse = await agent
+            .post('/api/runs')
+            .send({
+                selectedHeroId: Number(heroResult.lastInsertRowid),
+            })
+            .expect(201);
+
+        const runId = runResponse.body.run.id;
+
+        const battleResponse = await agent
+            .post(`/api/runs/${runId}/battles`)
+            .expect(201);
+
+        const battleId = battleResponse.body.battle.id;
+
+        db.prepare(`
+            UPDATE battles
+            SET
+                status = 'won',
+                completed_at = CURRENT_TIMESTAMP
+            WHERE id = ?
+        `).run(battleId);
+
+        const beforeRound = db
+            .prepare(`
+                SELECT
+                    status,
+                    completed_at
+                FROM battles
+                WHERE id = ?
+            `)
+            .get(battleId) as {
+                status: string;
+                completed_at: string;
+            };
+
+        const roundCountBefore = db
+            .prepare(`
+                SELECT COUNT(*) AS count
+                FROM battle_rounds
+                WHERE battle_id = ?
+            `)
+            .get(battleId) as {
+                count: number;
+            };
+
+        const response = await agent
+            .post(`/api/battles/${battleId}/rounds`)
+            .expect(409);
+
+        expect(response.body).toEqual({
+            error: 'Battle is already complete.',
+        });
+
+        const afterRound = db
+            .prepare(`
+                SELECT
+                    status,
+                    completed_at
+                FROM battles
+                WHERE id = ?
+            `)
+            .get(battleId) as {
+                status: string;
+                completed_at: string;
+            };
+
+        const roundCountAfter = db
+            .prepare(`
+                SELECT COUNT(*) AS count
+                FROM battle_rounds
+                WHERE battle_id = ?
+            `)
+            .get(battleId) as {
+                count: number;
+            };
+
+        expect(afterRound).toEqual(beforeRound);
+        expect(roundCountAfter.count).toBe(roundCountBefore.count);
+    });
+
+    it('rejects another round after a battle is abandoned', async () => {
+        const agent = request.agent(app);
+
+        await agent
+            .post('/api/auth/register')
+            .send({
+                username: 'abandoned-battle',
+                password: 'password123',
+            })
+            .expect(201);
+
+        const heroResult = db.prepare(`
+                INSERT INTO heroes (
+                    name,
+                    description,
+                    image_url,
+                    health,
+                    attack,
+                    defense
+                )
+                VALUES (?, ?, ?, ?, ?, ?)
+            `)
+            .run(
+                'Abandoned Battle Knight',
+                'A hero used for abandoned battle testing.',
+                '/images/abandoned-battle-knight.png',
+                100,
+                15,
+                8,
+            );
+
+        db.prepare(`
+                INSERT INTO heroes (
+                    name,
+                    description,
+                    image_url,
+                    health,
+                    attack,
+                    defense
+                )
+                VALUES (?, ?, ?, ?, ?, ?)
+            `)
+            .run(
+                'Abandoned Battle Orc',
+                'An enemy used for abandoned battle testing.',
+                '/images/abandoned-battle-orc.png',
+                80,
+                12,
+                4,
+            );
+
+        const runResponse = await agent
+            .post('/api/runs')
+            .send({
+                selectedHeroId: Number(heroResult.lastInsertRowid),
+            })
+            .expect(201);
+
+        const runId = runResponse.body.run.id;
+
+        const battleResponse = await agent
+            .post(`/api/runs/${runId}/battles`)
+            .expect(201);
+
+        const battleId = battleResponse.body.battle.id;
+
+        await agent
+            .post(`/api/runs/${runId}/reset`)
+            .expect(200);
+
+        const response = await agent
+            .post(`/api/battles/${battleId}/rounds`)
+            .expect(409);
+
+        expect(response.body).toEqual({
+            error: 'Game run is not active.',
+        });
+
+        const battle = db
+            .prepare(`
+                SELECT
+                    status,
+                    completed_at
+                FROM battles
+                WHERE id = ?
+            `)
+            .get(battleId) as {
+                status: string;
+                completed_at: string | null;
+            };
+
+        expect(battle).toEqual({
+            status: 'abandoned',
+            completed_at: expect.any(String),
+        });
+
+        const roundCount = db
+            .prepare(`
+                SELECT COUNT(*) AS count
+                FROM battle_rounds
+                WHERE battle_id = ?
+            `)
+            .get(battleId) as {
+                count: number;
+            };
+
+        expect(roundCount.count).toBe(0);
     });
 });
