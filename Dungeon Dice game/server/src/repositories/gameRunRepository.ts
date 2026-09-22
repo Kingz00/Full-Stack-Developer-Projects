@@ -64,19 +64,53 @@ export class GameRunRepository {
         return this.toDomain(row);
     }
 
-    updateStatus(id: number, status: RunStatus): GameRun | null {
-        this.db
+    findActiveByUserId(userId: number): GameRun | null {
+        const row = this.db
             .prepare(`
-            UPDATE game_runs
-            SET
-            status = ?,
-            completed_at = CASE
-                WHEN ? = 'active' THEN NULL
-                ELSE CURRENT_TIMESTAMP
-            END
-            WHERE id = ?
-        `)
-            .run(status, status, id);
+                SELECT
+                    id,
+                    user_id,
+                    selected_hero_id,
+                    status,
+                    started_at,
+                    completed_at
+                FROM game_runs
+                WHERE user_id = ?
+                AND status = 'active'
+                ORDER BY id DESC
+                LIMIT 1
+            `)
+            .get(userId);
+
+        if (!row) {
+            return null;
+        }
+
+        return this.toDomain(row);
+    }
+
+    updateStatus(id: number, status: RunStatus): GameRun | null {
+        const result = this.db
+            .prepare(`
+                UPDATE game_runs
+                SET
+                    status = ?,
+                    completed_at = CASE
+                        WHEN ? = 'active' THEN NULL
+                        ELSE CURRENT_TIMESTAMP
+                    END
+                WHERE id = ?
+                AND status = 'active'
+            `)
+            .run(
+                status,
+                status,
+                id
+            );
+
+        if (result.changes !== 1) {
+            return null;
+        }
 
         return this.findById(id);
     }
