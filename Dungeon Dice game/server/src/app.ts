@@ -22,6 +22,11 @@ import { BattleEngine } from './domain/battle/battleEngine.js';
 import { BattleService } from './services/battleService.js';
 import { createBattleRoutes } from './routes/battleRoutes.js';
 
+import { PlayerStatsController } from './controllers/playerStatsController.js';
+import { PlayerStatsRepository } from './repositories/playerStatsRepository.js';
+import { createPlayerStatsRoutes } from './routes/playerStatsRoutes.js';
+import { PlayerStatsService } from './services/playerStatsService.js';
+
 export function createApp(db: Database.Database) {
     const app = express();
 
@@ -67,10 +72,18 @@ export function createApp(db: Database.Database) {
 
     const battleController = new BattleController(battleService);
 
+    // Player Statistics
+    const playerStatsRepository = new PlayerStatsRepository(db);
+
+    const playerStatsService = new PlayerStatsService(playerStatsRepository);
+
+    const playerStatsController = new PlayerStatsController(playerStatsService);
+
     // Routes
     app.use('/api/auth', createAuthRoutes(authController));
     app.use('/api/runs', createGameRunRoutes(gameRunController));
     app.use('/api', createBattleRoutes(battleController));
+    app.use('/api/stats', createPlayerStatsRoutes(playerStatsController));
 
     app.get('/api/health', (req, res) => {
         res.json({
