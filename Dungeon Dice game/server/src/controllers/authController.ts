@@ -5,14 +5,14 @@ import { toAuthUser } from '../domain/user/toAuthUser.js';
 import { AppError } from '../errors/AppError.js';
 import { AuthService } from '../services/authService.js';
 import { SessionService } from '../services/sessionService.js';
-import { UserRepository } from '../repositories/userRepository.js';
 import { GameRunService } from '../services/gameRunService.js';
+import { CurrentUserService } from '../services/currentUserService.js';
 
 export class AuthController {
     constructor(
         private readonly authService: AuthService,
         private readonly sessionService: SessionService,
-        private readonly userRepository: UserRepository,
+        private readonly currentUserService: CurrentUserService,
         private readonly gameRunService: GameRunService
     ) { }
 
@@ -71,7 +71,7 @@ export class AuthController {
                 throw new AppError(401, 'Authentication required.');
             }
 
-            const user = this.userRepository.findById(req.session.userId);
+            const user = this.currentUserService.getUser(req.session.userId);
 
             if (!user) {
                 await this.sessionService.destroy(req.session);

@@ -1,3 +1,5 @@
+/// <reference path="../types/express-session.d.ts" />
+
 import { describe, expect, it, vi } from 'vitest';
 
 import type { Request, Response, NextFunction } from 'express';
@@ -5,7 +7,7 @@ import type { Request, Response, NextFunction } from 'express';
 import type { User } from '../domain/user/types.js';
 import type { AuthService } from '../services/authService.js';
 import type { SessionService } from '../services/sessionService.js';
-import type { UserRepository } from '../repositories/userRepository.js';
+import type { CurrentUserService } from '../services/currentUserService.js';
 import type { GameRunService } from '../services/gameRunService.js';
 
 import { AuthController } from './authController.js';
@@ -29,9 +31,9 @@ describe('AuthController', () => {
             destroy: vi.fn(),
         } as unknown as SessionService;
 
-        const userRepository = {
-            findById: vi.fn(),
-        } as unknown as UserRepository;
+        const currentUserService = {
+            getUser: vi.fn(),
+        } as unknown as CurrentUserService;
 
         const gameRunService = {
             completeRun: vi.fn(),
@@ -40,7 +42,7 @@ describe('AuthController', () => {
         const controller = new AuthController(
             authService,
             sessionService,
-            userRepository,
+            currentUserService,
             gameRunService,
         );
 
@@ -61,7 +63,7 @@ describe('AuthController', () => {
             controller,
             authService,
             sessionService,
-            userRepository,
+            currentUserService,
             gameRunService,
             req,
             res,
@@ -908,7 +910,7 @@ describe('AuthController', () => {
         it('returns the authenticated user', async () => {
             const {
                 controller,
-                userRepository,
+                currentUserService,
                 req,
                 res,
                 next,
@@ -916,12 +918,12 @@ describe('AuthController', () => {
 
             req.session.userId = 10;
 
-            vi.mocked(userRepository.findById)
+            vi.mocked(currentUserService.getUser)
                 .mockReturnValue(user);
 
             await controller.me(req, res, next);
 
-            expect(userRepository.findById)
+            expect(currentUserService.getUser)
                 .toHaveBeenCalledWith(10);
 
             expect(res.status)
@@ -938,6 +940,75 @@ describe('AuthController', () => {
 
             expect(next)
                 .not.toHaveBeenCalled();
+        });
+
+        it('rejects the request when no user is authenticated', async () => {
+            const {
+                controller,
+                currentUserService,
+                res,
+                next,
+            } = createController();
+
+            const req = {
+                body: {},
+                session: {},
+            } as Request;
+
+            await controller.me(req, res, next);
+
+            expect(currentUserService.getUser)
+                .not.toHaveBeenCalled();
+
+            expect(res.status)
+                .not.toHaveBeenCalled();
+
+            expect(next)
+                .toHaveBeenCalledWith(
+                    expect.objectContaining({
+                        statusCode: 401,
+                    }),
+                );
+        });
+
+        it('destroys the session when the authenticated user no longer exists', async () => {
+            const {
+                controller,
+                currentUserService,
+                sessionService,
+                req,
+                res,
+                next,
+            } = createController();
+
+            req.session.userId = 10;
+
+            vi.mocked(currentUserService.getUser)
+                .mockReturnValue(null);
+
+            vi.mocked(sessionService.destroy)
+                .mockResolvedValue();
+
+            await controller.me(req, res, next);
+
+            expect(currentUserService.getUser)
+                .toHaveBeenCalledWith(10);
+
+            expect(sessionService.destroy)
+                .toHaveBeenCalledWith(req.session);
+
+            expect(res.status)
+                .not.toHaveBeenCalled();
+
+            expect(res.json)
+                .not.toHaveBeenCalled();
+
+            expect(next)
+                .toHaveBeenCalledWith(
+                    expect.objectContaining({
+                        statusCode: 401,
+                    }),
+                );
         });
     });
 });

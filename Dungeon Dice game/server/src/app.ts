@@ -26,6 +26,10 @@ import { PlayerStatsController } from './controllers/playerStatsController.js';
 import { PlayerStatsRepository } from './repositories/playerStatsRepository.js';
 import { createPlayerStatsRoutes } from './routes/playerStatsRoutes.js';
 import { PlayerStatsService } from './services/playerStatsService.js';
+import { CurrentUserService } from './services/currentUserService.js';
+
+import { HeroController } from './controllers/heroController.js';
+import { createHeroRoutes } from './routes/heroRoutes.js';
 
 export function createApp(db: Database.Database) {
     const app = express();
@@ -34,10 +38,13 @@ export function createApp(db: Database.Database) {
     app.use(createSessionMiddleware());
 
     // Dependency composition
+
     // GameRun Service
     const gameRunRepository = new GameRunRepository(db);
     const heroRepository = new HeroRepository(db);
     const battleRepository = new BattleRepository(db);
+
+    const heroController = new HeroController(heroRepository);
 
     const gameRunService = new GameRunService(
         gameRunRepository,
@@ -52,11 +59,12 @@ export function createApp(db: Database.Database) {
     const userRepository = new UserRepository(db);
     const authService = new AuthService(userRepository);
     const sessionService = new SessionService();
+    const currentUserService = new CurrentUserService(userRepository)
 
     const authController = new AuthController(
         authService,
         sessionService,
-        userRepository,
+        currentUserService,
         gameRunService
     );
 
@@ -81,6 +89,7 @@ export function createApp(db: Database.Database) {
 
     // Routes
     app.use('/api/auth', createAuthRoutes(authController));
+    app.use('/api', createHeroRoutes(heroController));
     app.use('/api/runs', createGameRunRoutes(gameRunController));
     app.use('/api', createBattleRoutes(battleController));
     app.use('/api/stats', createPlayerStatsRoutes(playerStatsController));
