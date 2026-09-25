@@ -1,4 +1,6 @@
+import 'dotenv/config';
 import express from 'express';
+import cors from 'cors';
 import type Database from 'better-sqlite3';
 
 import { AuthController } from './controllers/authController.js';
@@ -33,6 +35,19 @@ import { createHeroRoutes } from './routes/heroRoutes.js';
 
 export function createApp(db: Database.Database) {
     const app = express();
+
+    const frontendOrigin = process.env.FRONTEND_ORIGIN
+
+    if (!frontendOrigin) {
+        throw new Error('FRONTEND_ORIGIN is not configured.')
+    }
+
+    app.use(
+        cors({
+            origin: frontendOrigin,
+            credentials: true
+        })
+    )
 
     app.use(express.json());
     app.use(createSessionMiddleware());

@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import session from 'express-session';
 
 export function createSessionMiddleware() {
