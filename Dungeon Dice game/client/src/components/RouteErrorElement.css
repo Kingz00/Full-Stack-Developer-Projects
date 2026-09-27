@@ -1,0 +1,39 @@
+.route-error {
+    display: grid;
+    min-height: 100vh;
+    place-items: center;
+
+    padding: 2rem;
+}
+
+.route-error__content {
+    width: min(100%, 520px);
+    padding: 2rem;
+
+    text-align: center;
+
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+}
+
+.route-error__status {
+    margin-bottom: 0.5rem;
+
+    color: var(--color-danger);
+    font-family: var(--font-heading);
+    font-size: 3rem;
+    line-height: 1;
+}
+
+.route-error__title {
+    margin-bottom: 0.75rem;
+
+    font-family: var(--font-heading);
+}
+
+.route-error__message {
+    margin-bottom: 0;
+    color: var(--color-text-secondary);
+}
