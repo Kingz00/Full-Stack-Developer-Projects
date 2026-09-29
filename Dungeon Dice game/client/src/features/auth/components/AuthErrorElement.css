@@ -1,0 +1,47 @@
+.auth-error {
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    padding: 2rem 1rem;
+}
+
+.auth-error__card {
+    width: min(100%, 28rem);
+    padding: 2rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-bg-card);
+    box-shadow: var(--shadow-card);
+    text-align: center;
+}
+
+.auth-error__eyebrow {
+    margin: 0 0 0.5rem;
+    color: var(--color-accent);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.auth-error__card h1 {
+    margin: 0;
+    color: var(--color-text-primary);
+    font-family: var(--font-heading);
+}
+
+.auth-error__card p:not(.auth-error__eyebrow) {
+    margin: 1rem 0 1.5rem;
+    color: var(--color-text-secondary);
+}
+
+.auth-error__card a {
+    color: var(--color-accent);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.auth-error__card a:hover {
+    color: var(--color-accent-hover);
+    text-decoration: underline;
+}
