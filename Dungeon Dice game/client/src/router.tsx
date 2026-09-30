@@ -11,6 +11,11 @@ import { loginAction } from './features/auth/actions/loginAction'
 import { registerAction } from './features/auth/actions/registerAction'
 import AppHeader from './components/AppHeader'
 import { logoutAction } from './features/auth/actions/logoutAction'
+import GamePage from './features/runs/pages/GamePage'
+import { gameLoader } from './features/runs/loaders/gameLoader'
+import { startRunAction } from './features/runs/actions/startRunAction'
+import BattlePage from './features/battles/pages/BattlePage'
+import { battleLoader } from './features/battles/loaders/battleLoader'
 
 function RootLayout() {
     return (
@@ -48,6 +53,18 @@ export const router = createBrowserRouter([
             {
                 path: '/logout',
                 action: logoutAction,
+            },
+            {
+                path: '/game',
+                loader: gameLoader,
+                action: startRunAction,
+                element: <GamePage />,
+            },
+            {
+                path: '/game/battle',
+                loader: battleLoader,
+                element: <BattlePage />,
+                errorElement: <RouteErrorElement />,
             },
         ],
     }

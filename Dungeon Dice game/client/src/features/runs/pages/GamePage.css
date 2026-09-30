@@ -1,0 +1,213 @@
+.game-page {
+    width: min(100% - 2rem, var(--content-width));
+    margin: 0 auto;
+    padding: 3rem 0 4rem;
+}
+
+.game-page__header {
+    margin-bottom: 2.5rem;
+    text-align: center;
+}
+
+.game-page__eyebrow {
+    margin: 0 0 0.5rem;
+    color: var(--color-accent);
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.game-page__title {
+    margin: 0;
+    color: var(--color-text-primary);
+    font-family: var(--font-heading);
+    font-size: clamp(2rem, 5vw, 3.25rem);
+}
+
+.game-page__subtitle {
+    max-width: 42rem;
+    margin: 0.75rem auto 0;
+    color: var(--color-text-secondary);
+    font-family: var(--font-body);
+}
+
+.game-page__hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-bg-card);
+    box-shadow: var(--shadow-card);
+}
+
+.game-page__image-wrapper {
+    min-height: 30rem;
+}
+
+.game-page__image {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+}
+
+.game-page__content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 2.5rem;
+}
+
+.game-page__label {
+    margin: 0 0 0.5rem;
+    color: var(--color-text-muted);
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.game-page__hero-name {
+    margin: 0;
+    color: var(--color-text-primary);
+    font-family: var(--font-heading);
+    font-size: 2rem;
+}
+
+.game-page__description {
+    margin: 1rem 0 0;
+    color: var(--color-text-secondary);
+    line-height: 1.7;
+}
+
+.game-page__stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    margin: 2rem 0;
+}
+
+.game-page__stat {
+    padding: 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    text-align: center;
+}
+
+.game-page__stat dt {
+    color: var(--color-text-muted);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+}
+
+.game-page__stat dd {
+    margin: 0.25rem 0 0;
+    color: var(--color-text-primary);
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.game-page__status {
+    margin: 0;
+    color: var(--color-accent);
+    font-weight: 600;
+}
+
+.game-page__form {
+    margin-top: 1.5rem;
+}
+
+.game-page__start-button {
+    width: 100%;
+    min-height: 3rem;
+    padding: 0.75rem 1rem;
+
+    border: 1px solid var(--color-accent);
+    border-radius: var(--radius-sm);
+
+    background: var(--color-accent);
+    color: var(--color-accent-text);
+
+    font: inherit;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        background-color 160ms ease,
+        border-color 160ms ease;
+}
+
+.game-page__start-button:hover:not(:disabled) {
+    background: var(--color-accent-hover);
+    border-color: var(--color-accent-hover);
+}
+
+.game-page__start-button:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+}
+
+.game-page__start-button:disabled {
+    cursor: wait;
+    opacity: 0.65;
+}
+
+.game-page__error {
+    margin: 1.5rem 0 0;
+    color: var(--color-danger);
+    font-size: 0.875rem;
+    line-height: 1.5;
+}
+
+.game-page__run {
+    margin-top: 1.5rem;
+    padding: 1rem;
+
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-bg-secondary);
+}
+
+.game-page__run .game-page__status {
+    margin: 0;
+}
+
+.game-page__run-details {
+    margin: 0.5rem 0 0;
+    color: var(--color-text-muted);
+    font-size: 0.875rem;
+}
+
+.game-page__run-message {
+    margin: 0.75rem 0 0;
+    color: var(--color-text-secondary);
+}
+
+@media (max-width: 768px) {
+    .game-page {
+        padding: 2rem 0 3rem;
+    }
+
+    .game-page__hero {
+        grid-template-columns: 1fr;
+    }
+
+    .game-page__image-wrapper {
+        min-height: 22rem;
+    }
+
+    .game-page__content {
+        padding: 2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .game-page__stats {
+        grid-template-columns: 1fr;
+    }
+}
