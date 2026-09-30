@@ -8,6 +8,7 @@ export interface CreateBattleInput {
     playerHealth: number;
     playerMaxHealth: number;
     enemyName: string;
+    enemyImageUrl: string;
     enemyHealth: number;
     enemyMaxHealth: number;
     enemyAttack: number;
@@ -38,25 +39,27 @@ export class BattleRepository {
     createBattle(input: CreateBattleInput): Battle {
         const result = this.db
             .prepare(`
-                            INSERT INTO battles (
-                            run_id,
-                            hero_id,
-                            player_health,
-                            player_max_health,
-                            enemy_name,
-                            enemy_health,
-                            enemy_max_health,
-                            enemy_attack,
-                            enemy_defense
-                            )
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-                        `)
+                INSERT INTO battles (
+                    run_id,
+                    hero_id,
+                    player_health,
+                    player_max_health,
+                    enemy_name,
+                    enemy_image_url,
+                    enemy_health,
+                    enemy_max_health,
+                    enemy_attack,
+                    enemy_defense
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                `)
             .run(
                 input.runId,
                 input.heroId,
                 input.playerHealth,
                 input.playerMaxHealth,
                 input.enemyName,
+                input.enemyImageUrl,
                 input.enemyHealth,
                 input.enemyMaxHealth,
                 input.enemyAttack,
@@ -75,23 +78,24 @@ export class BattleRepository {
     findById(id: number): Battle | null {
         const row = this.db
             .prepare(`
-                        SELECT
-                            id,
-                            run_id,
-                            hero_id,
-                            player_health,
-                            player_max_health,
-                            enemy_name,
-                            enemy_health,
-                            enemy_max_health,
-                            enemy_attack,
-                            enemy_defense,
-                            status,
-                            started_at,
-                            completed_at
-                        FROM battles
-                        WHERE id = ?
-                    `)
+                SELECT
+                    id,
+                    run_id,
+                    hero_id,
+                    player_health,
+                    player_max_health,
+                    enemy_name,
+                    enemy_image_url,
+                    enemy_health,
+                    enemy_max_health,
+                    enemy_attack,
+                    enemy_defense,
+                    status,
+                    started_at,
+                    completed_at
+                FROM battles
+                WHERE id = ?
+                `)
             .get(id);
 
         if (!row) {
@@ -111,6 +115,7 @@ export class BattleRepository {
                             battles.player_health,
                             battles.player_max_health,
                             battles.enemy_name,
+                            battles.enemy_image_url,
                             battles.enemy_health,
                             battles.enemy_max_health,
                             battles.enemy_attack,
@@ -143,6 +148,7 @@ export class BattleRepository {
                     player_health,
                     player_max_health,
                     enemy_name,
+                    enemy_image_url,
                     enemy_health,
                     enemy_max_health,
                     enemy_attack,
@@ -323,6 +329,7 @@ export class BattleRepository {
             player_health: number;
             player_max_health: number;
             enemy_name: string;
+            enemy_image_url: string;
             enemy_health: number;
             enemy_max_health: number;
             enemy_attack: number;
@@ -339,6 +346,7 @@ export class BattleRepository {
             playerHealth: battle.player_health,
             playerMaxHealth: battle.player_max_health,
             enemyName: battle.enemy_name,
+            enemyImageUrl: battle.enemy_image_url,
             enemyHealth: battle.enemy_health,
             enemyMaxHealth: battle.enemy_max_health,
             enemyAttack: battle.enemy_attack,

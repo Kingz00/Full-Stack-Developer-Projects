@@ -104,4 +104,8 @@ export class GameRunService {
 
         return transaction();
     }
+
+    getActiveRun(userId: number): GameRun | null {
+        return this.gameRunRepository.findActiveByUserId(userId)
+    }
 }

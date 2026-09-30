@@ -52,6 +52,42 @@ export class GameRunController {
         }
     }
 
+    getCurrentRun(req: Request, res: Response, next: NextFunction): void {
+        try {
+            const userId = this.getUserId(req)
+
+            const run = this.gameRunService.getActiveRun(userId)
+
+            res.status(200).json({
+                run
+            })
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    completeRun(req: Request, res: Response, next: NextFunction): void {
+        try {
+            const userId = this.getUserId(req)
+            const runId = this.getRunId(req)
+
+            const gameRun = this.gameRunService.completeRun(
+                userId,
+                runId
+            )
+
+            if (req.session.runId === gameRun.id) {
+                delete req.session.runId
+            }
+
+            res.status(200).json({
+                run: gameRun
+            })
+        } catch (error) {
+            next(error)
+        }
+    }
+
     private getUserId(req: Request): number {
         if (req.session.userId === undefined) {
             throw new AppError(401, 'Authentication required.');

@@ -76,11 +76,42 @@ export class BattleService {
             playerMaxHealth: selectedHero.health,
 
             enemyName: enemy.name,
+            enemyImageUrl: enemy.imageUrl,
             enemyHealth: enemy.health,
             enemyMaxHealth: enemy.health,
             enemyAttack: enemy.attack,
             enemyDefense: enemy.defense,
         });
+    }
+
+    getBattle(userId: number, battleId: number): Battle {
+        const battle = this.battleRepository.findByIdForUser(
+            battleId,
+            userId
+        )
+
+        if (!battle) {
+            throw new AppError(404, 'Battle not found.')
+        }
+
+        return battle
+    }
+
+    getActiveBattle(userId: number, runId: number): Battle | null {
+        const gameRun = this.gameRunRepository.findByIdForUser(
+            runId,
+            userId
+        )
+
+        if (!gameRun) {
+            throw new AppError(404, 'Game run not found.')
+        }
+
+        if (gameRun.status !== 'active') {
+            throw new AppError(409, 'Game run is not active.')
+        }
+
+        return this.battleRepository.findActiveByRunId(runId)
     }
 
     playRound(userId: number, battleId: number): BattleRoundResult {

@@ -56,6 +56,7 @@ describe('battle integration', () => {
             player_max_health INTEGER NOT NULL
                 CHECK (player_max_health > 0),
             enemy_name TEXT NOT NULL,
+            enemy_image_url TEXT NOT NULL,
             enemy_health INTEGER NOT NULL
                 CHECK (enemy_health >= 0),
             enemy_max_health INTEGER NOT NULL
@@ -380,6 +381,348 @@ describe('battle integration', () => {
             .all(runId);
 
         expect(battles).toHaveLength(0);
+    });
+
+    it('returns null when the game run has no active battle', async () => {
+        const agent = request.agent(app);
+
+        await agent
+            .post('/api/auth/register')
+            .send({
+                username: 'active-battle-none',
+                password: 'password123',
+            })
+            .expect(201);
+
+        const heroResult = db.prepare(`
+            INSERT INTO heroes (
+                name,
+                description,
+                image_url,
+                health,
+                attack,
+                defense
+            )
+            VALUES (?, ?, ?, ?, ?, ?)
+        `).run(
+            'Active Battle Hero',
+            'Hero for active battle lookup.',
+            '/images/active-battle-hero.png',
+            100,
+            15,
+            8,
+        );
+
+        const runResponse = await agent
+            .post('/api/runs')
+            .send({
+                selectedHeroId: Number(heroResult.lastInsertRowid),
+            })
+            .expect(201);
+
+        const response = await agent
+            .get(`/api/runs/${runResponse.body.run.id}/battles/active`)
+            .expect(200);
+
+        expect(response.body).toEqual({
+            battle: null,
+        });
+    });
+
+    it('returns the active battle for the authenticated user\'s run', async () => {
+        const agent = request.agent(app);
+
+        await agent
+            .post('/api/auth/register')
+            .send({
+                username: 'active-battle-found',
+                password: 'password123',
+            })
+            .expect(201);
+
+        const selectedHero = db.prepare(`
+            INSERT INTO heroes (
+                name,
+                description,
+                image_url,
+                health,
+                attack,
+                defense
+            )
+            VALUES (?, ?, ?, ?, ?, ?)
+        `).run(
+            'Active Battle Player',
+            'Player hero.',
+            '/images/active-player.png',
+            100,
+            15,
+            8,
+        );
+
+        db.prepare(`
+            INSERT INTO heroes (
+                name,
+                description,
+                image_url,
+                health,
+                attack,
+                defense
+            )
+            VALUES (?, ?, ?, ?, ?, ?)
+        `).run(
+            'Active Battle Enemy',
+            'Enemy hero.',
+            '/images/active-enemy.png',
+            80,
+            12,
+            4,
+        );
+
+        const runResponse = await agent
+            .post('/api/runs')
+            .send({
+                selectedHeroId: Number(selectedHero.lastInsertRowid),
+            })
+            .expect(201);
+
+        const runId = runResponse.body.run.id;
+
+        const battleResponse = await agent
+            .post(`/api/runs/${runId}/battles`)
+            .expect(201);
+
+        const response = await agent
+            .get(`/api/runs/${runId}/battles/active`)
+            .expect(200);
+
+        expect(response.body.battle).toMatchObject({
+            id: battleResponse.body.battle.id,
+            runId,
+            status: 'active',
+        });
+    });
+
+    it('does not allow one user to retrieve another user\'s active battle', async () => {
+        const owner = request.agent(app);
+        const otherUser = request.agent(app);
+
+        await owner
+            .post('/api/auth/register')
+            .send({
+                username: 'active-battle-owner',
+                password: 'password123',
+            })
+            .expect(201);
+
+        await otherUser
+            .post('/api/auth/register')
+            .send({
+                username: 'active-battle-other',
+                password: 'password123',
+            })
+            .expect(201);
+
+        const heroResult = db.prepare(`
+            INSERT INTO heroes (
+                name,
+                description,
+                image_url,
+                health,
+                attack,
+                defense
+            )
+            VALUES (?, ?, ?, ?, ?, ?)
+        `).run(
+            'Battle Ownership Hero',
+            'Hero for ownership testing.',
+            '/images/battle-ownership.png',
+            100,
+            10,
+            8,
+        );
+
+        db.prepare(`
+            INSERT INTO heroes (
+                name,
+                description,
+                image_url,
+                health,
+                attack,
+                defense
+            )
+            VALUES (?, ?, ?, ?, ?, ?)
+        `).run(
+            'Battle Ownership Enemy',
+            'Enemy for ownership testing.',
+            '/images/battle-ownership-enemy.png',
+            80,
+            10,
+            5,
+        );
+
+        const runResponse = await owner
+            .post('/api/runs')
+            .send({
+                selectedHeroId: Number(heroResult.lastInsertRowid),
+            })
+            .expect(201);
+
+        const runId = runResponse.body.run.id;
+
+        await owner
+            .post(`/api/runs/${runId}/battles`)
+            .expect(201);
+
+        await otherUser
+            .get(`/api/runs/${runId}/battles/active`)
+            .expect(404);
+    });
+
+    it('returns a battle by ID for the authenticated owner', async () => {
+        const agent = request.agent(app);
+
+        await agent
+            .post('/api/auth/register')
+            .send({
+                username: 'battle-by-id',
+                password: 'password123',
+            })
+            .expect(201);
+
+        const player = db.prepare(`
+            INSERT INTO heroes (
+                name,
+                description,
+                image_url,
+                health,
+                attack,
+                defense
+            )
+            VALUES (?, ?, ?, ?, ?, ?)
+        `).run(
+            'Battle By ID Player',
+            'Player.',
+            '/images/battle-by-id-player.png',
+            100,
+            15,
+            8,
+        );
+
+        db.prepare(`
+            INSERT INTO heroes (
+                name,
+                description,
+                image_url,
+                health,
+                attack,
+                defense
+            )
+            VALUES (?, ?, ?, ?, ?, ?)
+        `).run(
+            'Battle By ID Enemy',
+            'Enemy.',
+            '/images/battle-by-id-enemy.png',
+            80,
+            12,
+            4,
+        );
+
+        const runResponse = await agent
+            .post('/api/runs')
+            .send({
+                selectedHeroId: Number(player.lastInsertRowid),
+            })
+            .expect(201);
+
+        const battleResponse = await agent
+            .post(`/api/runs/${runResponse.body.run.id}/battles`)
+            .expect(201);
+
+        const battleId = battleResponse.body.battle.id;
+
+        const response = await agent
+            .get(`/api/battles/${battleId}`)
+            .expect(200);
+
+        expect(response.body.battle).toMatchObject({
+            id: battleId,
+            runId: runResponse.body.run.id,
+            status: 'active',
+        });
+    });
+
+    it('does not allow one user to retrieve another user\'s battle by ID', async () => {
+        const owner = request.agent(app);
+        const otherUser = request.agent(app);
+
+        await owner
+            .post('/api/auth/register')
+            .send({
+                username: 'battle-id-owner',
+                password: 'password123',
+            })
+            .expect(201);
+
+        await otherUser
+            .post('/api/auth/register')
+            .send({
+                username: 'battle-id-other',
+                password: 'password123',
+            })
+            .expect(201);
+
+        const player = db.prepare(`
+            INSERT INTO heroes (
+                name,
+                description,
+                image_url,
+                health,
+                attack,
+                defense
+            )
+            VALUES (?, ?, ?, ?, ?, ?)
+        `).run(
+            'Battle ID Ownership Player',
+            'Player.',
+            '/images/battle-id-owner.png',
+            100,
+            15,
+            8,
+        );
+
+        db.prepare(`
+            INSERT INTO heroes (
+                name,
+                description,
+                image_url,
+                health,
+                attack,
+                defense
+            )
+            VALUES (?, ?, ?, ?, ?, ?)
+        `).run(
+            'Battle ID Ownership Enemy',
+            'Enemy.',
+            '/images/battle-id-other.png',
+            80,
+            12,
+            4,
+        );
+
+        const runResponse = await owner
+            .post('/api/runs')
+            .send({
+                selectedHeroId: Number(player.lastInsertRowid),
+            })
+            .expect(201);
+
+        const battleResponse = await owner
+            .post(`/api/runs/${runResponse.body.run.id}/battles`)
+            .expect(201);
+
+        await otherUser
+            .get(`/api/battles/${battleResponse.body.battle.id}`)
+            .expect(404);
     });
 
     it('plays a round for an authenticated user', async () => {

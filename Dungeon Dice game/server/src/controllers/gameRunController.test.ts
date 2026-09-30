@@ -1,3 +1,5 @@
+/// <reference path="../types/express-session.d.ts" />
+
 import { describe, expect, it, vi } from 'vitest';
 
 import type { Request, Response, NextFunction } from 'express';
@@ -23,10 +25,18 @@ describe('GameRunController', () => {
         completedAt: '2026-09-20T05:00:00.000Z',
     };
 
+    const completedGameRun: GameRun = {
+        ...gameRun,
+        status: 'completed',
+        completedAt: '2026-09-20T06:00:00.000Z',
+    };
+
     function createController() {
         const gameRunService = {
             createRun: vi.fn(),
-            abandonRun: vi.fn()
+            abandonRun: vi.fn(),
+            getActiveRun: vi.fn(),
+            completeRun: vi.fn(),
         } as unknown as GameRunService;
 
         const controller = new GameRunController(gameRunService);
@@ -146,6 +156,62 @@ describe('GameRunController', () => {
         expect(error).toMatchObject({
             statusCode: 400,
             message: 'A valid selected hero ID is required.',
+        });
+    });
+
+    it('returns the current active game run', () => {
+        const {
+            controller,
+            gameRunService,
+            req,
+            res,
+            next,
+        } = createController();
+
+        req.session.userId = 10;
+
+        vi.mocked(gameRunService.getActiveRun)
+            .mockReturnValue(gameRun);
+
+        controller.getCurrentRun(req, res, next);
+
+        expect(gameRunService.getActiveRun)
+            .toHaveBeenCalledWith(10);
+
+        expect(res.status)
+            .toHaveBeenCalledWith(200);
+
+        expect(res.json)
+            .toHaveBeenCalledWith({
+                run: gameRun,
+            });
+
+        expect(next)
+            .not.toHaveBeenCalled();
+    });
+
+    it('rejects current run lookup when the user is not authenticated', () => {
+        const {
+            controller,
+            gameRunService,
+            req,
+            res,
+            next,
+        } = createController();
+
+        controller.getCurrentRun(req, res, next);
+
+        expect(gameRunService.getActiveRun)
+            .not.toHaveBeenCalled();
+
+        expect(next)
+            .toHaveBeenCalledOnce();
+
+        const error = vi.mocked(next).mock.calls[0]?.[0];
+
+        expect(error).toMatchObject({
+            statusCode: 401,
+            message: 'Authentication required.',
         });
     });
 
@@ -273,5 +339,72 @@ describe('GameRunController', () => {
 
         expect(next)
             .not.toHaveBeenCalled();
+    });
+
+    it('completes a game run and clears the session run', () => {
+        const {
+            controller,
+            gameRunService,
+            req,
+            res,
+            next,
+        } = createController();
+
+        req.session.userId = 10;
+        req.session.runId = 1;
+        req.params = {
+            runId: '1',
+        };
+
+        vi.mocked(gameRunService.completeRun)
+            .mockReturnValue(completedGameRun);
+
+        controller.completeRun(req, res, next);
+
+        expect(gameRunService.completeRun)
+            .toHaveBeenCalledWith(10, 1);
+
+        expect(req.session.runId)
+            .toBeUndefined();
+
+        expect(res.status)
+            .toHaveBeenCalledWith(200);
+
+        expect(res.json)
+            .toHaveBeenCalledWith({
+                run: completedGameRun,
+            });
+
+        expect(next)
+            .not.toHaveBeenCalled();
+    });
+
+    it('rejects completion when the user is not authenticated', () => {
+        const {
+            controller,
+            gameRunService,
+            req,
+            res,
+            next,
+        } = createController();
+
+        req.params = {
+            runId: '1',
+        };
+
+        controller.completeRun(req, res, next);
+
+        expect(gameRunService.completeRun)
+            .not.toHaveBeenCalled();
+
+        expect(next)
+            .toHaveBeenCalledOnce();
+
+        const error = vi.mocked(next).mock.calls[0]?.[0];
+
+        expect(error).toMatchObject({
+            statusCode: 401,
+            message: 'Authentication required.',
+        });
     });
 });

@@ -25,6 +25,42 @@ export class BattleController {
         }
     }
 
+    getBattle(req: Request, res: Response, next: NextFunction): void {
+        try {
+            const userId = this.getUserId(req)
+            const battleId = this.getIdParam(req, 'battleId')
+
+            const battle = this.battleService.getBattle(
+                userId,
+                battleId
+            )
+
+            res.status(200).json({
+                battle
+            })
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    getActiveBattle(req: Request, res: Response, next: NextFunction): void {
+        try {
+            const userId = this.getUserId(req)
+            const runId = this.getIdParam(req, 'runId')
+
+            const battle = this.battleService.getActiveBattle(
+                userId,
+                runId
+            )
+
+            res.status(200).json({
+                battle
+            })
+        } catch (error) {
+            next(error)
+        }
+    }
+
     playRound(req: Request, res: Response, next: NextFunction): void {
         try {
             const userId = this.getUserId(req);

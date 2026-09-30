@@ -41,6 +41,7 @@ export interface Battle {
     playerMaxHealth: number;
 
     enemyName: string;
+    enemyImageUrl: string;
     enemyHealth: number;
     enemyMaxHealth: number;
     enemyAttack: number;

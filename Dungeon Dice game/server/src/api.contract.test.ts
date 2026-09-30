@@ -66,6 +66,8 @@ describe('API contract', () => {
 
                 enemy_name TEXT NOT NULL,
 
+                enemy_image_url TEXT NOT NULL,
+
                 enemy_health INTEGER NOT NULL
                     CHECK (enemy_health >= 0),
 
@@ -366,6 +368,46 @@ describe('API contract', () => {
     });
 
     describe('Game Run API', () => {
+
+        describe('GET /api/runs/current', () => {
+            it('returns the current run contract when no run is active', async () => {
+                const agent = await createAuthenticatedAgent('contract-none');
+
+                const response = await agent
+                    .get('/api/runs/current');
+
+                expect(response.status).toBe(200);
+
+                expect(response.body).toEqual({
+                    run: null,
+                });
+            });
+
+            it('returns the current active run contract', async () => {
+                const heroId = createHero('Current Run Hero');
+
+                const agent = await createAuthenticatedAgent('contract-active');
+
+                const runId = await createAuthenticatedRun(agent, heroId);
+
+                const response = await agent
+                    .get('/api/runs/current');
+
+                expect(response.status).toBe(200);
+
+                expect(response.body).toEqual({
+                    run: {
+                        id: runId,
+                        userId: expect.any(Number),
+                        selectedHeroId: heroId,
+                        status: 'active',
+                        startedAt: expect.any(String),
+                        completedAt: null,
+                    },
+                });
+            });
+        });
+
         describe('POST /api/runs', () => {
             it('returns the game run contract', async () => {
                 const heroId = createHero('Run Hero', 18, 8, 7);
@@ -429,9 +471,171 @@ describe('API contract', () => {
                 });
             });
         });
+
+        describe('POST /api/runs/:runId/complete', () => {
+            it('returns the completed game run contract', async () => {
+                const heroId = createHero('Complete Hero');
+
+                const agent = await createAuthenticatedAgent('contract-complete');
+
+                const runId = await createAuthenticatedRun(agent, heroId);
+
+                const response = await agent
+                    .post(`/api/runs/${runId}/complete`);
+
+                expect(response.status).toBe(200);
+
+                expect(response.body).toEqual({
+                    run: {
+                        id: runId,
+                        userId: expect.any(Number),
+                        selectedHeroId: heroId,
+                        status: 'completed',
+                        startedAt: expect.any(String),
+                        completedAt: expect.any(String),
+                    },
+                });
+            });
+        });
+
+        describe('POST /api/runs/:runId/abandon', () => {
+            it('returns the abandoned game run contract', async () => {
+                const heroId = createHero('Abandon Hero');
+
+                const agent = await createAuthenticatedAgent('contract-abandon');
+
+                const runId = await createAuthenticatedRun(agent, heroId);
+
+                const response = await agent
+                    .post(`/api/runs/${runId}/abandon`);
+
+                expect(response.status).toBe(200);
+
+                expect(response.body).toEqual({
+                    run: {
+                        id: runId,
+                        userId: expect.any(Number),
+                        selectedHeroId: heroId,
+                        status: 'abandoned',
+                        startedAt: expect.any(String),
+                        completedAt: expect.any(String),
+                    },
+                });
+            });
+        });
     });
 
     describe('Battle API', () => {
+
+        describe('GET /api/runs/:runId/battles/active', () => {
+            it('returns the active battle contract when no battle exists', async () => {
+                const heroId = createHero('Active Battle Contract Hero');
+
+                const agent = await createAuthenticatedAgent('active-battle-none');
+
+                const runId = await createAuthenticatedRun(agent, heroId);
+
+                const response = await agent
+                    .get(`/api/runs/${runId}/battles/active`);
+
+                expect(response.status).toBe(200);
+
+                expect(response.body).toEqual({
+                    battle: null,
+                });
+            });
+
+            it('returns the active battle contract', async () => {
+                const playerHeroId = createHero('Active Battle Contract Player');
+
+                createHero('Active Battle Contract Enemy');
+
+                const agent = await createAuthenticatedAgent('active-battle');
+
+                const runId = await createAuthenticatedRun(agent, playerHeroId);
+
+                const battleResponse = await agent
+                    .post(`/api/runs/${runId}/battles`);
+
+                expect(battleResponse.status).toBe(201);
+
+                const battleId = battleResponse.body.battle.id;
+
+                const response = await agent
+                    .get(`/api/runs/${runId}/battles/active`);
+
+                expect(response.status).toBe(200);
+
+                expect(response.body).toEqual({
+                    battle: {
+                        id: battleId,
+                        runId,
+                        heroId: playerHeroId,
+
+                        playerHealth: expect.any(Number),
+                        playerMaxHealth: expect.any(Number),
+
+                        enemyName: expect.any(String),
+                        enemyImageUrl: expect.any(String),
+                        enemyHealth: expect.any(Number),
+                        enemyMaxHealth: expect.any(Number),
+                        enemyAttack: expect.any(Number),
+                        enemyDefense: expect.any(Number),
+
+                        status: 'active',
+                        startedAt: expect.any(String),
+                        completedAt: null,
+                    },
+                });
+            });
+        });
+
+        describe('GET /api/battles/:battleId', () => {
+            it('returns the battle contract', async () => {
+                const playerHeroId = createHero('Battle By ID Contract Player');
+
+                createHero('Battle By ID Contract Enemy');
+
+                const agent = await createAuthenticatedAgent('battle-by-id');
+
+                const runId = await createAuthenticatedRun(agent, playerHeroId);
+
+                const battleResponse = await agent
+                    .post(`/api/runs/${runId}/battles`);
+
+                expect(battleResponse.status).toBe(201);
+
+                const battleId = battleResponse.body.battle.id;
+
+                const response = await agent
+                    .get(`/api/battles/${battleId}`);
+
+                expect(response.status).toBe(200);
+
+                expect(response.body).toEqual({
+                    battle: {
+                        id: battleId,
+                        runId,
+                        heroId: playerHeroId,
+
+                        playerHealth: expect.any(Number),
+                        playerMaxHealth: expect.any(Number),
+
+                        enemyName: expect.any(String),
+                        enemyImageUrl: expect.any(String),
+                        enemyHealth: expect.any(Number),
+                        enemyMaxHealth: expect.any(Number),
+                        enemyAttack: expect.any(Number),
+                        enemyDefense: expect.any(Number),
+
+                        status: 'active',
+                        startedAt: expect.any(String),
+                        completedAt: null,
+                    },
+                });
+            });
+        });
+
         describe('POST /api/runs/:runId/battles', () => {
             it('returns the battle creation contract', async () => {
                 const playerHeroId = createHero('Battle Player', 18, 8, 7);
@@ -455,6 +659,7 @@ describe('API contract', () => {
                     playerMaxHealth: expect.any(Number),
 
                     enemyName: expect.any(String),
+                    enemyImageUrl: expect.any(String),
                     enemyHealth: expect.any(Number),
                     enemyMaxHealth: expect.any(Number),
                     enemyAttack: expect.any(Number),

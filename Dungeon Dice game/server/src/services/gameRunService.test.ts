@@ -69,6 +69,8 @@ describe('GameRunService', () => {
 
             enemy_name TEXT NOT NULL,
 
+            enemy_image_url TEXT NOT NULL,
+
             enemy_health INTEGER NOT NULL
                 CHECK (enemy_health >= 0),
 
@@ -479,6 +481,7 @@ describe('GameRunService', () => {
                 playerHealth: 100,
                 playerMaxHealth: 100,
                 enemyName: 'Goblin',
+                enemyImageUrl: '/images/goblin.png',
                 enemyHealth: 50,
                 enemyMaxHealth: 50,
                 enemyAttack: 8,
@@ -581,6 +584,7 @@ describe('GameRunService', () => {
                 playerHealth: 100,
                 playerMaxHealth: 100,
                 enemyName: 'Goblin',
+                enemyImageUrl: '/images/goblin.png',
                 enemyHealth: 50,
                 enemyMaxHealth: 50,
                 enemyAttack: 8,
@@ -817,6 +821,7 @@ describe('GameRunService', () => {
                 playerHealth: 100,
                 playerMaxHealth: 100,
                 enemyName: 'Goblin',
+                enemyImageUrl: '/images/goblin.png',
                 enemyHealth: 50,
                 enemyMaxHealth: 50,
                 enemyAttack: 8,
@@ -920,6 +925,7 @@ describe('GameRunService', () => {
                 playerHealth: 100,
                 playerMaxHealth: 100,
                 enemyName: 'Goblin',
+                enemyImageUrl: '/images/goblin.png',
                 enemyHealth: 50,
                 enemyMaxHealth: 50,
                 enemyAttack: 8,

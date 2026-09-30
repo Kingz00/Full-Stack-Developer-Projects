@@ -65,6 +65,8 @@ describe('Game Run integration', () => {
 
                 enemy_name TEXT NOT NULL,
 
+                enemy_image_url TEXT NOT NULL,
+
                 enemy_health INTEGER NOT NULL
                     CHECK (enemy_health >= 0),
 
@@ -580,12 +582,13 @@ describe('Game Run integration', () => {
                         player_health,
                         player_max_health,
                         enemy_name,
+                        enemy_image_url,
                         enemy_health,
                         enemy_max_health,
                         enemy_attack,
                         enemy_defense
                     )
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 `)
                 .run(
                     runId,
@@ -593,6 +596,7 @@ describe('Game Run integration', () => {
                     100,
                     100,
                     'Goblin',
+                    '/images/goblin.png',
                     50,
                     50,
                     8,
@@ -688,12 +692,13 @@ describe('Game Run integration', () => {
                         player_health,
                         player_max_health,
                         enemy_name,
+                        enemy_image_url,
                         enemy_health,
                         enemy_max_health,
                         enemy_attack,
                         enemy_defense
                     )
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 `)
                 .run(
                     runId,
@@ -701,6 +706,7 @@ describe('Game Run integration', () => {
                     100,
                     100,
                     'Goblin',
+                    '/images/goblin.png',
                     50,
                     50,
                     8,
@@ -1013,6 +1019,331 @@ describe('Game Run integration', () => {
 
             expect(run.status).toBe('completed');
             expect(run.completed_at).toEqual(expect.any(String));
+        });
+
+        it('returns null when the authenticated user has no active game run', async () => {
+            const agent = request.agent(app);
+
+            await agent
+                .post('/api/auth/register')
+                .send({
+                    username: 'current-run-none',
+                    password: 'password123',
+                })
+                .expect(201);
+
+            const response = await agent
+                .get('/api/runs/current')
+                .expect(200);
+
+            expect(response.body).toEqual({
+                run: null,
+            });
+        });
+
+        it('returns the authenticated user\'s active game run', async () => {
+            const agent = request.agent(app);
+
+            await agent
+                .post('/api/auth/register')
+                .send({
+                    username: 'current-run-active',
+                    password: 'password123',
+                })
+                .expect(201);
+
+            const heroResult = db.prepare(`
+                INSERT INTO heroes (
+                    name,
+                    description,
+                    image_url,
+                    health,
+                    attack,
+                    defense
+                )
+                VALUES (?, ?, ?, ?, ?, ?)
+            `).run(
+                'Current Run Hero',
+                'Hero for current run testing.',
+                '/images/current-run-hero.png',
+                100,
+                15,
+                8,
+            );
+
+            const heroId = Number(heroResult.lastInsertRowid);
+
+            const runResponse = await agent
+                .post('/api/runs')
+                .send({
+                    selectedHeroId: heroId,
+                })
+                .expect(201);
+
+            const response = await agent
+                .get('/api/runs/current')
+                .expect(200);
+
+            expect(response.body.run).toEqual(runResponse.body.run);
+        });
+
+        it('completes an active run and allows a new run without logging out', async () => {
+            const agent = request.agent(app);
+
+            await agent
+                .post('/api/auth/register')
+                .send({
+                    username: 'without-logout',
+                    password: 'password123',
+                })
+                .expect(201);
+
+            const heroResult = db.prepare(`
+                INSERT INTO heroes (
+                    name,
+                    description,
+                    image_url,
+                    health,
+                    attack,
+                    defense
+                )
+                VALUES (?, ?, ?, ?, ?, ?)
+            `).run(
+                'Complete Run Hero',
+                'Hero for completion testing.',
+                '/images/complete-run-hero.png',
+                100,
+                15,
+                8,
+            );
+
+            const enemyResult = db.prepare(`
+                INSERT INTO heroes (
+                    name,
+                    description,
+                    image_url,
+                    health,
+                    attack,
+                    defense
+                )
+                VALUES (?, ?, ?, ?, ?, ?)
+            `).run(
+                'Complete Run Enemy',
+                'Enemy for completion testing.',
+                '/images/complete-run-enemy.png',
+                80,
+                12,
+                4,
+            );
+
+            const heroId = Number(heroResult.lastInsertRowid);
+
+            const runResponse = await agent
+                .post('/api/runs')
+                .send({
+                    selectedHeroId: heroId,
+                })
+                .expect(201);
+
+            const runId = runResponse.body.run.id;
+
+            const battleResponse = await agent
+                .post(`/api/runs/${runId}/battles`)
+                .expect(201);
+
+            const battleId = battleResponse.body.battle.id;
+
+            const completeResponse = await agent
+                .post(`/api/runs/${runId}/complete`)
+                .expect(200);
+
+            expect(completeResponse.body.run).toMatchObject({
+                id: runId,
+                status: 'completed',
+            });
+
+            expect(completeResponse.body.run.completedAt)
+                .toEqual(expect.any(String));
+
+            const battle = db.prepare(`
+                SELECT status, completed_at
+                FROM battles
+                WHERE id = ?
+            `).get(battleId) as {
+                status: string;
+                completed_at: string | null;
+            };
+
+            expect(battle).toMatchObject({
+                status: 'abandoned',
+            });
+
+            expect(battle.completed_at)
+                .toEqual(expect.any(String));
+
+            const secondRunResponse = await agent
+                .post('/api/runs')
+                .send({
+                    selectedHeroId: Number(enemyResult.lastInsertRowid),
+                })
+                .expect(201);
+
+            expect(secondRunResponse.body.run).toMatchObject({
+                selectedHeroId: Number(enemyResult.lastInsertRowid),
+                status: 'active',
+            });
+        });
+
+        it('does not allow one user to complete another user\'s game run', async () => {
+            const owner = request.agent(app);
+            const otherUser = request.agent(app);
+
+            await owner
+                .post('/api/auth/register')
+                .send({
+                    username: 'complete-owner',
+                    password: 'password123',
+                })
+                .expect(201);
+
+            await otherUser
+                .post('/api/auth/register')
+                .send({
+                    username: 'complete-other',
+                    password: 'password123',
+                })
+                .expect(201);
+
+            const heroResult = db.prepare(`
+                INSERT INTO heroes (
+                    name,
+                    description,
+                    image_url,
+                    health,
+                    attack,
+                    defense
+                )
+                VALUES (?, ?, ?, ?, ?, ?)
+            `).run(
+                'Completion Ownership Hero',
+                'Hero for completion ownership testing.',
+                '/images/completion-owner.png',
+                100,
+                10,
+                8,
+            );
+
+            const runResponse = await owner
+                .post('/api/runs')
+                .send({
+                    selectedHeroId: Number(heroResult.lastInsertRowid),
+                })
+                .expect(201);
+
+            const runId = runResponse.body.run.id;
+
+            await otherUser
+                .post(`/api/runs/${runId}/complete`)
+                .expect(404);
+        });
+
+        it('rejects completing an abandoned game run', async () => {
+            const agent = request.agent(app);
+
+            await agent
+                .post('/api/auth/register')
+                .send({
+                    username: 'complete-abandoned',
+                    password: 'password123',
+                })
+                .expect(201);
+
+            const heroResult = db.prepare(`
+                INSERT INTO heroes (
+                    name,
+                    description,
+                    image_url,
+                    health,
+                    attack,
+                    defense
+                )
+                VALUES (?, ?, ?, ?, ?, ?)
+            `).run(
+                'Abandoned Completion Hero',
+                'Hero for completion state testing.',
+                '/images/abandoned-completion.png',
+                100,
+                10,
+                8,
+            );
+
+            const runResponse = await agent
+                .post('/api/runs')
+                .send({
+                    selectedHeroId: Number(heroResult.lastInsertRowid),
+                })
+                .expect(201);
+
+            const runId = runResponse.body.run.id;
+
+            await agent
+                .post(`/api/runs/${runId}/abandon`)
+                .expect(200);
+
+            const response = await agent
+                .post(`/api/runs/${runId}/complete`)
+                .expect(409);
+
+            expect(response.body).toEqual({
+                error: 'Game run is not active.',
+            });
+        });
+
+        it('abandons an active game run through the abandon endpoint', async () => {
+            const agent = request.agent(app);
+
+            await agent
+                .post('/api/auth/register')
+                .send({
+                    username: 'abandon-endpoint',
+                    password: 'password123',
+                })
+                .expect(201);
+
+            const heroResult = db.prepare(`
+                INSERT INTO heroes (
+                    name,
+                    description,
+                    image_url,
+                    health,
+                    attack,
+                    defense
+                )
+                VALUES (?, ?, ?, ?, ?, ?)
+            `).run(
+                'Abandon Endpoint Hero',
+                'Hero for abandon endpoint testing.',
+                '/images/abandon-endpoint.png',
+                100,
+                10,
+                8,
+            );
+
+            const runResponse = await agent
+                .post('/api/runs')
+                .send({
+                    selectedHeroId: Number(heroResult.lastInsertRowid),
+                })
+                .expect(201);
+
+            const response = await agent
+                .post(`/api/runs/${runResponse.body.run.id}/abandon`)
+                .expect(200);
+
+            expect(response.body.run).toMatchObject({
+                id: runResponse.body.run.id,
+                status: 'abandoned',
+            });
         });
 
     });
