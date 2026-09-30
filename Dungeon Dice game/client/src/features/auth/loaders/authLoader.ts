@@ -1,4 +1,4 @@
-import type { LoaderFunctionArgs } from 'react-router-dom'
+import { redirect, type LoaderFunctionArgs } from 'react-router-dom'
 
 export interface AuthUser {
     id: number
@@ -10,7 +10,7 @@ interface AuthResponse {
     user: AuthUser
 }
 
-export async function authLoader(_args: LoaderFunctionArgs): Promise<AuthUser | null> {
+export async function authLoader(request: LoaderFunctionArgs): Promise<AuthUser | null> {
     const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
 
     if (!apiBaseUrl) {
@@ -22,6 +22,20 @@ export async function authLoader(_args: LoaderFunctionArgs): Promise<AuthUser | 
     })
 
     if (response.status === 401) {
+        const url = new URL(request.url)
+
+        if (url.pathname === '/game') {
+            const heroId = url.searchParams.get('heroId')
+
+            if (heroId) {
+                throw redirect(
+                    `/login?heroId=${encodeURIComponent(heroId)}`
+                )
+            }
+
+            throw redirect('/login')
+        }
+
         return null
     }
 
