@@ -63,6 +63,8 @@ describe('PlayerStatsRepository', () => {
 
                 enemy_name TEXT NOT NULL,
 
+                enemy_image_url TEXT NOT NULL,
+
                 enemy_health INTEGER NOT NULL
                     CHECK (enemy_health >= 0),
 
@@ -165,19 +167,21 @@ describe('PlayerStatsRepository', () => {
                 player_health,
                 player_max_health,
                 enemy_name,
+                enemy_image_url,
                 enemy_health,
                 enemy_max_health,
                 enemy_attack,
                 enemy_defense,
                 status
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `).run(
             runId,
             1,
             100,
             100,
             'Test Enemy',
+            '/images/goblin.png',
             100,
             100,
             10,

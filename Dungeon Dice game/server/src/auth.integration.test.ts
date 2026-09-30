@@ -64,6 +64,8 @@ describe('Authentication API', () => {
 
                 enemy_name TEXT NOT NULL,
 
+                enemy_image_url TEXT NOT NULL,
+
                 enemy_health INTEGER NOT NULL
                     CHECK (enemy_health >= 0),
 
