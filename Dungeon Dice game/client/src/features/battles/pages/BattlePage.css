@@ -271,6 +271,183 @@
     text-align: center;
 }
 
+.battle-page__controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 2rem;
+}
+
+.battle-page__roll-button {
+    min-width: 10rem;
+    padding: 0.8rem 1.5rem;
+    border: 1px solid var(--color-accent);
+    border-radius: var(--radius-md);
+    background: var(--color-accent);
+    color: var(--color-accent-text);
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition:
+        background-color 160ms ease,
+        border-color 160ms ease,
+        transform 160ms ease;
+}
+
+.battle-page__roll-button:hover:not(:disabled) {
+    border-color: var(--color-accent-hover);
+    background: var(--color-accent-hover);
+    transform: translateY(-1px);
+}
+
+.battle-page__roll-button:focus-visible {
+    outline: 2px solid var(--color-text-primary);
+    outline-offset: 3px;
+}
+
+.battle-page__roll-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+}
+
+.battle-page__round-error {
+    margin: 0;
+    color: var(--color-danger);
+    font-size: 0.875rem;
+    text-align: center;
+}
+
+.battle-page__round-result {
+    margin-top: 1.5rem;
+    padding: 1.25rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-bg-card);
+}
+
+.battle-page__round-label {
+    margin: 0 0 1rem;
+    color: var(--color-accent);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.battle-page__round-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+}
+
+.battle-page__round-grid>div {
+    padding: 0.75rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background: var(--color-bg-secondary);
+    text-align: center;
+}
+
+.battle-page__round-grid span {
+    display: block;
+    margin-bottom: 0.35rem;
+    color: var(--color-text-muted);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.battle-page__round-grid strong {
+    color: var(--color-text-primary);
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+}
+
+.battle-page__resolution {
+    width: 100%;
+    padding: 1.5rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-bg-secondary);
+    text-align: center;
+}
+
+.battle-page__resolution-title {
+    margin: 0;
+    color: var(--color-text-primary);
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+}
+
+.battle-page__resolution-text {
+    margin: 0.5rem 0 0;
+    color: var(--color-text-secondary);
+    font-size: 0.875rem;
+}
+
+.battle-page__resolution-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+}
+
+.battle-page__secondary-button,
+.battle-page__danger-button {
+    min-width: 10rem;
+    padding: 0.8rem 1.5rem;
+    border-radius: var(--radius-md);
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition:
+        background-color 160ms ease,
+        border-color 160ms ease,
+        transform 160ms ease;
+}
+
+.battle-page__secondary-button {
+    border: 1px solid var(--color-border-hover);
+    background: var(--color-bg-card);
+    color: var(--color-text-primary);
+}
+
+.battle-page__secondary-button:hover:not(:disabled) {
+    border-color: var(--color-accent);
+    background: var(--color-bg-card-hover);
+    transform: translateY(-1px);
+}
+
+.battle-page__danger-button {
+    border: 1px solid var(--color-danger);
+    background: transparent;
+    color: var(--color-danger);
+}
+
+.battle-page__danger-button:hover:not(:disabled) {
+    background: var(--color-danger);
+    color: var(--color-text-primary);
+    transform: translateY(-1px);
+}
+
+.battle-page__secondary-button:focus-visible,
+.battle-page__danger-button:focus-visible {
+    outline: 2px solid var(--color-text-primary);
+    outline-offset: 3px;
+}
+
+.battle-page__secondary-button:disabled,
+.battle-page__danger-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+}
+
 @media (max-width: 768px) {
     .battle-page {
         padding: 1.5rem 0 3rem;
@@ -293,6 +470,19 @@
 
     .battle-page__fighter-content {
         padding: 1.25rem;
+    }
+
+    .battle-page__round-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .battle-page__resolution-actions {
+        flex-direction: column;
+    }
+
+    .battle-page__secondary-button,
+    .battle-page__danger-button {
+        width: 100%;
     }
 }
 
