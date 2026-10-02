@@ -33,18 +33,21 @@ describe('PlayerStatsRepository', () => {
             CREATE TABLE game_runs (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 user_id INTEGER NOT NULL,
+                run_number INTEGER NOT NULL,
                 selected_hero_id INTEGER NOT NULL,
                 status TEXT NOT NULL DEFAULT 'active'
-                    CHECK (status IN ('active','completed','abandoned')),
+                CHECK (status IN ('active', 'completed', 'abandoned')),
                 started_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 completed_at TEXT,
 
                 FOREIGN KEY (user_id)
-                    REFERENCES users(id)
-                    ON DELETE CASCADE,
+                REFERENCES users(id)
+                ON DELETE CASCADE,
 
                 FOREIGN KEY (selected_hero_id)
-                    REFERENCES heroes(id)
+                REFERENCES heroes(id),
+
+                UNIQUE (user_id, run_number)
             );
 
             CREATE INDEX idx_game_runs_user_id
@@ -53,39 +56,35 @@ describe('PlayerStatsRepository', () => {
             CREATE TABLE battles (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 run_id INTEGER NOT NULL,
+                battle_number INTEGER NOT NULL,
                 hero_id INTEGER NOT NULL,
-
                 player_health INTEGER NOT NULL
                     CHECK (player_health >= 0),
-
                 player_max_health INTEGER NOT NULL
                     CHECK (player_max_health > 0),
-
                 enemy_name TEXT NOT NULL,
-
                 enemy_image_url TEXT NOT NULL,
-
                 enemy_health INTEGER NOT NULL
                     CHECK (enemy_health >= 0),
-
                 enemy_max_health INTEGER NOT NULL
                     CHECK (enemy_max_health > 0),
-
                 enemy_attack INTEGER NOT NULL
                     CHECK (enemy_attack > 0),
-
                 enemy_defense INTEGER NOT NULL
                     CHECK (enemy_defense >= 0),
-
                 status TEXT NOT NULL DEFAULT 'active'
-                    CHECK (status IN ('active','won','lost','draw','abandoned')),
-
+                    CHECK (status IN ('active', 'won', 'lost', 'draw', 'abandoned')),
                 started_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 completed_at TEXT,
 
                 FOREIGN KEY (run_id)
                     REFERENCES game_runs(id)
-                    ON DELETE CASCADE
+                    ON DELETE CASCADE,
+
+                FOREIGN KEY (hero_id)
+                    REFERENCES heroes(id),
+
+                UNIQUE (run_id, battle_number)
             );
 
             CREATE INDEX idx_battles_run_id
@@ -147,11 +146,21 @@ describe('PlayerStatsRepository', () => {
         const result = db.prepare(`
             INSERT INTO game_runs (
                 user_id,
+                run_number,
                 selected_hero_id,
                 status
             )
-            VALUES (?, ?, ?)
-        `).run(userId, 1, status);
+            VALUES (
+                ?,
+                (
+                    SELECT COALESCE(MAX(run_number), 0) + 1
+                    FROM game_runs
+                    WHERE user_id = ?
+                ),
+                ?,
+                ?
+            )
+        `).run(userId, userId, 1, status);
 
         return Number(result.lastInsertRowid);
     }
@@ -163,6 +172,7 @@ describe('PlayerStatsRepository', () => {
         const result = db.prepare(`
             INSERT INTO battles (
                 run_id,
+                battle_number,
                 hero_id,
                 player_health,
                 player_max_health,
@@ -174,8 +184,12 @@ describe('PlayerStatsRepository', () => {
                 enemy_defense,
                 status
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?,
+                    (SELECT COALESCE(MAX(battle_number), 0) + 1 FROM battles
+                        WHERE run_id = ?),
+                    ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `).run(
+            runId,
             runId,
             1,
             100,
@@ -278,6 +292,7 @@ describe('PlayerStatsRepository', () => {
 
         expect(statistics.bestRun).toEqual({
             runId,
+            runNumber: 1,
             totalBattles: 4,
             wins: 2,
             losses: 1,
@@ -362,7 +377,7 @@ describe('PlayerStatsRepository', () => {
             .toBe(2);
     });
 
-    it('uses the lower run ID when all bestRun criteria are tied', () => {
+    it('uses the lower run number when all bestRun criteria are tied', () => {
         const runOne = createRun(1, 'completed');
         const runTwo = createRun(1, 'completed');
 
@@ -379,7 +394,7 @@ describe('PlayerStatsRepository', () => {
 
         const statistics = repository.getPlayerStatistics(1);
 
-        expect(statistics.bestRun?.runId)
+        expect(statistics.bestRun?.runNumber)
             .toBe(Math.min(runOne, runTwo));
     });
 

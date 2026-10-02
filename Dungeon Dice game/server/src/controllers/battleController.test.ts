@@ -13,6 +13,7 @@ describe('BattleController', () => {
     const battle: Battle = {
         id: 1,
         runId: 5,
+        battleNumber: 1,
         heroId: 2,
 
         playerHealth: 100,

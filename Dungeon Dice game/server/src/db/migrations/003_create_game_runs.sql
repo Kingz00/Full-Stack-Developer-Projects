@@ -1,6 +1,7 @@
 CREATE TABLE game_runs (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL,
+    run_number INTEGER NOT NULL,
     selected_hero_id INTEGER NOT NULL,
     status TEXT NOT NULL DEFAULT 'active'
         CHECK (status IN ('active', 'completed', 'abandoned')),
@@ -12,7 +13,9 @@ CREATE TABLE game_runs (
         ON DELETE CASCADE,
 
     FOREIGN KEY (selected_hero_id)
-        REFERENCES heroes(id)
+        REFERENCES heroes(id),
+
+    UNIQUE (user_id, run_number)
 );
 
 CREATE INDEX idx_game_runs_user_id

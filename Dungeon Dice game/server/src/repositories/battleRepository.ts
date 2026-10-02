@@ -41,6 +41,7 @@ export class BattleRepository {
             .prepare(`
                 INSERT INTO battles (
                     run_id,
+                    battle_number,
                     hero_id,
                     player_health,
                     player_max_health,
@@ -51,9 +52,15 @@ export class BattleRepository {
                     enemy_attack,
                     enemy_defense
                 )
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, (
+                    SELECT COALESCE(MAX(battle_number), 0) + 1
+                    FROM battles
+                    WHERE run_id = ?
+                ),
+                ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 `)
             .run(
+                input.runId,
                 input.runId,
                 input.heroId,
                 input.playerHealth,
@@ -81,6 +88,7 @@ export class BattleRepository {
                 SELECT
                     id,
                     run_id,
+                    battle_number,
                     hero_id,
                     player_health,
                     player_max_health,
@@ -111,6 +119,7 @@ export class BattleRepository {
                         SELECT
                             battles.id,
                             battles.run_id,
+                            battles.battle_number,
                             battles.hero_id,
                             battles.player_health,
                             battles.player_max_health,
@@ -144,6 +153,7 @@ export class BattleRepository {
                 SELECT
                     id,
                     run_id,
+                    battle_number,
                     hero_id,
                     player_health,
                     player_max_health,
@@ -325,6 +335,7 @@ export class BattleRepository {
         const battle = row as {
             id: number;
             run_id: number;
+            battle_number: number;
             hero_id: number;
             player_health: number;
             player_max_health: number;
@@ -341,6 +352,7 @@ export class BattleRepository {
 
         return {
             id: battle.id,
+            battleNumber: battle.battle_number,
             runId: battle.run_id,
             heroId: battle.hero_id,
             playerHealth: battle.player_health,

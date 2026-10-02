@@ -33,6 +33,7 @@ describe('battle integration', () => {
         CREATE TABLE game_runs (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id INTEGER NOT NULL,
+            run_number INTEGER NOT NULL,
             selected_hero_id INTEGER NOT NULL,
             status TEXT NOT NULL DEFAULT 'active'
                 CHECK (status IN ('active', 'completed', 'abandoned')),
@@ -44,12 +45,15 @@ describe('battle integration', () => {
                 ON DELETE CASCADE,
 
             FOREIGN KEY (selected_hero_id)
-                REFERENCES heroes(id)
+                REFERENCES heroes(id),
+
+            UNIQUE (user_id, run_number)
         );
 
         CREATE TABLE battles (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             run_id INTEGER NOT NULL,
+            battle_number INTEGER NOT NULL,
             hero_id INTEGER NOT NULL,
             player_health INTEGER NOT NULL
                 CHECK (player_health >= 0),
@@ -75,7 +79,9 @@ describe('battle integration', () => {
                 ON DELETE CASCADE,
 
             FOREIGN KEY (hero_id)
-                REFERENCES heroes(id)
+                REFERENCES heroes(id),
+
+            UNIQUE (run_id, battle_number)
         );
 
         CREATE TABLE battle_rounds (
@@ -193,6 +199,7 @@ describe('battle integration', () => {
 
         expect(response.body.battle).toMatchObject({
             runId,
+            battleNumber: 1,
             heroId: Number(selectedHero.lastInsertRowid),
             playerHealth: 100,
             playerMaxHealth: 100,
@@ -498,6 +505,7 @@ describe('battle integration', () => {
         expect(response.body.battle).toMatchObject({
             id: battleResponse.body.battle.id,
             runId,
+            battleNumber: 1,
             status: 'active',
         });
     });
@@ -647,6 +655,7 @@ describe('battle integration', () => {
         expect(response.body.battle).toMatchObject({
             id: battleId,
             runId: runResponse.body.run.id,
+            battleNumber: 1,
             status: 'active',
         });
     });
@@ -1149,6 +1158,7 @@ describe('battle integration', () => {
 
         expect(secondBattleResponse.body.battle).toMatchObject({
             runId,
+            battleNumber: 2,
             status: 'active',
         });
 

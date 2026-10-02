@@ -33,50 +33,44 @@ describe('BattleRepository', () => {
             CREATE TABLE game_runs (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 user_id INTEGER NOT NULL,
+                run_number INTEGER NOT NULL,
                 selected_hero_id INTEGER NOT NULL,
                 status TEXT NOT NULL DEFAULT 'active'
-                    CHECK (status IN ('active', 'completed', 'abandoned')),
+                CHECK (status IN ('active', 'completed', 'abandoned')),
                 started_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 completed_at TEXT,
 
                 FOREIGN KEY (user_id)
-                    REFERENCES users(id)
-                    ON DELETE CASCADE,
+                REFERENCES users(id)
+                ON DELETE CASCADE,
 
                 FOREIGN KEY (selected_hero_id)
-                    REFERENCES heroes(id)
+                REFERENCES heroes(id),
+
+                UNIQUE (user_id, run_number)
             );
 
             CREATE TABLE battles (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 run_id INTEGER NOT NULL,
+                battle_number INTEGER NOT NULL,
                 hero_id INTEGER NOT NULL,
-
                 player_health INTEGER NOT NULL
                     CHECK (player_health >= 0),
-
                 player_max_health INTEGER NOT NULL
                     CHECK (player_max_health > 0),
-
                 enemy_name TEXT NOT NULL,
-
                 enemy_image_url TEXT NOT NULL,
-
                 enemy_health INTEGER NOT NULL
                     CHECK (enemy_health >= 0),
-
                 enemy_max_health INTEGER NOT NULL
                     CHECK (enemy_max_health > 0),
-
                 enemy_attack INTEGER NOT NULL
                     CHECK (enemy_attack > 0),
-
                 enemy_defense INTEGER NOT NULL
                     CHECK (enemy_defense >= 0),
-
                 status TEXT NOT NULL DEFAULT 'active'
                     CHECK (status IN ('active', 'won', 'lost', 'draw', 'abandoned')),
-
                 started_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 completed_at TEXT,
 
@@ -85,7 +79,9 @@ describe('BattleRepository', () => {
                     ON DELETE CASCADE,
 
                 FOREIGN KEY (hero_id)
-                    REFERENCES heroes(id)
+                    REFERENCES heroes(id),
+
+                UNIQUE (run_id, battle_number)
             );
 
             CREATE INDEX idx_battles_run_id
@@ -163,18 +159,20 @@ describe('BattleRepository', () => {
         db.prepare(`
             INSERT INTO game_runs (
                 user_id,
+                run_number,
                 selected_hero_id
             )
-            VALUES (?, ?)
-        `).run(1, 1);
+            VALUES (?, ?, ?)
+        `).run(1, 1, 1);
 
         db.prepare(`
             INSERT INTO game_runs (
                 user_id,
+                run_number,
                 selected_hero_id
             )
-            VALUES (?, ?)
-        `).run(2, 1);
+            VALUES (?, ?, ?)
+        `).run(2, 1, 1);
 
         repository = new BattleRepository(db);
     });
@@ -200,6 +198,7 @@ describe('BattleRepository', () => {
         expect(battle).toMatchObject({
             id: 1,
             runId: 1,
+            battleNumber: 1,
             heroId: 1,
             playerHealth: 100,
             playerMaxHealth: 100,
@@ -213,6 +212,54 @@ describe('BattleRepository', () => {
         });
 
         expect(battle.startedAt).toBeTruthy();
+    });
+
+    it('assigns battle number 1 to the first battle in a run', () => {
+        const battle = repository.createBattle({
+            runId: 1,
+            heroId: 1,
+            playerHealth: 100,
+            playerMaxHealth: 100,
+            enemyName: 'Goblin',
+            enemyImageUrl: '/images/goblin.png',
+            enemyHealth: 50,
+            enemyMaxHealth: 50,
+            enemyAttack: 8,
+            enemyDefense: 3,
+        });
+
+        expect(battle.battleNumber).toBe(1);
+    });
+
+    it('starts battle numbering at 1 for each game run', () => {
+        const firstRunBattle = repository.createBattle({
+            runId: 1,
+            heroId: 1,
+            playerHealth: 100,
+            playerMaxHealth: 100,
+            enemyName: 'Goblin',
+            enemyImageUrl: '/images/goblin.png',
+            enemyHealth: 50,
+            enemyMaxHealth: 50,
+            enemyAttack: 8,
+            enemyDefense: 3,
+        });
+
+        const secondRunBattle = repository.createBattle({
+            runId: 2,
+            heroId: 1,
+            playerHealth: 100,
+            playerMaxHealth: 100,
+            enemyName: 'Orc',
+            enemyImageUrl: '/images/orc.png',
+            enemyHealth: 60,
+            enemyMaxHealth: 60,
+            enemyAttack: 10,
+            enemyDefense: 4,
+        });
+
+        expect(firstRunBattle.battleNumber).toBe(1);
+        expect(secondRunBattle.battleNumber).toBe(1);
     });
 
     it('finds a battle by id', () => {
@@ -754,6 +801,9 @@ describe('BattleRepository', () => {
             runId: 1,
             status: 'active',
         });
+
+        expect(firstBattle.battleNumber).toBe(1);
+        expect(secondBattle.battleNumber).toBe(2);
     });
 
     it('allows a new active battle after the previous battle is abandoned', () => {
@@ -798,6 +848,9 @@ describe('BattleRepository', () => {
             runId: 1,
             status: 'active',
         });
+
+        expect(firstBattle.battleNumber).toBe(1);
+        expect(secondBattle.battleNumber).toBe(2);
     });
 
     it('persists an abandoned battle and excludes it from active battles', () => {

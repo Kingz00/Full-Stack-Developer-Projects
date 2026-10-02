@@ -38,6 +38,7 @@ describe('BattleService', () => {
     const gameRun: GameRunExtended = {
         id: 1,
         userId: 10,
+        runNumber: 1,
         selectedHeroId: 1,
         status: 'active',
         startedAt: '2026-09-18T10:00:00.000Z',
@@ -47,6 +48,7 @@ describe('BattleService', () => {
     const createdBattle: Battle = {
         id: 1,
         runId: 1,
+        battleNumber: 1,
         heroId: 1,
         playerHealth: 100,
         playerMaxHealth: 100,

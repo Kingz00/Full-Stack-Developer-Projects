@@ -1,6 +1,7 @@
 CREATE TABLE battles (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     run_id INTEGER NOT NULL,
+    battle_number INTEGER NOT NULL,
     hero_id INTEGER NOT NULL,
 
     player_health INTEGER NOT NULL
@@ -36,7 +37,9 @@ CREATE TABLE battles (
         ON DELETE CASCADE,
 
     FOREIGN KEY (hero_id)
-        REFERENCES heroes(id)
+        REFERENCES heroes(id),
+
+    UNIQUE (run_id, battle_number)
 );
 
 CREATE INDEX idx_battles_run_id

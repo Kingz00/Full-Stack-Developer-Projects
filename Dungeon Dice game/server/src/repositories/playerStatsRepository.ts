@@ -44,6 +44,7 @@ export class PlayerStatsRepository {
             .prepare(`
                 SELECT
                     game_runs.id AS run_id,
+                    game_runs.run_number AS run_number,
                     COUNT(*) AS total_battles,
                     COUNT(
                         CASE
@@ -72,11 +73,12 @@ export class PlayerStatsRepository {
                     wins DESC,
                     losses ASC,
                     total_battles DESC,
-                    game_runs.id ASC
+                    game_runs.run_number ASC
                 LIMIT 1
             `)
             .get(userId) as {
                 run_id: number;
+                run_number: number;
                 total_battles: number;
                 wins: number;
                 losses: number;
@@ -86,6 +88,7 @@ export class PlayerStatsRepository {
         const bestRun: BestRunStats | null = bestRunRow
             ? {
                 runId: bestRunRow.run_id,
+                runNumber: bestRunRow.run_number,
                 totalBattles: bestRunRow.total_battles,
                 wins: bestRunRow.wins,
                 losses: bestRunRow.losses,

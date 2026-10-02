@@ -1,5 +1,6 @@
 export interface BestRunStats {
     runId: number;
+    runNumber: number;
     totalBattles: number;
     wins: number;
     losses: number;

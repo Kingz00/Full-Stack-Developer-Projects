@@ -35,6 +35,7 @@ describe('Game Run integration', () => {
             CREATE TABLE game_runs (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 user_id INTEGER NOT NULL,
+                run_number INTEGER NOT NULL,
                 selected_hero_id INTEGER NOT NULL,
                 status TEXT NOT NULL DEFAULT 'active'
                     CHECK (status IN ('active', 'completed', 'abandoned')),
@@ -46,7 +47,9 @@ describe('Game Run integration', () => {
                     ON DELETE CASCADE,
 
                 FOREIGN KEY (selected_hero_id)
-                    REFERENCES heroes(id)
+                    REFERENCES heroes(id),
+
+                UNIQUE (user_id, run_number)
             );
 
             CREATE INDEX idx_game_runs_user_id
@@ -55,33 +58,24 @@ describe('Game Run integration', () => {
             CREATE TABLE battles (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 run_id INTEGER NOT NULL,
+                battle_number INTEGER NOT NULL,
                 hero_id INTEGER NOT NULL,
-
                 player_health INTEGER NOT NULL
                     CHECK (player_health >= 0),
-
                 player_max_health INTEGER NOT NULL
                     CHECK (player_max_health > 0),
-
                 enemy_name TEXT NOT NULL,
-
                 enemy_image_url TEXT NOT NULL,
-
                 enemy_health INTEGER NOT NULL
                     CHECK (enemy_health >= 0),
-
                 enemy_max_health INTEGER NOT NULL
                     CHECK (enemy_max_health > 0),
-
                 enemy_attack INTEGER NOT NULL
                     CHECK (enemy_attack > 0),
-
                 enemy_defense INTEGER NOT NULL
                     CHECK (enemy_defense >= 0),
-
                 status TEXT NOT NULL DEFAULT 'active'
-                    CHECK (status IN ( 'active', 'won', 'lost', 'draw', 'abandoned')),
-
+                    CHECK (status IN ('active', 'won', 'lost', 'draw', 'abandoned')),
                 started_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 completed_at TEXT,
 
@@ -90,7 +84,9 @@ describe('Game Run integration', () => {
                     ON DELETE CASCADE,
 
                 FOREIGN KEY (hero_id)
-                    REFERENCES heroes(id)
+                    REFERENCES heroes(id),
+
+                UNIQUE (run_id, battle_number)
             );
 
             CREATE INDEX idx_battles_run_id
@@ -161,6 +157,7 @@ describe('Game Run integration', () => {
 
         expect(response.body.run).toMatchObject({
             id: expect.any(Number),
+            runNumber: expect.any(Number),
             userId: expect.any(Number),
             selectedHeroId: heroId,
             status: 'active',
@@ -172,6 +169,7 @@ describe('Game Run integration', () => {
                 SELECT
                     id,
                     user_id,
+                    run_number,
                     selected_hero_id,
                     status,
                     completed_at
@@ -181,6 +179,7 @@ describe('Game Run integration', () => {
             .get(response.body.run.id) as {
                 id: number;
                 user_id: number;
+                run_number: number;
                 selected_hero_id: number;
                 status: string;
                 completed_at: string | null;
@@ -188,12 +187,16 @@ describe('Game Run integration', () => {
 
         expect(run).toMatchObject({
             id: response.body.run.id,
+            run_number: 1,
             selected_hero_id: heroId,
             status: 'active',
             completed_at: null
         });
 
         expect(run.user_id).toBe(response.body.run.userId);
+
+        expect(run.run_number)
+            .toBe(response.body.run.runNumber);
         if (db) {
             db.close();
         }
@@ -578,6 +581,7 @@ describe('Game Run integration', () => {
                 .prepare(`
                     INSERT INTO battles (
                         run_id,
+                        battle_number,
                         hero_id,
                         player_health,
                         player_max_health,
@@ -588,10 +592,11 @@ describe('Game Run integration', () => {
                         enemy_attack,
                         enemy_defense
                     )
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 `)
                 .run(
                     runId,
+                    1,
                     heroId,
                     100,
                     100,
@@ -688,6 +693,7 @@ describe('Game Run integration', () => {
                 .prepare(`
                     INSERT INTO battles (
                         run_id,
+                        battle_number,
                         hero_id,
                         player_health,
                         player_max_health,
@@ -698,10 +704,11 @@ describe('Game Run integration', () => {
                         enemy_attack,
                         enemy_defense
                     )
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 `)
                 .run(
                     runId,
+                    1,
                     heroId,
                     100,
                     100,
