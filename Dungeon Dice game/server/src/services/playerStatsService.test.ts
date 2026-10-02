@@ -32,6 +32,7 @@ describe('PlayerStatsService', () => {
             draws: 2,
             bestRun: {
                 runId: 7,
+                runNumber: 2,
                 totalBattles: 5,
                 wins: 3,
                 losses: 1,

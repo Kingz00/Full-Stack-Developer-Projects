@@ -14,11 +14,17 @@ export class GameRunRepository {
             .prepare(`
                         INSERT INTO game_runs (
                         user_id,
+                        run_number,
                         selected_hero_id
                         )
-                        VALUES (?, ?)
+                        VALUES (?, (
+                            SELECT COALESCE(MAX(run_number), 0) + 1
+                            FROM game_runs
+                            WHERE user_id = ?
+                        ), ?)
                     `)
             .run(
+                input.userId,
                 input.userId,
                 input.selectedHeroId,
             );
@@ -35,7 +41,7 @@ export class GameRunRepository {
     findById(id: number): GameRun | null {
         const row = this.db
             .prepare(`
-                    SELECT id, user_id, selected_hero_id, status, started_at, completed_at
+                    SELECT id, user_id, run_number, selected_hero_id, status, started_at, completed_at
                         FROM game_runs
                         WHERE id = ?
                 `)
@@ -51,7 +57,7 @@ export class GameRunRepository {
     findByIdForUser(id: number, userId: number): GameRun | null {
         const row = this.db
             .prepare(`
-                    SELECT id, user_id, selected_hero_id, status, started_at, completed_at 
+                    SELECT id, user_id, run_number, selected_hero_id, status, started_at, completed_at 
                         FROM game_runs
                         WHERE id = ? AND user_id = ?
                 `)
@@ -70,6 +76,7 @@ export class GameRunRepository {
                 SELECT
                     id,
                     user_id,
+                    run_number,
                     selected_hero_id,
                     status,
                     started_at,
@@ -119,6 +126,7 @@ export class GameRunRepository {
         const gameRun = row as {
             id: number;
             user_id: number;
+            run_number: number;
             selected_hero_id: number;
             status: RunStatus;
             started_at: string;
@@ -127,6 +135,7 @@ export class GameRunRepository {
 
         return {
             id: gameRun.id,
+            runNumber: gameRun.run_number,
             userId: gameRun.user_id,
             selectedHeroId: gameRun.selected_hero_id,
             status: gameRun.status,

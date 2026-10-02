@@ -34,6 +34,7 @@ export interface BattleRoundResult {
 
 export interface Battle {
     id: number;
+    battleNumber: number;
     runId: number;
     heroId: number;
 

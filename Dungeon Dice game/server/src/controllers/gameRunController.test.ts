@@ -13,6 +13,7 @@ describe('GameRunController', () => {
     const gameRun: GameRun = {
         id: 1,
         userId: 10,
+        runNumber: 1,
         selectedHeroId: 2,
         status: 'active',
         startedAt: '2026-09-19T10:00:00.000Z',

@@ -33,6 +33,7 @@ describe('GameRunRepository', () => {
       CREATE TABLE game_runs (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id INTEGER NOT NULL,
+        run_number INTEGER NOT NULL,
         selected_hero_id INTEGER NOT NULL,
         status TEXT NOT NULL DEFAULT 'active'
           CHECK (status IN ('active', 'completed', 'abandoned')),
@@ -44,7 +45,9 @@ describe('GameRunRepository', () => {
           ON DELETE CASCADE,
 
         FOREIGN KEY (selected_hero_id)
-          REFERENCES heroes(id)
+          REFERENCES heroes(id),
+
+        UNIQUE (user_id, run_number)
       );
 
       CREATE INDEX idx_game_runs_user_id
@@ -107,6 +110,7 @@ describe('GameRunRepository', () => {
 
         expect(gameRun).toMatchObject({
             id: 1,
+            runNumber: 1,
             userId: 1,
             selectedHeroId: 1,
             status: 'active',
@@ -114,6 +118,61 @@ describe('GameRunRepository', () => {
         });
 
         expect(gameRun.startedAt).toBeTruthy();
+    });
+
+    it('assigns run number 1 to a user\'s first run', () => {
+        const gameRun = repository.create({
+            userId: 1,
+            selectedHeroId: 1,
+        });
+
+        expect(gameRun.runNumber).toBe(1);
+    });
+
+    it('increments run numbers for the same user', () => {
+        const firstRun = repository.create({
+            userId: 1,
+            selectedHeroId: 1,
+        });
+
+        const secondRun = repository.create({
+            userId: 1,
+            selectedHeroId: 1,
+        });
+
+        expect(firstRun.runNumber).toBe(1);
+        expect(secondRun.runNumber).toBe(2);
+    });
+
+    it('starts run numbering at 1 for each user', () => {
+        const userOneRun = repository.create({
+            userId: 1,
+            selectedHeroId: 1,
+        });
+
+        const userTwoRun = repository.create({
+            userId: 2,
+            selectedHeroId: 1,
+        });
+
+        expect(userOneRun.runNumber).toBe(1);
+        expect(userTwoRun.runNumber).toBe(1);
+    });
+
+    it('does not reuse a run number after a run ends', () => {
+        const firstRun = repository.create({
+            userId: 1,
+            selectedHeroId: 1,
+        });
+
+        repository.updateStatus(firstRun.id, 'completed');
+
+        const secondRun = repository.create({
+            userId: 1,
+            selectedHeroId: 1,
+        });
+
+        expect(secondRun.runNumber).toBe(2);
     });
 
     it('finds a game run by id', () => {
