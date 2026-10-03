@@ -32,6 +32,8 @@ function AppHeader() {
                     aria-label="Main navigation"
                 >
 
+                    <Link to="/statistics">Statistics</Link>
+
                     <span className="app-header__username">
                         {user.username}
                     </span>

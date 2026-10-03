@@ -2,6 +2,7 @@ export type RunStatus = 'active' | 'completed' | 'abandoned'
 
 export interface GameRun {
     id: number
+    runNumber: number
     userId: number
     selectedHeroId: number
     status: RunStatus

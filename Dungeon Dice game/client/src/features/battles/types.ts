@@ -2,6 +2,7 @@ export type BattleStatus = 'active' | 'won' | 'lost' | 'draw' | 'abandoned'
 
 export interface Battle {
     id: number
+    battleNumber: number
     runId: number
     heroId: number
     playerHealth: number
