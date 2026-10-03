@@ -164,7 +164,7 @@ function GamePage() {
                             </p>
 
                             <p className="game-page__run-details">
-                                Run #{runId}
+                                Run #{run.runNumber}
                             </p>
 
                             {activeBattle ? (
@@ -174,7 +174,7 @@ function GamePage() {
                                     </p>
 
                                     <p>
-                                        Battle #{activeBattle.id} against{' '}
+                                        Battle #{activeBattle.battleNumber} against{' '}
                                         {activeBattle.enemyName}
                                     </p>
                                 </>

@@ -294,10 +294,6 @@ function BattlePage() {
                 >
                     ← Return to Run
                 </Link>
-
-                <p className="battle-page__run">
-                    Run #{battle.runId}
-                </p>
             </div>
 
             <header className="battle-page__header">
@@ -573,7 +569,7 @@ function BattlePage() {
             <section className="battle-page__footer">
                 <div className="battle-page__status">
                     <span className="battle-page__status-label">
-                        Battle #{battle.id}
+                        Battle #{battle.battleNumber}
                     </span>
 
                     <span
