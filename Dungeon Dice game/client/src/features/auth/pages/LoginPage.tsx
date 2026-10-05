@@ -1,6 +1,7 @@
 import { Form, Link, useNavigation, useSearchParams, useActionData, useRouteLoaderData, Navigate } from 'react-router-dom'
 import type { AuthUser } from '../loaders/authLoader'
 
+import logo from '../../../assets/branding/dungeon-dice-duel-logo.png'
 import './AuthPage.css'
 
 interface LoginActionData {
@@ -17,7 +18,6 @@ function LoginPage() {
     const actionData = useActionData() as LoginActionData | undefined
     const user = useRouteLoaderData('root') as AuthUser | null
 
-
     if (user) {
         return <Navigate to="/" replace />
     }
@@ -31,15 +31,28 @@ function LoginPage() {
 
     return (
         <main className="auth-page">
-            <section className="auth-card">
+            <section className="auth-card" aria-labelledby="login-title">
+                <div className="auth-card__brand">
+                    <img
+                        src={logo}
+                        alt="Dungeon Dice Duel"
+                    />
+                </div>
+
+                <div className="auth-card__divider" aria-hidden="true">
+                    <span />
+                </div>
+
                 <div className="auth-card__header">
                     <p className="auth-card__eyebrow">
-                        Dungeon Dice Duel
+                        Enter the dungeon
                     </p>
 
-                    <h1>Welcome back</h1>
+                    <h1 id="login-title">Welcome back</h1>
 
-                    <p>Sign in to continue your adventure.</p>
+                    <p>
+                        Sign in to continue your adventure.
+                    </p>
                 </div>
 
                 <Form method="post" className="auth-form">
@@ -52,7 +65,9 @@ function LoginPage() {
                             type="text"
                             autoComplete="username"
                             required
-                            aria-invalid={Boolean(actionData?.fieldErrors?.username)}
+                            aria-invalid={Boolean(
+                                actionData?.fieldErrors?.username
+                            )}
                             aria-describedby={
                                 actionData?.fieldErrors?.username
                                     ? 'username-error'
@@ -61,7 +76,10 @@ function LoginPage() {
                         />
 
                         {actionData?.fieldErrors?.username && (
-                            <p id="username-error" className="auth-form__error">
+                            <p
+                                id="username-error"
+                                className="auth-form__error"
+                            >
                                 {actionData.fieldErrors.username}
                             </p>
                         )}
