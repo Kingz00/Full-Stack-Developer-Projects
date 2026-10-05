@@ -1,11 +1,36 @@
 @import './variables.css';
 
+@font-face {
+    font-family: 'Cinzel';
+    src: url('../assets/fonts/Cinzel-Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Cinzel';
+    src: url('../assets/fonts/Cinzel-Bold.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Cinzel';
+    src: url('../assets/fonts/Cinzel-Black.woff2') format('woff2');
+    font-weight: 900;
+    font-style: normal;
+    font-display: swap;
+}
+
 * {
     box-sizing: border-box;
 }
 
 html {
     min-width: 320px;
+    min-height: 100%;
     background: var(--color-bg-primary);
 }
 
@@ -14,7 +39,15 @@ body {
     min-width: 320px;
     min-height: 100vh;
 
-    background: var(--color-bg-primary);
+    background:
+        radial-gradient(circle at 50% 0%,
+            rgb(75 57 32 / 0.12),
+            transparent 38%),
+        linear-gradient(180deg,
+            #0d0e12 0%,
+            var(--color-bg-primary) 45%,
+            #06070a 100%);
+
     color: var(--color-text-primary);
 
     font-family: var(--font-body);
@@ -34,6 +67,13 @@ button:disabled {
     cursor: not-allowed;
 }
 
+button:focus-visible,
+input:focus-visible,
+a:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+}
+
 img {
     display: block;
     max-width: 100%;
@@ -44,4 +84,10 @@ h2,
 h3,
 p {
     margin-top: 0;
+}
+
+h1,
+h2,
+h3 {
+    font-family: var(--font-heading);
 }

@@ -1,6 +1,7 @@
 import { Form, Link, useNavigation, useSearchParams, useActionData, useRouteLoaderData, Navigate } from 'react-router-dom'
 import type { AuthUser } from '../loaders/authLoader'
 
+import logo from '../../../assets/branding/dungeon-dice-duel-logo.png'
 import './AuthPage.css'
 
 interface RegisterActionData {
@@ -16,7 +17,7 @@ function RegisterPage() {
     const navigation = useNavigation()
     const [searchParams] = useSearchParams()
     const actionData = useActionData() as RegisterActionData | undefined
-    const user = useRouteLoaderData("root") as AuthUser | null
+    const user = useRouteLoaderData('root') as AuthUser | null
 
     if (user) {
         return <Navigate to="/" replace />
@@ -31,15 +32,30 @@ function RegisterPage() {
 
     return (
         <main className="auth-page">
-            <section className="auth-card">
+            <section className="auth-card" aria-labelledby="register-title">
+                <div className="auth-card__brand">
+                    <img
+                        src={logo}
+                        alt="Dungeon Dice Duel"
+                    />
+                </div>
+
+                <div className="auth-card__divider" aria-hidden="true">
+                    <span />
+                </div>
+
                 <div className="auth-card__header">
                     <p className="auth-card__eyebrow">
-                        Dungeon Dice Duel
+                        Begin your quest
                     </p>
 
-                    <h1>Create your account</h1>
+                    <h1 id="register-title">
+                        Create your account
+                    </h1>
 
-                    <p>Join the duel and begin your adventure.</p>
+                    <p>
+                        Join the duel and begin your adventure.
+                    </p>
                 </div>
 
                 <Form method="post" className="auth-form">
@@ -52,7 +68,9 @@ function RegisterPage() {
                             type="text"
                             autoComplete="username"
                             required
-                            aria-invalid={Boolean(actionData?.fieldErrors?.username)}
+                            aria-invalid={Boolean(
+                                actionData?.fieldErrors?.username
+                            )}
                             aria-describedby={
                                 actionData?.fieldErrors?.username
                                     ? 'username-error'
@@ -94,7 +112,9 @@ function RegisterPage() {
                             type="password"
                             autoComplete="new-password"
                             required
-                            aria-invalid={Boolean(actionData?.fieldErrors?.confirmPassword)}
+                            aria-invalid={Boolean(
+                                actionData?.fieldErrors?.confirmPassword
+                            )}
                             aria-describedby={
                                 actionData?.fieldErrors?.confirmPassword
                                     ? 'confirm-password-error'

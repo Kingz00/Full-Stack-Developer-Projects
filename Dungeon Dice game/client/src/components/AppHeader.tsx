@@ -1,6 +1,7 @@
 import { Form, Link, useNavigation, useRouteLoaderData } from 'react-router-dom'
 
 import type { AuthUser } from '../features/auth/loaders/authLoader'
+import logo from '../assets/branding/dungeon-dice-duel-logo.png'
 
 import './AppHeader.css'
 
@@ -17,34 +18,59 @@ function AppHeader() {
         navigation.formMethod === 'POST' &&
         navigation.formAction === '/logout'
 
+
     return (
         <header className="app-header">
             <div className="app-header__content">
                 <Link
                     className="app-header__brand"
                     to="/"
+                    aria-label="Dungeon Dice Duel home"
                 >
-                    Dungeon Dice Duel
+                    <img
+                        className="app-header__logo"
+                        src={logo}
+                        alt="Dungeon Dice Duel"
+                    />
                 </Link>
 
                 <nav
                     className="app-header__nav"
                     aria-label="Main navigation"
                 >
-
-                    <Link to="/statistics">Statistics</Link>
-
                     <span className="app-header__username">
                         {user.username}
                     </span>
 
-                    <Form method="post" action="/logout">
+                    <span
+                        className="app-header__separator"
+                        aria-hidden="true"
+                    />
+
+                    <Link
+                        className="app-header__stats"
+                        to="/statistics"
+                    >
+                        Stats
+                    </Link>
+
+                    <span
+                        className="app-header__separator"
+                        aria-hidden="true"
+                    />
+
+                    <Form
+                        method="post"
+                        action="/logout"
+                    >
                         <button
                             className="app-header__logout"
                             type="submit"
                             disabled={isLoggingOut}
                         >
-                            {isLoggingOut ? 'Signing out...' : 'Sign out'}
+                            {isLoggingOut
+                                ? 'Signing out...'
+                                : 'Sign out'}
                         </button>
                     </Form>
                 </nav>
