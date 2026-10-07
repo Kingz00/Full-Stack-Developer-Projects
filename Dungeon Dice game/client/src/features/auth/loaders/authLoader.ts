@@ -17,9 +17,21 @@ export async function authLoader(request: LoaderFunctionArgs): Promise<AuthUser 
         throw new Error('VITE_API_BASE_URL is not configured.')
     }
 
-    const response = await fetch(`${apiBaseUrl}/auth/me`, {
-        credentials: 'include',
-    })
+
+    let response: Response
+
+    try {
+        response = await fetch(`${apiBaseUrl}/auth/me`, {
+            credentials: 'include',
+        })
+    } catch {
+        const error = new Error(
+            'The game server could not be reached. It may be offline or temporarily unavailable.'
+        )
+
+        error.name = 'ServerConnectionError'
+        throw error
+    }
 
     if (response.status === 401) {
         const url = new URL(request.url)

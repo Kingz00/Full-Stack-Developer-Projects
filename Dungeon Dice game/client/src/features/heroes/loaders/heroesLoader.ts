@@ -19,7 +19,19 @@ export async function heroesLoader(): Promise<Hero[]> {
         throw new Error('VITE_API_BASE_URL is not configured.')
     }
 
-    const response = await fetch(`${apiBaseUrl}/heroes`)
+
+    let response: Response
+
+    try {
+        response = await fetch(`${apiBaseUrl}/heroes`)
+    } catch {
+        const error = new Error(
+            'The game server could not be reached. It may be offline or temporarily unavailable.'
+        )
+
+        error.name = 'ServerConnectionError'
+        throw error
+    }
 
     if (!response.ok) {
         throw new Error('Unable to load heroes.')
