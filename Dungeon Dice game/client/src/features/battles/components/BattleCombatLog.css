@@ -1,0 +1,95 @@
+.battle-combat-log {
+    min-width: 0;
+    padding: 0.9rem 1rem;
+}
+
+.battle-combat-log__empty {
+    margin: 1rem 0 0;
+    color: var(--color-text-muted);
+    font-size: 0.85rem;
+    line-height: 1.5;
+    text-align: center;
+}
+
+.battle-combat-log__list {
+    display: grid;
+    gap: 0;
+    max-height: 12rem;
+    margin: 0;
+    padding: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-frame-highlight) var(--color-bg-surface-inset);
+    list-style: none;
+}
+
+.battle-combat-log__list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.battle-combat-log__list::-webkit-scrollbar-track {
+    background: var(--color-bg-surface-inset);
+    border-left: 1px solid var(--color-border);
+}
+
+.battle-combat-log__list::-webkit-scrollbar-thumb {
+    background: var(--color-frame);
+    border: 1px solid var(--color-frame-highlight);
+    border-radius: var(--radius-sm);
+}
+
+.battle-combat-log__list::-webkit-scrollbar-thumb:hover {
+    background: var(--color-frame-highlight);
+}
+
+.battle-combat-log__entry {
+    padding: 0.85rem 0;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.battle-combat-log__entry:last-child {
+    border-bottom: 0;
+}
+
+.battle-combat-log__entry h3 {
+    margin: 0 0 0.4rem;
+    color: var(--color-accent);
+    font-family: var(--font-heading);
+    font-size: 0.85rem;
+}
+
+.battle-combat-log__entry p {
+    margin: 0.25rem 0;
+    color: var(--color-text-secondary);
+    font-size: 0.8rem;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.battle-combat-log__entry strong {
+    color: var(--color-text-primary);
+}
+
+.battle-combat-log__outcome {
+    font-weight: 700;
+}
+
+.battle-combat-log__outcome--won {
+    color: #72d49a !important;
+}
+
+.battle-combat-log__outcome--lost {
+    color: #ef7165 !important;
+}
+
+.battle-combat-log__outcome--draw,
+.battle-combat-log__outcome--active {
+    color: var(--color-accent) !important;
+}
+
+@media (max-width: 520px) {
+    .battle-combat-log {
+        padding: 0.85rem;
+    }
+}

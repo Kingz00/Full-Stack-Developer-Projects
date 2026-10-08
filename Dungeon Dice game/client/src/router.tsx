@@ -1,4 +1,4 @@
-import { createBrowserRouter, Outlet } from 'react-router-dom'
+import { createBrowserRouter, Outlet, useLocation } from 'react-router-dom'
 
 import HeroSelectionPage from './features/heroes/pages/HeroSelectionPage'
 import RouteErrorElement from './components/RouteErrorElement'
@@ -20,9 +20,12 @@ import { statisticsLoader } from './features/statistics/loaders/statisticsLoader
 import StatisticsPage from './features/statistics/pages/StatisticsPage'
 
 function RootLayout() {
+    const { pathname } = useLocation()
+    const isBattlePage = pathname === '/game/battle'
+
     return (
         <>
-            <AppHeader />
+            {!isBattlePage && <AppHeader />}
             <Outlet />
         </>
     )

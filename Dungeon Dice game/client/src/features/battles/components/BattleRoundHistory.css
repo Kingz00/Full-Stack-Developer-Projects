@@ -1,0 +1,104 @@
+.battle-round-history {
+    min-width: 0;
+    padding: 0.9rem 1rem;
+}
+
+.battle-support-panel__title {
+    margin: 0;
+    padding-bottom: 0.75rem;
+    color: var(--color-accent);
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    text-align: center;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.battle-round-history__empty {
+    margin: 1rem 0 0;
+    color: var(--color-text-muted);
+    font-size: 0.85rem;
+    line-height: 1.5;
+    text-align: center;
+}
+
+.battle-round-history__list {
+    display: grid;
+    gap: 0;
+    max-height: 12rem;
+    margin: 0;
+    padding: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-frame-highlight) var(--color-bg-surface-inset);
+    list-style: none;
+}
+
+.battle-round-history__list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.battle-round-history__list::-webkit-scrollbar-track {
+    background: var(--color-bg-surface-inset);
+    border-left: 1px solid var(--color-border);
+}
+
+.battle-round-history__list::-webkit-scrollbar-thumb {
+    background: var(--color-frame);
+    border: 1px solid var(--color-frame-highlight);
+    border-radius: var(--radius-sm);
+}
+
+.battle-round-history__list::-webkit-scrollbar-thumb:hover {
+    background: var(--color-frame-highlight);
+}
+
+.battle-round-history__item {
+    padding: 0.85rem 0;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.battle-round-history__item:last-child {
+    border-bottom: 0;
+}
+
+.battle-round-history__heading {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.4rem;
+    color: var(--color-text-primary);
+    font-size: 0.8rem;
+}
+
+.battle-round-history__status {
+    font-weight: 700;
+}
+
+.battle-round-history__status--won {
+    color: #72d49a;
+}
+
+.battle-round-history__status--lost {
+    color: #ef7165;
+}
+
+.battle-round-history__status--draw,
+.battle-round-history__status--active {
+    color: var(--color-accent);
+}
+
+.battle-round-history__item p {
+    margin: 0.35rem 0 0;
+    color: var(--color-text-secondary);
+    font-size: 0.8rem;
+    line-height: 1.45;
+}
+
+@media (max-width: 520px) {
+    .battle-round-history {
+        padding: 0.85rem;
+    }
+}
