@@ -18,6 +18,7 @@ import BattlePage from './features/battles/pages/BattlePage'
 import { battleLoader } from './features/battles/loaders/battleLoader'
 import { statisticsLoader } from './features/statistics/loaders/statisticsLoader'
 import StatisticsPage from './features/statistics/pages/StatisticsPage'
+import AboutPage from './features/about/pages/AboutPage'
 
 function RootLayout() {
     const { pathname } = useLocation()
@@ -76,6 +77,10 @@ export const router = createBrowserRouter([
                 loader: statisticsLoader,
                 element: <StatisticsPage />,
                 errorElement: <RouteErrorElement />,
+            },
+            {
+                path: '/about',
+                element: <AboutPage />,
             },
         ],
     }

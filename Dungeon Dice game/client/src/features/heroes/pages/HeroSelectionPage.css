@@ -477,6 +477,28 @@
     color: var(--color-danger);
 }
 
+/* About */
+.hero-selection__footer-nav {
+    margin-top: 1rem;
+    text-align: center;
+}
+
+.hero-selection__footer-nav a {
+    color: var(--color-accent);
+    font-family: var(--font-heading);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: color 160ms ease;
+}
+
+.hero-selection__footer-nav a:hover {
+    color: var(--color-accent-hover);
+    text-decoration: underline;
+    text-underline-offset: 0.25rem;
+}
+
 /* --------------------------------
    Responsive
 -------------------------------- */

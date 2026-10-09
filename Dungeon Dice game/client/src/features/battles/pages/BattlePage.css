@@ -223,6 +223,18 @@
     }
 }
 
+/* Compact desktop layout for shorter viewports */
+@media (min-width: 901px) and (max-height: 800px) {
+    .battle-page__content {
+        gap: 0.6rem;
+        padding-block: 0.5rem 0.75rem;
+    }
+
+    .battle-page__lower-grid {
+        gap: 0.75rem;
+    }
+}
+
 @media (prefers-reduced-motion: reduce) {
 
     .battle-page *,
