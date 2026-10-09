@@ -71,3 +71,13 @@
         grid-row: 2;
     }
 }
+
+@media (min-width: 901px) and (max-height: 800px) {
+    .battle-header {
+        margin-bottom: 0.5rem;
+    }
+
+    .battle-header__title h1 {
+        font-size: clamp(1.5rem, 2.5vw, 2rem);
+    }
+}

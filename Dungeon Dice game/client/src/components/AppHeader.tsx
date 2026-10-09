@@ -42,6 +42,13 @@ function AppHeader() {
                         {user.username}
                     </span>
 
+                    <Link
+                        className="app-header__stats"
+                        to="/about"
+                    >
+                        About
+                    </Link>
+
                     <span
                         className="app-header__separator"
                         aria-hidden="true"

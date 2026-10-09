@@ -310,7 +310,6 @@ function BattlePage() {
                     battleNumber={battle.battleNumber}
                     status={battleState.status}
                 />
-
                 <BattleArena
                     hero={hero}
                     battle={battle}
@@ -344,6 +343,7 @@ function BattlePage() {
                         <BattleCombatLog rounds={rounds} />
                     </div>
                 )}
+
 
                 {isBattleResolved ? (
                     <section className="battle-page__completion">

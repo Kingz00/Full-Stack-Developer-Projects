@@ -1,4 +1,4 @@
-import { useLoaderData, useNavigate, useRouteLoaderData } from 'react-router-dom'
+import { Link, useLoaderData, useNavigate, useRouteLoaderData } from 'react-router-dom'
 
 import type { AuthUser } from '../../auth/loaders/authLoader'
 import type { Hero } from '../loaders/heroesLoader'
@@ -141,6 +141,10 @@ function HeroSelectionPage() {
                 <p className="hero-selection__quote">
                     "In the end, we all roll the same dice."
                 </p>
+
+                <nav className="hero-selection__footer-nav" aria-label="Additional navigation">
+                    <Link to="/about">About the Game</Link>
+                </nav>
             </div>
         </main>
     )
