@@ -1,7 +1,7 @@
 import Database from 'better-sqlite3';
 import request from 'supertest';
 
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createApp } from './app.js';
 
@@ -136,11 +136,23 @@ describe('API contract', () => {
                 ON battle_rounds(battle_id);
         `);
 
+        process.env.RECAPTCHA_SECRET_KEY = 'integration-test-secret'
+
+        vi.stubGlobal(
+            'fetch',
+            vi.fn().mockResolvedValue({
+                ok: true,
+                json: async () => ({ success: true }),
+            }),
+        )
+
         app = createApp(db);
     });
 
     afterEach(() => {
         db.close();
+        vi.unstubAllGlobals()
+        vi.restoreAllMocks()
     });
 
     function createHero(name: string, health = 18, attack = 8, defense = 7): number {
@@ -177,7 +189,8 @@ describe('API contract', () => {
             .post('/api/auth/register')
             .send({
                 username,
-                password
+                password,
+                recaptchaToken: 'integration-test-token'
             });
     }
 
@@ -263,6 +276,7 @@ describe('API contract', () => {
                     .send({
                         username: 'contract-register',
                         password: 'password123',
+                        recaptchaToken: 'integration-test-token'
                     });
 
                 expect(response.status).toBe(201);
@@ -290,6 +304,7 @@ describe('API contract', () => {
                     .send({
                         username: 'contract-login',
                         password: 'password123',
+                        recaptchaToken: 'integration-test-token'
                     })
                     .expect(201);
 
@@ -298,6 +313,7 @@ describe('API contract', () => {
                     .send({
                         username: 'contract-login',
                         password: 'password123',
+                        recaptchaToken: 'integration-test-token'
                     });
 
                 expect(response.status).toBe(200);

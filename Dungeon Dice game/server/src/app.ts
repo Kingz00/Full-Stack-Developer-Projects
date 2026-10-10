@@ -33,6 +33,8 @@ import { CurrentUserService } from './services/currentUserService.js';
 import { HeroController } from './controllers/heroController.js';
 import { createHeroRoutes } from './routes/heroRoutes.js';
 
+import { RecaptchaService } from './services/recaptchaService.js'
+
 export function createApp(db: Database.Database) {
     const app = express();
 
@@ -71,6 +73,7 @@ export function createApp(db: Database.Database) {
     const gameRunController = new GameRunController(gameRunService);
 
     // Authentication
+    const recaptchaService = new RecaptchaService()
     const userRepository = new UserRepository(db);
     const authService = new AuthService(userRepository);
     const sessionService = new SessionService();
@@ -80,7 +83,8 @@ export function createApp(db: Database.Database) {
         authService,
         sessionService,
         currentUserService,
-        gameRunService
+        gameRunService,
+        recaptchaService
     );
 
     // Battle Service

@@ -1,7 +1,7 @@
 import Database from 'better-sqlite3';
 import request from 'supertest';
 
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createApp } from './app.js';
 import { createDatabase } from './db/database.js';
@@ -116,11 +116,23 @@ describe('Player Statistics API', () => {
             5,
         );
 
+        process.env.RECAPTCHA_SECRET_KEY = 'integration-test-secret'
+
+        vi.stubGlobal(
+            'fetch',
+            vi.fn().mockResolvedValue({
+                ok: true,
+                json: async () => ({ success: true }),
+            }),
+        )
+
         app = createApp(db);
     });
 
     afterEach(() => {
         db.close();
+        vi.unstubAllGlobals()
+        vi.restoreAllMocks()
     });
 
     function createRun(
@@ -191,6 +203,7 @@ describe('Player Statistics API', () => {
             .send({
                 username,
                 password: 'password123',
+                recaptchaToken: 'integration-test-token'
             });
     }
 

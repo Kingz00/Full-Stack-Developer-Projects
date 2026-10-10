@@ -15,6 +15,7 @@ export async function registerAction({ request }: ActionFunctionArgs): Promise<R
     const username = formData.get('username')
     const password = formData.get('password')
     const confirmPassword = formData.get('confirmPassword')
+    const recaptchaToken = formData.get('recaptchaToken')
 
     if (
         typeof username !== 'string' ||
@@ -39,6 +40,23 @@ export async function registerAction({ request }: ActionFunctionArgs): Promise<R
         }
     }
 
+    if (
+        typeof username !== 'string' ||
+        typeof password !== 'string' ||
+        typeof confirmPassword !== 'string' ||
+        typeof recaptchaToken !== 'string' ||
+        !username.trim() ||
+        !password ||
+        !confirmPassword ||
+        !recaptchaToken
+    ) {
+        return {
+            fieldErrors: {
+                form: 'Complete the CAPTCHA and enter all required fields.',
+            },
+        }
+    }
+
     const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
 
     if (!apiBaseUrl) {
@@ -54,7 +72,8 @@ export async function registerAction({ request }: ActionFunctionArgs): Promise<R
             },
             body: JSON.stringify({
                 username,
-                password
+                password,
+                recaptchaToken
             })
         }
     )
@@ -81,6 +100,20 @@ export async function registerAction({ request }: ActionFunctionArgs): Promise<R
          * sending them to AuthErrorElement.
          */
         if (response.status === 400 || response.status === 409) {
+            const data = await response.json().catch(() => null)
+
+            if (
+                data &&
+                typeof data.error === 'string' &&
+                data.error.toLowerCase().includes('captcha')
+            ) {
+                return {
+                    fieldErrors: {
+                        form: data.error
+                    }
+                }
+            }
+
             return {
                 fieldErrors: {
                     username: message

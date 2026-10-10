@@ -409,6 +409,13 @@
         var(--shadow-inset);
 }
 
+.auth-form__captcha {
+    display: flex;
+    justify-content: center;
+    min-width: 0;
+    overflow-x: auto;
+}
+
 @media (max-width: 700px) {
     .auth-page {
         padding: 2rem 1rem;

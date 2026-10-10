@@ -13,6 +13,7 @@ export async function loginAction({ request }: ActionFunctionArgs): Promise<Resp
 
     const username = formData.get('username')
     const password = formData.get('password')
+    const recaptchaToken = formData.get('recaptchaToken')
 
     if (
         typeof username !== 'string' ||
@@ -24,6 +25,21 @@ export async function loginAction({ request }: ActionFunctionArgs): Promise<Resp
             fieldErrors: {
                 form: 'Username and password are required.',
             }
+        }
+    }
+
+    if (
+        typeof username !== 'string' ||
+        typeof password !== 'string' ||
+        typeof recaptchaToken !== 'string' ||
+        !username.trim() ||
+        !password ||
+        !recaptchaToken
+    ) {
+        return {
+            fieldErrors: {
+                form: 'Complete the CAPTCHA and enter your username and password.',
+            },
         }
     }
 
@@ -41,9 +57,26 @@ export async function loginAction({ request }: ActionFunctionArgs): Promise<Resp
         },
         body: JSON.stringify({
             username,
-            password
+            password,
+            recaptchaToken
         }),
     })
+
+    if (response.status === 400) {
+        const data = await response.json().catch(() => null)
+
+        if (
+            data &&
+            typeof data.error === 'string' &&
+            data.error.toLowerCase().includes('captcha')
+        ) {
+            return {
+                fieldErrors: {
+                    form: data.error
+                }
+            }
+        }
+    }
 
     if (response.status === 401) {
         return {
