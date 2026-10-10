@@ -1,4 +1,4 @@
-import { describe, expect, it, beforeEach, afterEach } from 'vitest';
+import { describe, expect, it, beforeEach, afterEach, vi } from 'vitest';
 import request from 'supertest';
 
 import { createApp } from './app.js';
@@ -112,11 +112,23 @@ describe('battle integration', () => {
         );
     `);
 
+        process.env.RECAPTCHA_SECRET_KEY = 'integration-test-secret'
+
+        vi.stubGlobal(
+            'fetch',
+            vi.fn().mockResolvedValue({
+                ok: true,
+                json: async () => ({ success: true }),
+            }),
+        )
+
         app = createApp(db);
     });
 
     afterEach(() => {
         db.close();
+        vi.unstubAllGlobals()
+        vi.restoreAllMocks()
     });
 
     it('rejects unauthenticated battle creation', async () => {
@@ -141,6 +153,7 @@ describe('battle integration', () => {
             .send({
                 username: 'battle-player',
                 password: 'password123',
+                recaptchaToken: 'integration-test-token'
             })
             .expect(201);
 
@@ -222,6 +235,7 @@ describe('battle integration', () => {
             .send({
                 username: 'player-one',
                 password: 'password123',
+                recaptchaToken: 'integration-test-token'
             })
             .expect(201);
 
@@ -231,6 +245,7 @@ describe('battle integration', () => {
             .send({
                 username: 'player-two',
                 password: 'password123',
+                recaptchaToken: 'integration-test-token'
             })
             .expect(201);
 
@@ -308,6 +323,7 @@ describe('battle integration', () => {
             .send({
                 username: 'battle-run-owner',
                 password: 'password123',
+                recaptchaToken: 'integration-test-token'
             })
             .expect(201);
 
@@ -316,6 +332,7 @@ describe('battle integration', () => {
             .send({
                 username: 'battle-run-attacker',
                 password: 'password123',
+                recaptchaToken: 'integration-test-token'
             })
             .expect(201);
 
@@ -398,6 +415,7 @@ describe('battle integration', () => {
             .send({
                 username: 'active-battle-none',
                 password: 'password123',
+                recaptchaToken: 'integration-test-token'
             })
             .expect(201);
 
@@ -444,6 +462,7 @@ describe('battle integration', () => {
             .send({
                 username: 'active-battle-found',
                 password: 'password123',
+                recaptchaToken: 'integration-test-token'
             })
             .expect(201);
 
@@ -519,6 +538,7 @@ describe('battle integration', () => {
             .send({
                 username: 'active-battle-owner',
                 password: 'password123',
+                recaptchaToken: 'integration-test-token'
             })
             .expect(201);
 
@@ -527,6 +547,7 @@ describe('battle integration', () => {
             .send({
                 username: 'active-battle-other',
                 password: 'password123',
+                recaptchaToken: 'integration-test-token'
             })
             .expect(201);
 
@@ -594,6 +615,7 @@ describe('battle integration', () => {
             .send({
                 username: 'battle-by-id',
                 password: 'password123',
+                recaptchaToken: 'integration-test-token'
             })
             .expect(201);
 
@@ -669,6 +691,7 @@ describe('battle integration', () => {
             .send({
                 username: 'battle-id-owner',
                 password: 'password123',
+                recaptchaToken: 'integration-test-token'
             })
             .expect(201);
 
@@ -677,6 +700,7 @@ describe('battle integration', () => {
             .send({
                 username: 'battle-id-other',
                 password: 'password123',
+                recaptchaToken: 'integration-test-token'
             })
             .expect(201);
 
@@ -742,6 +766,7 @@ describe('battle integration', () => {
             .send({
                 username: 'round-player',
                 password: 'password123',
+                recaptchaToken: 'integration-test-token'
             })
             .expect(201);
 
@@ -818,6 +843,7 @@ describe('battle integration', () => {
             .send({
                 username: 'history-player',
                 password: 'password123',
+                recaptchaToken: 'integration-test-token'
             })
             .expect(201);
 
@@ -934,6 +960,7 @@ describe('battle integration', () => {
             .send({
                 username: 'active-battle-player',
                 password: 'password123',
+                recaptchaToken: 'integration-test-token'
             })
             .expect(201);
 
@@ -1034,6 +1061,7 @@ describe('battle integration', () => {
             .send({
                 username: 'continuous-player',
                 password: 'password123',
+                recaptchaToken: 'integration-test-token'
             })
             .expect(201);
 
@@ -1174,6 +1202,7 @@ describe('battle integration', () => {
             .send({
                 username: 'reset-battle-player',
                 password: 'password123',
+                recaptchaToken: 'integration-test-token'
             })
             .expect(201);
 
@@ -1281,6 +1310,7 @@ describe('battle integration', () => {
             .send({
                 username: 'reset-battle-player',
                 password: 'password123',
+                recaptchaToken: 'integration-test-token'
             })
             .expect(201);
 
@@ -1361,6 +1391,7 @@ describe('battle integration', () => {
             .send({
                 username: 'completed-battle',
                 password: 'password123',
+                recaptchaToken: 'integration-test-token'
             })
             .expect(201);
 
@@ -1493,6 +1524,7 @@ describe('battle integration', () => {
             .send({
                 username: 'abandoned-battle',
                 password: 'password123',
+                recaptchaToken: 'integration-test-token'
             })
             .expect(201);
 

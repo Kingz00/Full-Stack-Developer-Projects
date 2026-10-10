@@ -9,6 +9,7 @@ import type { AuthService } from '../services/authService.js';
 import type { SessionService } from '../services/sessionService.js';
 import type { CurrentUserService } from '../services/currentUserService.js';
 import type { GameRunService } from '../services/gameRunService.js';
+import type { RecaptchaService } from '../services/recaptchaService.js'
 
 import { AuthController } from './authController.js';
 
@@ -25,6 +26,10 @@ describe('AuthController', () => {
             register: vi.fn(),
             login: vi.fn(),
         } as unknown as AuthService;
+
+        const recaptchaService = {
+            verify: vi.fn().mockResolvedValue(undefined),
+        } as unknown as RecaptchaService
 
         const sessionService = {
             create: vi.fn(),
@@ -44,6 +49,7 @@ describe('AuthController', () => {
             sessionService,
             currentUserService,
             gameRunService,
+            recaptchaService
         );
 
         const req = {
@@ -65,6 +71,7 @@ describe('AuthController', () => {
             sessionService,
             currentUserService,
             gameRunService,
+            recaptchaService,
             req,
             res,
             next
@@ -77,6 +84,7 @@ describe('AuthController', () => {
                 controller,
                 authService,
                 sessionService,
+                recaptchaService,
                 req,
                 res,
                 next,
@@ -85,6 +93,7 @@ describe('AuthController', () => {
             req.body = {
                 username: 'testuser',
                 password: 'password123',
+                recaptchaToken: 'valid-test-token'
             };
 
             vi.mocked(authService.register)
@@ -100,6 +109,9 @@ describe('AuthController', () => {
                     username: 'testuser',
                     password: 'password123',
                 });
+
+            expect(recaptchaService.verify)
+                .toHaveBeenCalledWith('valid-test-token')
 
             expect(sessionService.create)
                 .toHaveBeenCalledWith(req, user.id);
@@ -118,7 +130,45 @@ describe('AuthController', () => {
 
             expect(next)
                 .not.toHaveBeenCalled();
+
+            expect(vi.mocked(recaptchaService.verify).mock.invocationCallOrder[0])
+                .toBeLessThan(
+                    vi.mocked(authService.register).mock.invocationCallOrder[0],
+                );
         });
+
+        it('does not register or create a session when CAPTCHA verification fails', async () => {
+            const {
+                controller,
+                authService,
+                sessionService,
+                recaptchaService,
+                req,
+                res,
+                next,
+            } = createController()
+
+            req.body = {
+                username: 'testuser',
+                password: 'password123',
+                recaptchaToken: 'invalid-test-token',
+            }
+
+            const error = new Error('CAPTCHA verification failed.')
+
+            vi.mocked(recaptchaService.verify)
+                .mockRejectedValue(error)
+
+            await controller.register(req, res, next)
+
+            expect(recaptchaService.verify)
+                .toHaveBeenCalledWith('invalid-test-token')
+
+            expect(authService.register).not.toHaveBeenCalled()
+            expect(sessionService.create).not.toHaveBeenCalled()
+            expect(res.status).not.toHaveBeenCalled()
+            expect(next).toHaveBeenCalledWith(error)
+        })
 
         it('passes registration errors to next', async () => {
             const {
@@ -426,6 +476,7 @@ describe('AuthController', () => {
                 controller,
                 authService,
                 sessionService,
+                recaptchaService,
                 req,
                 res,
                 next,
@@ -434,6 +485,7 @@ describe('AuthController', () => {
             req.body = {
                 username: 'testuser',
                 password: 'password123',
+                recaptchaToken: 'valid-test-token'
             };
 
             vi.mocked(authService.login)
@@ -449,6 +501,9 @@ describe('AuthController', () => {
                     username: 'testuser',
                     password: 'password123',
                 });
+
+            expect(recaptchaService.verify)
+                .toHaveBeenCalledWith('valid-test-token')
 
             expect(sessionService.create)
                 .toHaveBeenCalledWith(req, user.id);
@@ -467,7 +522,45 @@ describe('AuthController', () => {
 
             expect(next)
                 .not.toHaveBeenCalled();
+
+            expect(vi.mocked(recaptchaService.verify).mock.invocationCallOrder[0])
+                .toBeLessThan(
+                    vi.mocked(authService.login).mock.invocationCallOrder[0],
+                );
         });
+
+        it('does not authenticate or create a session when CAPTCHA verification fails', async () => {
+            const {
+                controller,
+                authService,
+                sessionService,
+                recaptchaService,
+                req,
+                res,
+                next,
+            } = createController()
+
+            req.body = {
+                username: 'testuser',
+                password: 'password123',
+                recaptchaToken: 'invalid-test-token',
+            }
+
+            const error = new Error('CAPTCHA verification failed.')
+
+            vi.mocked(recaptchaService.verify)
+                .mockRejectedValue(error)
+
+            await controller.login(req, res, next)
+
+            expect(recaptchaService.verify)
+                .toHaveBeenCalledWith('invalid-test-token')
+
+            expect(authService.login).not.toHaveBeenCalled()
+            expect(sessionService.create).not.toHaveBeenCalled()
+            expect(res.status).not.toHaveBeenCalled()
+            expect(next).toHaveBeenCalledWith(error)
+        })
 
         it('passes login errors to next', async () => {
             const {
@@ -727,6 +820,7 @@ describe('AuthController', () => {
                 .mockReturnValue({
                     id: 1,
                     userId: 10,
+                    runNumber: 1,
                     selectedHeroId: 2,
                     status: 'completed',
                     startedAt: '2026-09-20T08:00:00.000Z',
@@ -879,6 +973,7 @@ describe('AuthController', () => {
                 .mockReturnValue({
                     id: 1,
                     userId: 10,
+                    runNumber: 1,
                     selectedHeroId: 2,
                     status: 'completed',
                     startedAt: '2026-09-20T08:00:00.000Z',

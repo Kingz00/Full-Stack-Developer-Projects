@@ -7,18 +7,22 @@ import { AuthService } from '../services/authService.js';
 import { SessionService } from '../services/sessionService.js';
 import { GameRunService } from '../services/gameRunService.js';
 import { CurrentUserService } from '../services/currentUserService.js';
+import { RecaptchaService } from '../services/recaptchaService.js'
 
 export class AuthController {
     constructor(
         private readonly authService: AuthService,
         private readonly sessionService: SessionService,
         private readonly currentUserService: CurrentUserService,
-        private readonly gameRunService: GameRunService
+        private readonly gameRunService: GameRunService,
+        private readonly recaptchaService: RecaptchaService
     ) { }
 
     async register(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const credentials = this.getCredentials(req);
+
+            await this.recaptchaService.verify(req.body?.recaptchaToken)
 
             const user = await this.authService.register(credentials);
 
@@ -35,6 +39,8 @@ export class AuthController {
     async login(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const credentials = this.getCredentials(req);
+
+            await this.recaptchaService.verify(req.body?.recaptchaToken)
 
             const user = await this.authService.login(credentials);
 

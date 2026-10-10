@@ -1,6 +1,6 @@
 import Database from 'better-sqlite3';
 import request from 'supertest';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createApp } from './app.js';
 import { createDatabase } from './db/database.js';
@@ -8,6 +8,7 @@ import { createDatabase } from './db/database.js';
 describe('Authentication API', () => {
     let db: Database.Database;
     let app: ReturnType<typeof createApp>;
+    const originalSecret = process.env.RECAPTCHA_SECRET_KEY
 
     beforeEach(() => {
         db = createDatabase(':memory:');
@@ -92,11 +93,28 @@ describe('Authentication API', () => {
             ON battles(run_id);
     `);
 
+        process.env.RECAPTCHA_SECRET_KEY = 'integration-test-secret'
+
+        vi.stubGlobal('fetch',
+            vi.fn().mockResolvedValue({
+                ok: true,
+                json: async () => ({ success: true }),
+            }),
+        )
+
         app = createApp(db);
     });
 
     afterEach(() => {
         db.close();
+        if (originalSecret === undefined) {
+            delete process.env.RECAPTCHA_SECRET_KEY
+        } else {
+            process.env.RECAPTCHA_SECRET_KEY = originalSecret
+        }
+
+        vi.unstubAllGlobals()
+        vi.restoreAllMocks()
     });
 
     function createHero(): number {
@@ -128,6 +146,7 @@ describe('Authentication API', () => {
             .send({
                 username: 'testuser',
                 password: 'password123',
+                recaptchaToken: 'integration-test-token'
             });
 
         expect(response.status).toBe(201);
@@ -142,6 +161,32 @@ describe('Authentication API', () => {
         expect(response.body.user.passwordHash).toBeUndefined();
     });
 
+    it('rejects registration when CAPTCHA verification fails', async () => {
+        vi.mocked(fetch).mockResolvedValueOnce({
+            ok: true,
+            json: async () => ({ success: false }),
+        } as Response)
+
+        const response = await request(app)
+            .post('/api/auth/register')
+            .send({
+                username: 'captchauser',
+                password: 'password123',
+                recaptchaToken: 'invalid-token',
+            })
+
+        expect(response.status).toBe(400)
+        expect(response.body).toEqual({
+            error: 'CAPTCHA verification failed. Please try again.',
+        })
+
+        const users = db
+            .prepare('SELECT COUNT(*) AS count FROM users')
+            .get() as { count: number }
+
+        expect(users.count).toBe(0)
+    })
+
     it('creates an authenticated session when registering', async () => {
         const agent = request.agent(app);
 
@@ -150,6 +195,7 @@ describe('Authentication API', () => {
             .send({
                 username: 'testuser',
                 password: 'password123',
+                recaptchaToken: 'integration-test-token'
             });
 
         expect(registerResponse.status).toBe(201);
@@ -174,6 +220,7 @@ describe('Authentication API', () => {
             .send({
                 username: 'testuser',
                 password: 'password123',
+                recaptchaToken: 'integration-test-token'
             });
 
         // Log out first so we're testing the login flow itself.
@@ -187,6 +234,7 @@ describe('Authentication API', () => {
             .send({
                 username: 'testuser',
                 password: 'password123',
+                recaptchaToken: 'integration-test-token'
             });
 
         expect(loginResponse.status).toBe(200);
@@ -205,12 +253,49 @@ describe('Authentication API', () => {
         expect(meResponse.body.user.username).toBe('testuser');
     });
 
+    it('rejects login when CAPTCHA verification fails', async () => {
+        const agent = request.agent(app)
+
+        await agent
+            .post('/api/auth/register')
+            .send({
+                username: 'captchauser',
+                password: 'password123',
+                recaptchaToken: 'integration-test-token',
+            })
+            .expect(201)
+
+        await agent
+            .post('/api/auth/logout')
+            .expect(204)
+
+        vi.mocked(fetch).mockResolvedValueOnce({
+            ok: true,
+            json: async () => ({ success: false }),
+        } as Response)
+
+        const response = await agent
+            .post('/api/auth/login')
+            .send({
+                username: 'captchauser',
+                password: 'password123',
+                recaptchaToken: 'invalid-token',
+            })
+
+        expect(response.status).toBe(400)
+
+        const meResponse = await agent.get('/api/auth/me')
+
+        expect(meResponse.status).toBe(401)
+    })
+
     it('rejects an unknown username', async () => {
         const response = await request(app)
             .post('/api/auth/login')
             .send({
                 username: 'unknown',
                 password: 'password123',
+                recaptchaToken: 'integration-test-token'
             });
 
         expect(response.status).toBe(401);
@@ -226,6 +311,7 @@ describe('Authentication API', () => {
             .send({
                 username: 'testuser',
                 password: 'password123',
+                recaptchaToken: 'integration-test-token'
             });
 
         const response = await request(app)
@@ -233,6 +319,7 @@ describe('Authentication API', () => {
             .send({
                 username: 'testuser',
                 password: 'wrong-password',
+                recaptchaToken: 'integration-test-token'
             });
 
         expect(response.status).toBe(401);
@@ -261,6 +348,7 @@ describe('Authentication API', () => {
             .send({
                 username: 'testuser',
                 password: 'password123',
+                recaptchaToken: 'integration-test-token'
             });
 
         const response = await agent
@@ -279,6 +367,7 @@ describe('Authentication API', () => {
             .send({
                 username: 'testuser',
                 password: 'password123',
+                recaptchaToken: 'integration-test-token'
             })
             .expect(201);
 
@@ -344,6 +433,7 @@ describe('Authentication API', () => {
             .send({
                 username: 'testuser',
                 password: 'password123',
+                recaptchaToken: 'integration-test-token'
             })
             .expect(201);
 
@@ -381,6 +471,7 @@ describe('Authentication API', () => {
             .send({
                 username: 'testuser',
                 password: 'password123',
+                recaptchaToken: 'integration-test-token'
             })
             .expect(201);
 
@@ -440,6 +531,7 @@ describe('Authentication API', () => {
             .send({
                 username: 'testuser',
                 password: 'password123',
+                recaptchaToken: 'integration-test-token'
             });
 
         const response = await request(app)
@@ -447,6 +539,7 @@ describe('Authentication API', () => {
             .send({
                 username: 'testuser',
                 password: 'another-password',
+                recaptchaToken: 'integration-test-token'
             });
 
         expect(response.status).toBe(409);
@@ -461,6 +554,7 @@ describe('Authentication API', () => {
             .post('/api/auth/register')
             .send({
                 password: 'password123',
+                recaptchaToken: 'integration-test-token'
             });
 
         expect(response.status).toBe(400);
@@ -475,6 +569,7 @@ describe('Authentication API', () => {
             .post('/api/auth/register')
             .send({
                 username: 'testuser',
+                recaptchaToken: 'integration-test-token'
             });
 
         expect(response.status).toBe(400);
@@ -490,6 +585,7 @@ describe('Authentication API', () => {
             .send({
                 username: '',
                 password: 'password123',
+                recaptchaToken: 'integration-test-token'
             });
 
         expect(response.status).toBe(400);
@@ -505,6 +601,7 @@ describe('Authentication API', () => {
             .send({
                 username: '   ',
                 password: 'password123',
+                recaptchaToken: 'integration-test-token'
             });
 
         expect(response.status).toBe(400);
@@ -520,6 +617,7 @@ describe('Authentication API', () => {
             .send({
                 username: 'test.user',
                 password: 'password123',
+                recaptchaToken: 'integration-test-token'
             });
 
         expect(response.status).toBe(400);
@@ -535,6 +633,7 @@ describe('Authentication API', () => {
             .send({
                 username: 'thisusernameiswaytoolong',
                 password: 'password123',
+                recaptchaToken: 'integration-test-token'
             });
 
         expect(response.status).toBe(400);
@@ -550,6 +649,7 @@ describe('Authentication API', () => {
             .send({
                 username: '  testuser  ',
                 password: 'password123',
+                recaptchaToken: 'integration-test-token'
             });
 
         expect(response.status).toBe(201);
@@ -578,6 +678,7 @@ describe('Authentication API', () => {
             .post('/api/auth/login')
             .send({
                 password: 'password123',
+                recaptchaToken: 'integration-test-token'
             });
 
         expect(response.status).toBe(400);
@@ -592,6 +693,7 @@ describe('Authentication API', () => {
             .post('/api/auth/login')
             .send({
                 username: 'testuser',
+                recaptchaToken: 'integration-test-token'
             });
 
         expect(response.status).toBe(400);
@@ -607,6 +709,7 @@ describe('Authentication API', () => {
             .send({
                 username: '',
                 password: 'password123',
+                recaptchaToken: 'integration-test-token'
             });
 
         expect(response.status).toBe(400);
@@ -622,6 +725,7 @@ describe('Authentication API', () => {
             .send({
                 username: '   ',
                 password: 'password123',
+                recaptchaToken: 'integration-test-token'
             });
 
         expect(response.status).toBe(400);
@@ -637,6 +741,7 @@ describe('Authentication API', () => {
             .send({
                 username: 'testuser',
                 password: 'password123',
+                recaptchaToken: 'integration-test-token'
             })
             .expect(201);
 
@@ -645,6 +750,7 @@ describe('Authentication API', () => {
             .send({
                 username: '  testuser  ',
                 password: 'password123',
+                recaptchaToken: 'integration-test-token'
             });
 
         expect(response.status).toBe(200);
@@ -665,6 +771,7 @@ describe('Authentication API', () => {
             .send({
                 username: 'firstuser',
                 password: 'password123',
+                recaptchaToken: 'integration-test-token'
             })
             .expect(201);
 
@@ -673,6 +780,7 @@ describe('Authentication API', () => {
             .send({
                 username: 'seconduser',
                 password: 'password123',
+                recaptchaToken: 'integration-test-token'
             })
             .expect(201);
 
@@ -698,6 +806,7 @@ describe('Authentication API', () => {
             .send({
                 username: 'firstuser',
                 password: 'password123',
+                recaptchaToken: 'integration-test-token'
             })
             .expect(201);
 
@@ -706,6 +815,7 @@ describe('Authentication API', () => {
             .send({
                 username: 'seconduser',
                 password: 'password123',
+                recaptchaToken: 'integration-test-token'
             })
             .expect(201);
 

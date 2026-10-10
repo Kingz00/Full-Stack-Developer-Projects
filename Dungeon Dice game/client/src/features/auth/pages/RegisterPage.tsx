@@ -1,4 +1,6 @@
 import { Form, Link, useNavigation, useSearchParams, useActionData, useRouteLoaderData, Navigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import RecaptchaCheckbox from '../../../components/RecaptchaCheckbox'
 import type { AuthUser } from '../loaders/authLoader'
 
 import logo from '../../../assets/branding/dungeon-dice-duel-logo.png'
@@ -18,10 +20,13 @@ function RegisterPage() {
     const [searchParams] = useSearchParams()
     const actionData = useActionData() as RegisterActionData | undefined
     const user = useRouteLoaderData('root') as AuthUser | null
+    const [captchaResetKey, setCaptchaResetKey] = useState(0)
 
-    if (user) {
-        return <Navigate to="/" replace />
-    }
+    useEffect(() => {
+        if (navigation.state === 'idle' && actionData) {
+            setCaptchaResetKey((key) => key + 1)
+        }
+    }, [navigation.state, actionData])
 
     const heroId = searchParams.get('heroId')
     const isSubmitting = navigation.state === 'submitting'
@@ -29,6 +34,10 @@ function RegisterPage() {
     const loginPath = heroId
         ? `/login?heroId=${encodeURIComponent(heroId)}`
         : '/login'
+
+    if (user) {
+        return <Navigate to="/" replace />
+    }
 
     return (
         <main className="auth-page">
@@ -138,6 +147,8 @@ function RegisterPage() {
                             {actionData.fieldErrors.form}
                         </p>
                     )}
+
+                    <RecaptchaCheckbox resetKey={captchaResetKey} />
 
                     <button
                         type="submit"

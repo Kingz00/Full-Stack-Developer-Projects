@@ -1,6 +1,6 @@
 import Database from 'better-sqlite3';
 import request from 'supertest';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, afterEach, describe, expect, it, vi } from 'vitest';
 
 import { createApp } from './app.js';
 
@@ -97,7 +97,22 @@ describe('Game Run integration', () => {
                 WHERE status = 'active';
         `);
 
+        process.env.RECAPTCHA_SECRET_KEY = 'integration-test-secret'
+
+        vi.stubGlobal(
+            'fetch',
+            vi.fn().mockResolvedValue({
+                ok: true,
+                json: async () => ({ success: true }),
+            }),
+        )
+
         app = createApp(db);
+    });
+
+    afterEach(() => {
+        vi.unstubAllGlobals()
+        vi.restoreAllMocks()
     });
 
     it('rejects unauthenticated game run creation', async () => {
@@ -121,7 +136,8 @@ describe('Game Run integration', () => {
             .post('/api/auth/register')
             .send({
                 username: 'run-player',
-                password: 'password123'
+                password: 'password123',
+                recaptchaToken: 'integration-test-token'
             })
             .expect(201);
 
@@ -210,6 +226,7 @@ describe('Game Run integration', () => {
             .send({
                 username: 'duplicate-active-run',
                 password: 'password123',
+                recaptchaToken: 'integration-test-token'
             })
             .expect(201);
 
@@ -284,6 +301,7 @@ describe('Game Run integration', () => {
             .send({
                 username: 'missing-hero-player',
                 password: 'password123',
+                recaptchaToken: 'integration-test-token'
             })
             .expect(201);
 
@@ -307,6 +325,7 @@ describe('Game Run integration', () => {
             .send({
                 username: 'invalid-run-player',
                 password: 'password123',
+                recaptchaToken: 'integration-test-token'
             })
             .expect(201);
 
@@ -328,6 +347,7 @@ describe('Game Run integration', () => {
             .send({
                 username: 'reset-player',
                 password: 'password123',
+                recaptchaToken: 'integration-test-token'
             })
             .expect(201);
 
@@ -423,6 +443,7 @@ describe('Game Run integration', () => {
             .send({
                 username: 'missing-run-player',
                 password: 'password123',
+                recaptchaToken: 'integration-test-token'
             })
             .expect(201);
 
@@ -443,6 +464,7 @@ describe('Game Run integration', () => {
             .send({
                 username: 'invalid-runId-player',
                 password: 'password123',
+                recaptchaToken: 'integration-test-token'
             })
             .expect(201);
 
@@ -464,6 +486,7 @@ describe('Game Run integration', () => {
             .send({
                 username: 'run-owner',
                 password: 'password123',
+                recaptchaToken: 'integration-test-token'
             })
             .expect(201);
 
@@ -472,6 +495,7 @@ describe('Game Run integration', () => {
             .send({
                 username: 'run-attacker',
                 password: 'password123',
+                recaptchaToken: 'integration-test-token'
             })
             .expect(201);
 
@@ -542,6 +566,7 @@ describe('Game Run integration', () => {
                 .send({
                     username: 'stage17-reset-player',
                     password: 'password123',
+                    recaptchaToken: 'integration-test-token'
                 })
                 .expect(201);
 
@@ -654,6 +679,7 @@ describe('Game Run integration', () => {
                 .send({
                     username: 'complete-player',
                     password: 'password123',
+                    recaptchaToken: 'integration-test-token'
                 })
                 .expect(201);
 
@@ -784,6 +810,7 @@ describe('Game Run integration', () => {
                 .send({
                     username: 'reset-session-player',
                     password: 'password123',
+                    recaptchaToken: 'integration-test-token'
                 })
                 .expect(201);
 
@@ -868,6 +895,7 @@ describe('Game Run integration', () => {
                 .send({
                     username: 'new-run-after-login',
                     password: 'password123',
+                    recaptchaToken: 'integration-test-token'
                 })
                 .expect(201);
 
@@ -912,6 +940,7 @@ describe('Game Run integration', () => {
                 .send({
                     username: 'new-run-after-login',
                     password: 'password123',
+                    recaptchaToken: 'integration-test-token'
                 })
                 .expect(200);
 
@@ -960,6 +989,7 @@ describe('Game Run integration', () => {
                 .send({
                     username: 'completed-run-reset',
                     password: 'password123',
+                    recaptchaToken: 'integration-test-token'
                 })
                 .expect(201);
 
@@ -1002,6 +1032,7 @@ describe('Game Run integration', () => {
                 .send({
                     username: 'completed-run-reset',
                     password: 'password123',
+                    recaptchaToken: 'integration-test-token'
                 })
                 .expect(200);
 
@@ -1036,6 +1067,7 @@ describe('Game Run integration', () => {
                 .send({
                     username: 'current-run-none',
                     password: 'password123',
+                    recaptchaToken: 'integration-test-token'
                 })
                 .expect(201);
 
@@ -1056,6 +1088,7 @@ describe('Game Run integration', () => {
                 .send({
                     username: 'current-run-active',
                     password: 'password123',
+                    recaptchaToken: 'integration-test-token'
                 })
                 .expect(201);
 
@@ -1102,6 +1135,7 @@ describe('Game Run integration', () => {
                 .send({
                     username: 'without-logout',
                     password: 'password123',
+                    recaptchaToken: 'integration-test-token'
                 })
                 .expect(201);
 
@@ -1210,6 +1244,7 @@ describe('Game Run integration', () => {
                 .send({
                     username: 'complete-owner',
                     password: 'password123',
+                    recaptchaToken: 'integration-test-token'
                 })
                 .expect(201);
 
@@ -1218,6 +1253,7 @@ describe('Game Run integration', () => {
                 .send({
                     username: 'complete-other',
                     password: 'password123',
+                    recaptchaToken: 'integration-test-token'
                 })
                 .expect(201);
 
@@ -1262,6 +1298,7 @@ describe('Game Run integration', () => {
                 .send({
                     username: 'complete-abandoned',
                     password: 'password123',
+                    recaptchaToken: 'integration-test-token'
                 })
                 .expect(201);
 
@@ -1314,6 +1351,7 @@ describe('Game Run integration', () => {
                 .send({
                     username: 'abandon-endpoint',
                     password: 'password123',
+                    recaptchaToken: 'integration-test-token'
                 })
                 .expect(201);
 
