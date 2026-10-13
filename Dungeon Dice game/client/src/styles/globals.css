@@ -91,3 +91,13 @@ h2,
 h3 {
     font-family: var(--font-heading);
 }
+
+.ornate-frame {
+    border: 14px solid transparent;
+    border-image-source: url('../assets/decorations/battle-panel-frame.png');
+    border-image-slice: 110 fill;
+    border-image-width: 14px;
+    border-image-repeat: stretch;
+    border-radius: 0;
+    background-clip: padding-box;
+}

@@ -43,7 +43,7 @@ export default function StatisticsPage() {
                 >
                     {statisticCards.map(({ key, label, icon }) => (
                         <article
-                            className={`statistics-card statistics-card--${key}`}
+                            className={`statistics-card statistics-card--${key} ornate-frame`}
                             key={key}
                         >
                             <div className="statistics-card__icon-frame">
@@ -67,7 +67,7 @@ export default function StatisticsPage() {
                 </section>
 
                 <section
-                    className="best-run"
+                    className="best-run ornate-frame"
                     aria-labelledby="best-run-heading"
                 >
                     {statistics.bestRun ? (

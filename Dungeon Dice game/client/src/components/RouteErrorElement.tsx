@@ -37,7 +37,7 @@ function RouteErrorElement() {
 
     return (
         <main className="route-error">
-            <section className="route-error__content">
+            <section className="route-error__content ornate-frame">
                 <div className="route-error__brand">
                     <img src={logo} alt="Dungeon Dice Duel" />
                 </div>

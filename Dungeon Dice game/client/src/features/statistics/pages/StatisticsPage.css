@@ -12,7 +12,7 @@
 }
 
 .statistics-page__content {
-    width: min(100% - 2rem, var(--content-width));
+    width: min(calc(100% - 2rem), var(--content-width));
     margin: 0 auto;
 }
 
@@ -69,25 +69,12 @@
     padding: 1.5rem 1rem;
 
     overflow: hidden;
-    border: 1px solid var(--color-frame);
-    border-radius: 0.15rem;
 
     background:
         linear-gradient(145deg,
             rgb(34 35 40 / 0.97),
             rgb(13 14 17 / 0.98));
 
-    box-shadow:
-        var(--shadow-card),
-        var(--shadow-inset);
-}
-
-.statistics-card::before {
-    content: '';
-    position: absolute;
-    inset: 0.3rem;
-    border: 1px solid rgb(138 112 72 / 0.45);
-    pointer-events: none;
 }
 
 .statistics-card__icon-frame {
@@ -141,31 +128,17 @@
 .best-run {
     position: relative;
     padding: 2rem;
-    border: 1px solid var(--color-frame);
-    border-radius: 0.15rem;
 
     background:
         linear-gradient(145deg,
             rgb(24 25 29 / 0.97),
             rgb(9 10 13 / 0.98));
-
-    box-shadow:
-        var(--shadow-card),
-        var(--shadow-inset);
-}
-
-.best-run::before {
-    content: '';
-    position: absolute;
-    inset: 0.35rem;
-    border: 1px solid rgb(138 112 72 / 0.45);
-    pointer-events: none;
 }
 
 .best-run__layout {
     position: relative;
     display: grid;
-    grid-template-columns: minmax(0, 1.25fr) minmax(15rem, 0.75fr);
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
     align-items: center;
     gap: 2rem;
 }
@@ -367,7 +340,7 @@
     .statistics-page__metrics {
         grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 0.65rem;
-        margin-bottom: 1rem;
+        margin-bottom: 1.25rem;
     }
 
     .statistics-card {
@@ -446,6 +419,10 @@
 }
 
 @media (max-width: 380px) {
+    .statistics-page__content {
+        width: calc(100% - 1rem);
+    }
+
     .statistics-page__metrics {
         gap: 0.65rem;
     }
@@ -464,6 +441,14 @@
 
     .statistics-card__label {
         font-size: 0.75rem;
+    }
+
+    .best-run__number {
+        overflow-wrap: anywhere;
+    }
+
+    .best-run__completed {
+        line-height: 1.5;
     }
 
     .best-run__identity {

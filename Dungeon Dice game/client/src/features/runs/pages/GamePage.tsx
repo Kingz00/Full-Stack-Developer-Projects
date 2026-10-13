@@ -190,7 +190,7 @@ function GamePage() {
                 className="game-page__layout"
                 aria-label="Current dungeon run"
             >
-                <article className="game-page__hero-card">
+                <article className="game-page__hero-card ornate-frame">
                     <div className="game-page__hero-image-wrapper">
                         <img
                             className="game-page__hero-image"
@@ -256,7 +256,7 @@ function GamePage() {
                     {hasActiveRun ? (
                         <>
                             <section
-                                className="game-page__run-card"
+                                className="game-page__run-card ornate-frame"
                                 aria-labelledby="run-heading"
                             >
                                 <div className="game-page__run-heading">
@@ -291,7 +291,7 @@ function GamePage() {
                             </section>
 
                             <section
-                                className="game-page__continue-card"
+                                className="game-page__continue-card ornate-frame"
                                 aria-labelledby="continue-heading"
                             >
                                 <div className="game-page__continue-content">
@@ -401,7 +401,7 @@ function GamePage() {
                     ) : (
                         <>
                             <section
-                                className="game-page__prepare-card"
+                                className="game-page__prepare-card ornate-frame"
                                 aria-labelledby="prepare-heading"
                             >
                                 <p className="game-page__section-eyebrow">

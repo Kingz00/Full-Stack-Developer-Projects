@@ -29,7 +29,7 @@ function AuthErrorElement() {
 
     return (
         <main className="auth-error">
-            <section className="auth-error__card">
+            <section className="auth-error__card ornate-frame">
                 <div className="auth-error__brand">
                     <img src={logo} alt="Dungeon Dice Duel" />
                 </div>

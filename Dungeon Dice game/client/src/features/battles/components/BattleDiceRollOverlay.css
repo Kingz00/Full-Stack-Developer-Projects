@@ -292,8 +292,11 @@
     .battle-roll-overlay,
     .battle-roll__die,
     .battle-roll__result {
-        animation-duration: 1ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 1ms !important;
+        animation: none !important;
+        transition: none !important;
+    }
+
+    .battle-roll__die {
+        transform: none;
     }
 }

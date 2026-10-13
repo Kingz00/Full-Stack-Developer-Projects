@@ -40,7 +40,7 @@ function LoginPage() {
 
     return (
         <main className="auth-page">
-            <section className="auth-card" aria-labelledby="login-title">
+            <section className="auth-card ornate-frame" aria-labelledby="login-title">
                 <div className="auth-card__brand">
                     <img
                         src={logo}

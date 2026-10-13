@@ -19,10 +19,7 @@
     isolation: isolate;
     width: min(100%, 34rem);
     box-sizing: border-box;
-    padding: 2rem 2.25rem;
-
-    border: 1px solid var(--color-frame);
-    border-radius: 0.15rem;
+    padding: 3rem 2.25rem;
 
     background:
         linear-gradient(180deg,
@@ -33,14 +30,6 @@
         0 1.5rem 3rem rgb(0 0 0 / 0.65),
         inset 0 1px 0 rgb(255 255 255 / 0.05),
         inset 0 -1px 0 rgb(0 0 0 / 0.75);
-}
-
-.route-error__content::before {
-    content: '';
-    position: absolute;
-    inset: 0.35rem;
-    border: 1px solid rgb(138 112 72 / 0.45);
-    pointer-events: none;
 }
 
 .route-error__brand {

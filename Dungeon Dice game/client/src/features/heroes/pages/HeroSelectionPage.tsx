@@ -10,7 +10,6 @@ import attackIcon from '../../../assets/icons/attack.svg'
 import defenseIcon from '../../../assets/icons/defense.svg'
 
 import heroDivider from '../../../assets/decorations/hero-selection-divider.png'
-import cardFrame from '../../../assets/decorations/hero-card-frame-responsive.svg'
 
 
 function HeroSelectionPage() {
@@ -56,7 +55,7 @@ function HeroSelectionPage() {
                 >
                     {heroes.map((hero) => (
                         <article
-                            className="hero-card"
+                            className="hero-card ornate-frame"
                             key={hero.id}
                         >
                             <div className="hero-card__image-wrapper">
@@ -127,13 +126,6 @@ function HeroSelectionPage() {
                                     Select Hero
                                 </button>
                             </div>
-
-                            <img
-                                className="hero-card__frame"
-                                src={cardFrame}
-                                alt=""
-                                aria-hidden="true"
-                            />
                         </article>
                     ))}
                 </section>
