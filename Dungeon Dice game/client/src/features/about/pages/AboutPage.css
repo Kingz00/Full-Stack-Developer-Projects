@@ -72,7 +72,6 @@
     max-width: 800px;
     margin: 0 auto 3.5rem;
     padding: 2rem clamp(1.25rem, 4vw, 3rem);
-    border: 1px solid var(--color-frame);
     background:
         linear-gradient(180deg,
             rgb(24 25 29 / 0.96),
@@ -119,7 +118,6 @@
     position: relative;
     min-width: 0;
     padding: 1.75rem 1.5rem;
-    border: 1px solid var(--color-frame);
     background:
         linear-gradient(180deg,
             rgb(24 25 29 / 0.97),
@@ -170,7 +168,6 @@
 .about-page__closing {
     margin-top: 3.5rem;
     padding: 2.5rem 1.5rem;
-    border: 1px solid var(--color-frame);
     background:
         radial-gradient(circle at 50% 0%,
             rgb(214 168 79 / 0.1),
@@ -219,7 +216,6 @@
     max-width: 800px;
     margin: 3.5rem auto 0;
     padding: 2rem clamp(1.25rem, 4vw, 3rem);
-    border: 1px solid var(--color-frame);
     background:
         linear-gradient(180deg,
             rgb(24 25 29 / 0.96),
@@ -250,16 +246,21 @@
 
 @media (max-width: 900px) {
     .about-page {
-        min-height: calc(100vh - 5.75rem);
+        min-height: calc(100vh - 6.5rem);
         padding-top: 3rem;
     }
 
     .about-page__step-grid {
-        gap: 0.85rem;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1rem;
     }
 
     .about-step {
-        padding: 1.4rem 1.1rem;
+        padding: 1.4rem 1.25rem;
+    }
+
+    .about-page__step-grid .about-step:last-child {
+        grid-column: 1 / -1;
     }
 }
 
@@ -279,7 +280,7 @@
 
     .about-page__story {
         margin-bottom: 2.5rem;
-        padding: 1.5rem 1.1rem;
+        padding: 1.5rem 1.1rem 2rem;
     }
 
     .about-page__step-grid {
@@ -297,7 +298,7 @@
 
     .about-page__creator {
         margin-top: 2.5rem;
-        padding: 1.5rem 1.1rem;
+        padding: 1.5rem 1.1rem 2.5rem;
     }
 }
 

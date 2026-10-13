@@ -41,7 +41,7 @@ function RegisterPage() {
 
     return (
         <main className="auth-page">
-            <section className="auth-card" aria-labelledby="register-title">
+            <section className="auth-card ornate-frame" aria-labelledby="register-title">
                 <div className="auth-card__brand">
                     <img
                         src={logo}

@@ -1,6 +1,7 @@
 .battle-round-history {
     min-width: 0;
-    padding: 0.9rem 1rem;
+    min-height: 0;
+    padding: 0.9rem 1rem 1.2rem;
 }
 
 .battle-support-panel__title {
@@ -20,14 +21,16 @@
     font-size: 0.85rem;
     line-height: 1.5;
     text-align: center;
+    overflow-wrap: anywhere;
 }
 
 .battle-round-history__list {
     display: grid;
     gap: 0;
-    max-height: 12rem;
+    max-height: 18rem;
     margin: 0;
-    padding: 0;
+    padding: 0 0 0.75rem;
+    min-width: 0;
     overflow-y: auto;
     overscroll-behavior: contain;
     scrollbar-width: thin;
@@ -55,6 +58,8 @@
 }
 
 .battle-round-history__item {
+    min-width: 0;
+    overflow-wrap: anywhere;
     padding: 0.85rem 0;
     border-bottom: 1px solid var(--color-border);
 }
@@ -99,6 +104,6 @@
 
 @media (max-width: 520px) {
     .battle-round-history {
-        padding: 0.85rem;
+        padding: 0.85rem 0.85rem 1.1rem;
     }
 }

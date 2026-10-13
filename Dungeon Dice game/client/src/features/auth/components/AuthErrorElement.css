@@ -19,10 +19,7 @@
     isolation: isolate;
     width: min(100%, 31rem);
     box-sizing: border-box;
-    padding: 1.75rem 2rem 2rem;
-
-    border: 1px solid var(--color-frame);
-    border-radius: 0.15rem;
+    padding: 3rem 2rem;
 
     background:
         linear-gradient(180deg,
@@ -35,14 +32,6 @@
         inset 0 -1px 0 rgb(0 0 0 / 0.75);
 
     text-align: center;
-}
-
-.auth-error__card::before {
-    content: '';
-    position: absolute;
-    inset: 0.35rem;
-    border: 1px solid rgb(138 112 72 / 0.45);
-    pointer-events: none;
 }
 
 .auth-error__brand {

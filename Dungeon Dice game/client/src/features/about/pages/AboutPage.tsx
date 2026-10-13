@@ -52,7 +52,7 @@ export default function AboutPage() {
                 </header>
 
                 <section
-                    className="about-page__story"
+                    className="about-page__story ornate-frame"
                     aria-labelledby="about-story-heading"
                 >
                     <p className="about-page__section-label">
@@ -94,7 +94,7 @@ export default function AboutPage() {
                     <div className="about-page__step-grid">
                         {gameSteps.map((step) => (
                             <article
-                                className="about-step"
+                                className="about-step ornate-frame"
                                 key={step.number}
                             >
                                 <span
@@ -113,7 +113,7 @@ export default function AboutPage() {
                 </section>
 
                 <section
-                    className="about-page__creator"
+                    className="about-page__creator ornate-frame"
                     aria-labelledby="about-creator-heading"
                 >
                     <p className="about-page__section-label">
@@ -143,7 +143,7 @@ export default function AboutPage() {
                 </section>
 
                 <section
-                    className="about-page__closing"
+                    className="about-page__closing ornate-frame"
                     aria-labelledby="about-closing-heading"
                 >
                     <h2 id="about-closing-heading">

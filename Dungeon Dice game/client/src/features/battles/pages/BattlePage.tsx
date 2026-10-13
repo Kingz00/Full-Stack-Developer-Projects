@@ -17,6 +17,7 @@ import './BattlePage.css'
 
 
 export type CombatAnimationPhase = 'idle' | 'rolling' | 'revealing' | 'impact'
+type BattleOutcome = 'won' | 'lost' | 'draw'
 
 const delay = (milliseconds: number) => new Promise<void>(resolve => {
     window.setTimeout(resolve, milliseconds)
@@ -50,6 +51,7 @@ function BattlePage() {
     const [isProcessingLifecycle, setIsProcessingLifecycle] = useState(false)
     const [lifecycleError, setLifecycleError] = useState<string | null>(null)
     const [isAbandonModalOpen, setIsAbandonModalOpen] = useState(false)
+    const [outcomeFeedback, setOutcomeFeedback] = useState<BattleOutcome | null>(null)
 
     const isBattleResolved =
         battleState.status === 'won' ||
@@ -81,6 +83,7 @@ function BattlePage() {
         setAnimationPhase('idle')
         setIsProcessingLifecycle(false)
         setIsAbandonModalOpen(false)
+        setOutcomeFeedback(null)
     }, [
         battle.id,
         battle.playerHealth,
@@ -171,6 +174,14 @@ function BattlePage() {
 
             // Allow the hit reaction and health-bar transition to finish.
             await delay(1150)
+
+            if (
+                data.state.status === 'won' ||
+                data.state.status === 'lost' ||
+                data.state.status === 'draw'
+            ) {
+                setOutcomeFeedback(data.state.status)
+            }
 
             setAnimationPhase('idle')
         } catch {
@@ -348,9 +359,20 @@ function BattlePage() {
                 {isBattleResolved ? (
                     <section className="battle-page__completion">
                         <section
-                            className={`battle-page__resolution battle-page__resolution--${battleState.status}`}
+                            className={[
+                                'battle-page__resolution',
+                                `battle-page__resolution--${battleState.status}`,
+                                outcomeFeedback === battleState.status
+                                    ? 'battle-page__resolution--animate'
+                                    : '',
+                            ].filter(Boolean).join(' ')}
                             aria-live="polite"
                         >
+                            <span
+                                className="battle-page__outcome-effects"
+                                aria-hidden="true"
+                            />
+
                             <span className="battle-page__completion-eyebrow">
                                 Battle concluded
                             </span>

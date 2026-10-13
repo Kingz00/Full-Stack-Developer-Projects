@@ -262,8 +262,4 @@
     .confirmation-modal__actions {
         grid-template-columns: 1fr;
     }
-
-    .confirmation-modal__confirm {
-        order: -1;
-    }
 }
