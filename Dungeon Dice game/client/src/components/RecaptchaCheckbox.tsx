@@ -1,20 +1,11 @@
-import { useEffect, useRef, useState } from 'react'
 import ReCAPTCHA from 'react-google-recaptcha'
+import { useRef, useState } from 'react'
 
-interface RecaptchaCheckboxProps {
-    resetKey: number
-}
-
-function RecaptchaCheckbox({ resetKey }: RecaptchaCheckboxProps) {
+function RecaptchaCheckbox() {
     const captchaRef = useRef<ReCAPTCHA>(null)
     const [token, setToken] = useState<string | null>(null)
 
     const siteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY
-
-    useEffect(() => {
-        captchaRef.current?.reset()
-        setToken(null)
-    }, [resetKey])
 
     if (!siteKey) {
         return (

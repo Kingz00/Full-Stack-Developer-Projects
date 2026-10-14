@@ -78,16 +78,14 @@ export async function registerAction({ request }: ActionFunctionArgs): Promise<R
         }
     )
 
+
     if (!response.ok) {
         let message = 'Unable to create your account.'
 
         try {
             const data = await response.json()
 
-            if (
-                data &&
-                typeof data.error === 'string'
-            ) {
+            if (data && typeof data.error === 'string') {
                 message = data.error
             }
         } catch {
@@ -100,29 +98,23 @@ export async function registerAction({ request }: ActionFunctionArgs): Promise<R
          * sending them to AuthErrorElement.
          */
         if (response.status === 400 || response.status === 409) {
-            const data = await response.json().catch(() => null)
-
-            if (
-                data &&
-                typeof data.error === 'string' &&
-                data.error.toLowerCase().includes('captcha')
-            ) {
+            if (message.toLowerCase().includes('captcha')) {
                 return {
                     fieldErrors: {
-                        form: data.error
-                    }
+                        form: message,
+                    },
                 }
             }
 
             return {
                 fieldErrors: {
-                    username: message
-                }
+                    username: message,
+                },
             }
         }
 
         throw new Response(message, {
-            status: response.status
+            status: response.status,
         })
     }
 
