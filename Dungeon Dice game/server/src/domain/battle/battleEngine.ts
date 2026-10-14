@@ -15,12 +15,12 @@ export class BattleEngine {
         const enemyRoll = rollDie(6, this.random);
 
         const playerDamage = Math.max(
-            0,
+            1,
             playerRoll + state.player.attack - state.enemy.defense,
         );
 
         const enemyDamage = Math.max(
-            0,
+            1,
             enemyRoll + state.enemy.attack - state.player.defense,
         );
 
