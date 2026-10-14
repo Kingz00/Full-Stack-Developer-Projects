@@ -9,7 +9,7 @@ export const heroSeedData: Hero[] = [
         imageUrl: '/heroes/01-knight-of-ashfang.png',
         health: 18,
         attack: 8,
-        defense: 7,
+        defense: 8,
     },
     {
         id: 2,
@@ -18,8 +18,8 @@ export const heroSeedData: Hero[] = [
             'A ruthless swamp raider who strikes quickly from the mist and disappears before the counterattack.',
         imageUrl: '/heroes/02-mireclaw-raider.png',
         health: 15,
-        attack: 7,
-        defense: 5,
+        attack: 8,
+        defense: 7,
     },
     {
         id: 3,
@@ -27,8 +27,8 @@ export const heroSeedData: Hero[] = [
         description:
             'A lightning-fast rogue whose electrified blades make every attack dangerously unpredictable.',
         imageUrl: '/heroes/03-voltjaw-rogue.png',
-        health: 13,
-        attack: 6,
+        health: 14,
+        attack: 8,
         defense: 7,
     },
     {
@@ -37,9 +37,9 @@ export const heroSeedData: Hero[] = [
         description:
             'A heavily armored guardian protected by grimscale plating that turns aside devastating blows.',
         imageUrl: '/heroes/04-grimscale-guardian.png',
-        health: 20,
-        attack: 5,
-        defense: 9,
+        health: 19,
+        attack: 7,
+        defense: 8,
     },
     {
         id: 5,
@@ -48,7 +48,7 @@ export const heroSeedData: Hero[] = [
             'A woodland warrior who commands thorn-covered roots and draws strength from the ancient forest.',
         imageUrl: '/heroes/05-briarhorn-druid.png',
         health: 16,
-        attack: 5,
+        attack: 8,
         defense: 8,
     },
     {
@@ -67,9 +67,9 @@ export const heroSeedData: Hero[] = [
         description:
             'A steadfast paladin clad in stone-forged armor, built to withstand relentless assaults.',
         imageUrl: '/heroes/07-stoneforge-paladin.png',
-        health: 21,
-        attack: 5,
-        defense: 10,
+        health: 20,
+        attack: 7,
+        defense: 9,
     },
     {
         id: 8,
@@ -78,8 +78,8 @@ export const heroSeedData: Hero[] = [
             'A disciplined martial artist who has mastered the balance between precision, speed, and defense.',
         imageUrl: '/heroes/08-zenith-monk.png',
         health: 16,
-        attack: 6,
-        defense: 10,
+        attack: 8,
+        defense: 9,
     },
     {
         id: 9,
@@ -88,8 +88,8 @@ export const heroSeedData: Hero[] = [
             'A silent forest assassin who blends into the shadows and waits patiently for the perfect strike.',
         imageUrl: '/heroes/09-shadowleaf-rogue.png',
         health: 14,
-        attack: 8,
-        defense: 6,
+        attack: 9,
+        defense: 7,
     },
     {
         id: 10,
@@ -98,7 +98,7 @@ export const heroSeedData: Hero[] = [
             'A storm-wielding mage who channels thunderous energy through every devastating spell.',
         imageUrl: '/heroes/10-stormsoul-sorceress.png',
         health: 15,
-        attack: 7,
+        attack: 8,
         defense: 8,
     },
     {
@@ -118,8 +118,8 @@ export const heroSeedData: Hero[] = [
             'A dark spellcaster who binds spectral forces to weaken enemies and protect their own life force.',
         imageUrl: '/heroes/12-gravebind-warlock.png',
         health: 17,
-        attack: 6,
-        defense: 9,
+        attack: 8,
+        defense: 8,
     },
     {
         id: 13,
@@ -129,7 +129,7 @@ export const heroSeedData: Hero[] = [
         imageUrl: '/heroes/13-shadow-rogue.png',
         health: 15,
         attack: 9,
-        defense: 5,
+        defense: 6,
     },
     {
         id: 14,
@@ -138,8 +138,8 @@ export const heroSeedData: Hero[] = [
             'A fierce guardian of the wild who protects her lands with a bow, blade, and unwavering bond with the creatures she defends.',
         imageUrl: '/heroes/14-wildroot-warden.png',
         health: 19,
-        attack: 5,
-        defense: 10,
+        attack: 8,
+        defense: 9,
     },
     {
         id: 15,
@@ -148,8 +148,8 @@ export const heroSeedData: Hero[] = [
             'A frostbound warlock who commands chilling magic capable of slowing even the fiercest foes.',
         imageUrl: '/heroes/15-frostmane-warlock.png',
         health: 15,
-        attack: 6,
-        defense: 6,
+        attack: 8,
+        defense: 7,
     },
     {
         id: 16,
@@ -159,7 +159,7 @@ export const heroSeedData: Hero[] = [
         imageUrl: '/heroes/16-emberfang-berserker.png',
         health: 16,
         attack: 9,
-        defense: 6,
+        defense: 7,
     },
     {
         id: 17,
@@ -168,8 +168,8 @@ export const heroSeedData: Hero[] = [
             'A mystical warrior who bends the power of the tides to protect allies and withstand attacks.',
         imageUrl: '/heroes/17-tidecaller-mystic.png',
         health: 17,
-        attack: 4,
-        defense: 10,
+        attack: 8,
+        defense: 9,
     },
     {
         id: 18,
@@ -178,8 +178,8 @@ export const heroSeedData: Hero[] = [
             'A deadly assassin from the shadowfen, striking with precision before vanishing into the gloom.',
         imageUrl: '/heroes/18-shadowfen-assassin.png',
         health: 15,
-        attack: 8,
-        defense: 5,
+        attack: 9,
+        defense: 6,
     },
     {
         id: 19,
@@ -187,9 +187,9 @@ export const heroSeedData: Hero[] = [
         description:
             'An immovable sentinel whose ironbark armor provides exceptional protection against enemy attacks.',
         imageUrl: '/heroes/19-ironbark-sentinel.png',
-        health: 22,
-        attack: 4,
-        defense: 11,
+        health: 20,
+        attack: 7,
+        defense: 9,
     },
     {
         id: 20,
@@ -198,7 +198,7 @@ export const heroSeedData: Hero[] = [
             'A master archer who fires with the speed and precision of a storm sweeping across the battlefield.',
         imageUrl: '/heroes/20-stormveil-archer.png',
         health: 14,
-        attack: 7,
+        attack: 8,
         defense: 8,
     },
     {
@@ -208,8 +208,8 @@ export const heroSeedData: Hero[] = [
             'A spectral knight who walks between darkness and light, balancing powerful attacks with sturdy defense.',
         imageUrl: '/heroes/21-duskwraith-knight.png',
         health: 18,
-        attack: 6,
-        defense: 9,
+        attack: 8,
+        defense: 8,
     },
     {
         id: 22,
@@ -228,7 +228,7 @@ export const heroSeedData: Hero[] = [
             'A relentless huntress whose poisoned attacks wear down enemies while she keeps her distance.',
         imageUrl: '/heroes/23-venomshade-huntress.png',
         health: 14,
-        attack: 8,
+        attack: 9,
         defense: 7,
     },
     {
@@ -239,6 +239,6 @@ export const heroSeedData: Hero[] = [
         imageUrl: '/heroes/24-thunderforge-monk.png',
         health: 17,
         attack: 9,
-        defense: 9,
+        defense: 8,
     },
 ];

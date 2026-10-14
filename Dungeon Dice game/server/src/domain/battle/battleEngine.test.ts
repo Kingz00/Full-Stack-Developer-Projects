@@ -66,4 +66,38 @@ describe('BattleEngine', () => {
         expect(result.state.enemy.health).toBe(0);
         expect(result.state.status).toBe('draw');
     });
+
+
+    it('deals at least 1 damage per attack', () => {
+        const battle: BattleState = {
+            player: {
+                health: 10,
+                maxHealth: 10,
+                attack: 4,
+                defense: 9,
+            },
+            enemy: {
+                health: 10,
+                maxHealth: 10,
+                attack: 4,
+                defense: 10,
+            },
+            status: 'active',
+        };
+
+        const engine = new BattleEngine(() => 0);
+
+        const result = engine.playRound(battle);
+
+        expect(result.round.playerRoll).toBe(1);
+        expect(result.round.enemyRoll).toBe(1);
+
+        expect(result.round.playerDamage).toBe(1);
+        expect(result.round.enemyDamage).toBe(1);
+
+        expect(result.state.player.health).toBe(9);
+        expect(result.state.enemy.health).toBe(9);
+        expect(result.state.status).toBe('active');
+    });
+
 });
