@@ -1,5 +1,4 @@
 import { Form, Link, useNavigation, useSearchParams, useActionData, useRouteLoaderData, Navigate } from 'react-router-dom'
-import { useState, useEffect } from 'react'
 import RecaptchaCheckbox from '../../../components/RecaptchaCheckbox'
 import type { AuthUser } from '../loaders/authLoader'
 
@@ -19,13 +18,6 @@ function LoginPage() {
     const [searchParams] = useSearchParams()
     const actionData = useActionData() as LoginActionData | undefined
     const user = useRouteLoaderData('root') as AuthUser | null
-    const [captchaResetKey, setCaptchaResetKey] = useState(0)
-
-    useEffect(() => {
-        if (navigation.state === 'idle' && actionData) {
-            setCaptchaResetKey((key) => key + 1)
-        }
-    }, [navigation.state, actionData])
 
     const heroId = searchParams.get('heroId')
     const isSubmitting = navigation.state === 'submitting'
@@ -112,7 +104,8 @@ function LoginPage() {
                         </p>
                     )}
 
-                    <RecaptchaCheckbox resetKey={captchaResetKey} />
+
+                    <RecaptchaCheckbox key={navigation.state} />
 
                     <button
                         type="submit"

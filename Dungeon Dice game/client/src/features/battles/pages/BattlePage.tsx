@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useLoaderData, useNavigate } from 'react-router-dom'
 
 import ConfirmationModal from '../../../components/ConfirmationModal'
@@ -11,20 +11,37 @@ import BattleRoundHistory from '../components/BattleRoundHistory'
 import BattleDiceRollOverlay from '../components/BattleDiceRollOverlay'
 import type { BattleRoundEntry } from '../components/battlePresentationTypes'
 import type { BattleLoaderData } from '../loaders/battleLoader'
-import type { BattleState, RoundResult } from '../types'
+import type { Battle, BattleState, RoundResult } from '../types'
 
 import './BattlePage.css'
 
-
 export type CombatAnimationPhase = 'idle' | 'rolling' | 'revealing' | 'impact'
+
 type BattleOutcome = 'won' | 'lost' | 'draw'
 
-const delay = (milliseconds: number) => new Promise<void>(resolve => {
-    window.setTimeout(resolve, milliseconds)
-})
+const delay = (milliseconds: number) =>
+    new Promise<void>(resolve => {
+        window.setTimeout(resolve, milliseconds)
+    })
 
 function BattlePage() {
     const { battle, hero } = useLoaderData() as BattleLoaderData
+
+    return (
+        <BattlePageContent
+            key={battle.id}
+            battle={battle}
+            hero={hero}
+        />
+    )
+}
+
+interface BattlePageContentProps {
+    battle: Battle
+    hero: BattleLoaderData['hero']
+}
+
+function BattlePageContent({ battle, hero }: BattlePageContentProps) {
     const navigate = useNavigate()
 
     const [battleState, setBattleState] = useState<BattleState>({
@@ -58,45 +75,6 @@ function BattlePage() {
         battleState.status === 'lost' ||
         battleState.status === 'draw'
 
-    useEffect(() => {
-        setBattleState({
-            player: {
-                health: battle.playerHealth,
-                maxHealth: battle.playerMaxHealth,
-                attack: hero.attack,
-                defense: hero.defense,
-            },
-            enemy: {
-                health: battle.enemyHealth,
-                maxHealth: battle.enemyMaxHealth,
-                attack: battle.enemyAttack,
-                defense: battle.enemyDefense,
-            },
-            status: battle.status,
-        })
-
-        setLastRound(null)
-        setRounds([])
-        setRoundError(null)
-        setLifecycleError(null)
-        setIsPlayingRound(false)
-        setAnimationPhase('idle')
-        setIsProcessingLifecycle(false)
-        setIsAbandonModalOpen(false)
-        setOutcomeFeedback(null)
-    }, [
-        battle.id,
-        battle.playerHealth,
-        battle.playerMaxHealth,
-        battle.enemyHealth,
-        battle.enemyMaxHealth,
-        battle.enemyAttack,
-        battle.enemyDefense,
-        battle.status,
-        hero.attack,
-        hero.defense,
-    ])
-
     async function handlePlayRound() {
         const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
 
@@ -120,7 +98,8 @@ function BattlePage() {
         const rollMinimum = delay(1800)
 
         try {
-            const response = await fetch(`${apiBaseUrl}/battles/${battle.id}/rounds`,
+            const response = await fetch(
+                `${apiBaseUrl}/battles/${battle.id}/rounds`,
                 {
                     method: 'POST',
                     credentials: 'include',
@@ -321,6 +300,7 @@ function BattlePage() {
                     battleNumber={battle.battleNumber}
                     status={battleState.status}
                 />
+
                 <BattleArena
                     hero={hero}
                     battle={battle}
@@ -354,7 +334,6 @@ function BattlePage() {
                         <BattleCombatLog rounds={rounds} />
                     </div>
                 )}
-
 
                 {isBattleResolved ? (
                     <section className="battle-page__completion">

@@ -1,5 +1,5 @@
-import { createBrowserRouter, Outlet, useLocation } from 'react-router-dom'
-
+import { createBrowserRouter } from 'react-router-dom'
+import RootLayout from './components/RootLayout'
 import HeroSelectionPage from './features/heroes/pages/HeroSelectionPage'
 import RouteErrorElement from './components/RouteErrorElement'
 import { authLoader } from './features/auth/loaders/authLoader'
@@ -9,7 +9,6 @@ import LoginPage from './features/auth/pages/LoginPage'
 import RegisterPage from './features/auth/pages/RegisterPage'
 import { loginAction } from './features/auth/actions/loginAction'
 import { registerAction } from './features/auth/actions/registerAction'
-import AppHeader from './components/AppHeader'
 import { logoutAction } from './features/auth/actions/logoutAction'
 import GamePage from './features/runs/pages/GamePage'
 import { gameLoader } from './features/runs/loaders/gameLoader'
@@ -20,17 +19,7 @@ import { statisticsLoader } from './features/statistics/loaders/statisticsLoader
 import StatisticsPage from './features/statistics/pages/StatisticsPage'
 import AboutPage from './features/about/pages/AboutPage'
 
-function RootLayout() {
-    const { pathname } = useLocation()
-    const isBattlePage = pathname === '/game/battle'
 
-    return (
-        <>
-            {!isBattlePage && <AppHeader />}
-            <Outlet />
-        </>
-    )
-}
 
 export const router = createBrowserRouter([
     {

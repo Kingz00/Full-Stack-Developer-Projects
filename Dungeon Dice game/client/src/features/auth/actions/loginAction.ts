@@ -62,27 +62,12 @@ export async function loginAction({ request }: ActionFunctionArgs): Promise<Resp
         }),
     })
 
-    if (response.status === 400) {
-        const data = await response.json().catch(() => null)
-
-        if (
-            data &&
-            typeof data.error === 'string' &&
-            data.error.toLowerCase().includes('captcha')
-        ) {
-            return {
-                fieldErrors: {
-                    form: data.error
-                }
-            }
-        }
-    }
 
     if (response.status === 401) {
         return {
             fieldErrors: {
-                username: 'We couldn’t find an account with those login details.'
-            }
+                username: 'We couldn’t find an account with those login details.',
+            },
         }
     }
 
@@ -92,18 +77,23 @@ export async function loginAction({ request }: ActionFunctionArgs): Promise<Resp
         try {
             const data = await response.json()
 
-            if (
-                data &&
-                typeof data.error === 'string'
-            ) {
+            if (data && typeof data.error === 'string') {
                 message = data.error
             }
         } catch {
             // Keep the fallback message.
         }
 
+        if (response.status === 400) {
+            return {
+                fieldErrors: {
+                    form: message,
+                },
+            }
+        }
+
         throw new Response(message, {
-            status: response.status
+            status: response.status,
         })
     }
 
