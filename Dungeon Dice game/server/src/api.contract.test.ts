@@ -237,7 +237,8 @@ describe('API contract', () => {
             expect(response.status).toBe(200);
 
             expect(response.body).toEqual({
-                status: 'ok'
+                status: 'ok',
+                database: 'ok'
             });
         });
     });

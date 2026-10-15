@@ -9,15 +9,23 @@ export function createDatabase(databasePath: string): Database.Database {
 
     const db = new Database(databasePath);
 
-    db.pragma('journal_mode = WAL');
-    db.pragma('foreign_keys = ON');
+    try {
 
-    return db;
+        db.pragma('journal_mode = WAL');
+        db.pragma('foreign_keys = ON');
+
+        return db;
+    } catch (error) {
+        db.close();
+        throw error;
+    }
 }
+
+const configuredPath = process.env.DATABASE_PATH;
 
 const databasePath = path.resolve(
     process.cwd(),
-    'data/dungeon-dice.db',
+    configuredPath || 'data/dungeon-dice.db',
 );
 
 const db = createDatabase(databasePath);

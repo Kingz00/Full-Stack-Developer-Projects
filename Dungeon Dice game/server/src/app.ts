@@ -118,10 +118,20 @@ export function createApp(db: Database.Database) {
     app.use('/api', createBattleRoutes(battleController));
     app.use('/api/stats', createPlayerStatsRoutes(playerStatsController));
 
-    app.get('/api/health', (req, res) => {
-        res.json({
-            status: 'ok',
-        });
+    app.get('/api/health', (_req, res) => {
+        try {
+            db.prepare('SELECT 1').get();
+
+            res.status(200).json({
+                status: 'ok',
+                database: 'ok',
+            });
+        } catch {
+            res.status(503).json({
+                status: 'unavailable',
+                database: 'unavailable',
+            });
+        }
     });
 
     // Error handler must be registered after the routes
