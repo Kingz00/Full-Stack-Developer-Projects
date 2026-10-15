@@ -38,6 +38,11 @@ import { RecaptchaService } from './services/recaptchaService.js'
 export function createApp(db: Database.Database) {
     const app = express();
 
+    if (process.env.NODE_ENV === 'production') {
+        // Assumes exactly one trusted reverse proxy in front of Express.
+        app.set('trust proxy', 1);
+    }
+
     const frontendOrigin = process.env.FRONTEND_ORIGIN
 
     if (!frontendOrigin) {
@@ -52,7 +57,7 @@ export function createApp(db: Database.Database) {
     )
 
     app.use(express.json());
-    app.use(createSessionMiddleware());
+    app.use(createSessionMiddleware(db));
 
     // Dependency composition
 

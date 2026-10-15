@@ -138,6 +138,10 @@ describe('API contract', () => {
 
         process.env.RECAPTCHA_SECRET_KEY = 'integration-test-secret'
 
+        process.env.SESSION_SECRET = 'test-session-secret-with-at-least-32-bytes';
+
+        process.env.FRONTEND_ORIGIN = 'http://localhost:5173';
+
         vi.stubGlobal(
             'fetch',
             vi.fn().mockResolvedValue({
