@@ -16,6 +16,8 @@ describe('Game Run integration', () => {
         db.exec(`
             CREATE TABLE users (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
+                email TEXT,
+                email_verified_at TEXT,
                 username TEXT NOT NULL UNIQUE,
                 password_hash TEXT NOT NULL,
                 created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -140,6 +142,7 @@ describe('Game Run integration', () => {
             .post('/api/auth/register')
             .send({
                 username: 'run-player',
+                email: 'testuser@example.com',
                 password: 'password123',
                 recaptchaToken: 'integration-test-token'
             })
@@ -229,6 +232,7 @@ describe('Game Run integration', () => {
             .post('/api/auth/register')
             .send({
                 username: 'duplicate-active-run',
+                email: 'testuser@example.com',
                 password: 'password123',
                 recaptchaToken: 'integration-test-token'
             })
@@ -304,6 +308,7 @@ describe('Game Run integration', () => {
             .post('/api/auth/register')
             .send({
                 username: 'missing-hero-player',
+                email: 'testuser@example.com',
                 password: 'password123',
                 recaptchaToken: 'integration-test-token'
             })
@@ -328,6 +333,7 @@ describe('Game Run integration', () => {
             .post('/api/auth/register')
             .send({
                 username: 'invalid-run-player',
+                email: 'testuser@example.com',
                 password: 'password123',
                 recaptchaToken: 'integration-test-token'
             })
@@ -350,6 +356,7 @@ describe('Game Run integration', () => {
             .post('/api/auth/register')
             .send({
                 username: 'reset-player',
+                email: 'testuser@example.com',
                 password: 'password123',
                 recaptchaToken: 'integration-test-token'
             })
@@ -446,6 +453,7 @@ describe('Game Run integration', () => {
             .post('/api/auth/register')
             .send({
                 username: 'missing-run-player',
+                email: 'testuser@example.com',
                 password: 'password123',
                 recaptchaToken: 'integration-test-token'
             })
@@ -467,6 +475,7 @@ describe('Game Run integration', () => {
             .post('/api/auth/register')
             .send({
                 username: 'invalid-runId-player',
+                email: 'testuser@example.com',
                 password: 'password123',
                 recaptchaToken: 'integration-test-token'
             })
@@ -489,6 +498,7 @@ describe('Game Run integration', () => {
             .post('/api/auth/register')
             .send({
                 username: 'run-owner',
+                email: 'testuser@example.com',
                 password: 'password123',
                 recaptchaToken: 'integration-test-token'
             })
@@ -498,6 +508,7 @@ describe('Game Run integration', () => {
             .post('/api/auth/register')
             .send({
                 username: 'run-attacker',
+                email: 'testuser2@example.com',
                 password: 'password123',
                 recaptchaToken: 'integration-test-token'
             })
@@ -569,6 +580,7 @@ describe('Game Run integration', () => {
                 .post('/api/auth/register')
                 .send({
                     username: 'stage17-reset-player',
+                    email: 'testuser@example.com',
                     password: 'password123',
                     recaptchaToken: 'integration-test-token'
                 })
@@ -682,6 +694,7 @@ describe('Game Run integration', () => {
                 .post('/api/auth/register')
                 .send({
                     username: 'complete-player',
+                    email: 'testuser@example.com',
                     password: 'password123',
                     recaptchaToken: 'integration-test-token'
                 })
@@ -813,6 +826,7 @@ describe('Game Run integration', () => {
                 .post('/api/auth/register')
                 .send({
                     username: 'reset-session-player',
+                    email: 'testuser@example.com',
                     password: 'password123',
                     recaptchaToken: 'integration-test-token'
                 })
@@ -898,6 +912,7 @@ describe('Game Run integration', () => {
                 .post('/api/auth/register')
                 .send({
                     username: 'new-run-after-login',
+                    email: 'testuser@example.com',
                     password: 'password123',
                     recaptchaToken: 'integration-test-token'
                 })
@@ -992,6 +1007,7 @@ describe('Game Run integration', () => {
                 .post('/api/auth/register')
                 .send({
                     username: 'completed-run-reset',
+                    email: 'testuser@example.com',
                     password: 'password123',
                     recaptchaToken: 'integration-test-token'
                 })
@@ -1070,6 +1086,7 @@ describe('Game Run integration', () => {
                 .post('/api/auth/register')
                 .send({
                     username: 'current-run-none',
+                    email: 'testuser@example.com',
                     password: 'password123',
                     recaptchaToken: 'integration-test-token'
                 })
@@ -1091,6 +1108,7 @@ describe('Game Run integration', () => {
                 .post('/api/auth/register')
                 .send({
                     username: 'current-run-active',
+                    email: 'testuser@example.com',
                     password: 'password123',
                     recaptchaToken: 'integration-test-token'
                 })
@@ -1138,6 +1156,7 @@ describe('Game Run integration', () => {
                 .post('/api/auth/register')
                 .send({
                     username: 'without-logout',
+                    email: 'testuser@example.com',
                     password: 'password123',
                     recaptchaToken: 'integration-test-token'
                 })
@@ -1247,6 +1266,7 @@ describe('Game Run integration', () => {
                 .post('/api/auth/register')
                 .send({
                     username: 'complete-owner',
+                    email: 'testuser@example.com',
                     password: 'password123',
                     recaptchaToken: 'integration-test-token'
                 })
@@ -1256,6 +1276,7 @@ describe('Game Run integration', () => {
                 .post('/api/auth/register')
                 .send({
                     username: 'complete-other',
+                    email: 'testuser2@example.com',
                     password: 'password123',
                     recaptchaToken: 'integration-test-token'
                 })
@@ -1301,6 +1322,7 @@ describe('Game Run integration', () => {
                 .post('/api/auth/register')
                 .send({
                     username: 'complete-abandoned',
+                    email: 'testuser@example.com',
                     password: 'password123',
                     recaptchaToken: 'integration-test-token'
                 })
@@ -1354,6 +1376,7 @@ describe('Game Run integration', () => {
                 .post('/api/auth/register')
                 .send({
                     username: 'abandon-endpoint',
+                    email: 'testuser@example.com',
                     password: 'password123',
                     recaptchaToken: 'integration-test-token'
                 })

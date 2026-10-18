@@ -17,6 +17,8 @@ describe('API contract', () => {
         db.exec(`
             CREATE TABLE users (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
+                email TEXT,
+                email_verified_at TEXT,
                 username TEXT NOT NULL UNIQUE,
                 password_hash TEXT NOT NULL,
                 created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -187,27 +189,31 @@ describe('API contract', () => {
     async function registerUser(
         agent: ReturnType<typeof request.agent>,
         username = 'contract-user',
-        password = 'password123'
+        password = 'password123',
+        email = 'testuser@example.com',
     ) {
         return agent
             .post('/api/auth/register')
             .send({
                 username,
                 password,
+                email,
                 recaptchaToken: 'integration-test-token'
             });
     }
 
     async function createAuthenticatedAgent(
         username = 'contract-user',
-        password = 'password123'
+        password = 'password123',
+        email = 'testuser@example.com',
     ) {
         const agent = request.agent(app);
 
         const response = await registerUser(
             agent,
             username,
-            password
+            password,
+            email
         );
 
         expect(response.status).toBe(201);
@@ -281,6 +287,7 @@ describe('API contract', () => {
                     .send({
                         username: 'contract-register',
                         password: 'password123',
+                        email: 'testuser@example.com',
                         recaptchaToken: 'integration-test-token'
                     });
 
@@ -309,6 +316,7 @@ describe('API contract', () => {
                     .send({
                         username: 'contract-login',
                         password: 'password123',
+                        email: 'testuser@example.com',
                         recaptchaToken: 'integration-test-token'
                     })
                     .expect(201);

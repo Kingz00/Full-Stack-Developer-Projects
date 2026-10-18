@@ -16,6 +16,8 @@ describe('Authentication API', () => {
         db.exec(`
         CREATE TABLE users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
+            email TEXT,
+            email_verified_at TEXT,
             username TEXT NOT NULL UNIQUE,
             password_hash TEXT NOT NULL,
             created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -149,6 +151,7 @@ describe('Authentication API', () => {
             .post('/api/auth/register')
             .send({
                 username: 'testuser',
+                email: 'testuser@example.com',
                 password: 'password123',
                 recaptchaToken: 'integration-test-token'
             });
@@ -175,6 +178,7 @@ describe('Authentication API', () => {
             .post('/api/auth/register')
             .send({
                 username: 'captchauser',
+                email: 'testuser@example.com',
                 password: 'password123',
                 recaptchaToken: 'invalid-token',
             })
@@ -198,6 +202,7 @@ describe('Authentication API', () => {
             .post('/api/auth/register')
             .send({
                 username: 'testuser',
+                email: 'testuser@example.com',
                 password: 'password123',
                 recaptchaToken: 'integration-test-token'
             });
@@ -223,6 +228,7 @@ describe('Authentication API', () => {
             .post('/api/auth/register')
             .send({
                 username: 'testuser',
+                email: 'testuser@example.com',
                 password: 'password123',
                 recaptchaToken: 'integration-test-token'
             });
@@ -264,6 +270,7 @@ describe('Authentication API', () => {
             .post('/api/auth/register')
             .send({
                 username: 'captchauser',
+                email: 'testuser@example.com',
                 password: 'password123',
                 recaptchaToken: 'integration-test-token',
             })
@@ -314,6 +321,7 @@ describe('Authentication API', () => {
             .post('/api/auth/register')
             .send({
                 username: 'testuser',
+                email: 'testuser@example.com',
                 password: 'password123',
                 recaptchaToken: 'integration-test-token'
             });
@@ -351,6 +359,7 @@ describe('Authentication API', () => {
             .post('/api/auth/register')
             .send({
                 username: 'testuser',
+                email: 'testuser@example.com',
                 password: 'password123',
                 recaptchaToken: 'integration-test-token'
             });
@@ -370,6 +379,7 @@ describe('Authentication API', () => {
             .post('/api/auth/register')
             .send({
                 username: 'testuser',
+                email: 'testuser@example.com',
                 password: 'password123',
                 recaptchaToken: 'integration-test-token'
             })
@@ -436,6 +446,7 @@ describe('Authentication API', () => {
             .post('/api/auth/register')
             .send({
                 username: 'testuser',
+                email: 'testuser@example.com',
                 password: 'password123',
                 recaptchaToken: 'integration-test-token'
             })
@@ -474,6 +485,7 @@ describe('Authentication API', () => {
             .post('/api/auth/register')
             .send({
                 username: 'testuser',
+                email: 'testuser@example.com',
                 password: 'password123',
                 recaptchaToken: 'integration-test-token'
             })
@@ -534,6 +546,7 @@ describe('Authentication API', () => {
             .post('/api/auth/register')
             .send({
                 username: 'testuser',
+                email: 'testuser@example.com',
                 password: 'password123',
                 recaptchaToken: 'integration-test-token'
             });
@@ -542,6 +555,7 @@ describe('Authentication API', () => {
             .post('/api/auth/register')
             .send({
                 username: 'testuser',
+                email: 'testuser@example.com',
                 password: 'another-password',
                 recaptchaToken: 'integration-test-token'
             });
@@ -557,6 +571,7 @@ describe('Authentication API', () => {
         const response = await request(app)
             .post('/api/auth/register')
             .send({
+                email: 'testuser@example.com',
                 password: 'password123',
                 recaptchaToken: 'integration-test-token'
             });
@@ -572,6 +587,7 @@ describe('Authentication API', () => {
         const response = await request(app)
             .post('/api/auth/register')
             .send({
+                email: 'testuser@example.com',
                 username: 'testuser',
                 recaptchaToken: 'integration-test-token'
             });
@@ -588,6 +604,7 @@ describe('Authentication API', () => {
             .post('/api/auth/register')
             .send({
                 username: '',
+                email: 'testuser@example.com',
                 password: 'password123',
                 recaptchaToken: 'integration-test-token'
             });
@@ -604,6 +621,7 @@ describe('Authentication API', () => {
             .post('/api/auth/register')
             .send({
                 username: '   ',
+                email: 'testuser@example.com',
                 password: 'password123',
                 recaptchaToken: 'integration-test-token'
             });
@@ -620,6 +638,7 @@ describe('Authentication API', () => {
             .post('/api/auth/register')
             .send({
                 username: 'test.user',
+                email: 'testuser@example.com',
                 password: 'password123',
                 recaptchaToken: 'integration-test-token'
             });
@@ -636,6 +655,7 @@ describe('Authentication API', () => {
             .post('/api/auth/register')
             .send({
                 username: 'thisusernameiswaytoolong',
+                email: 'testuser@example.com',
                 password: 'password123',
                 recaptchaToken: 'integration-test-token'
             });
@@ -652,6 +672,7 @@ describe('Authentication API', () => {
             .post('/api/auth/register')
             .send({
                 username: '  testuser  ',
+                email: 'testuser@example.com',
                 password: 'password123',
                 recaptchaToken: 'integration-test-token'
             });
@@ -744,6 +765,7 @@ describe('Authentication API', () => {
             .post('/api/auth/register')
             .send({
                 username: 'testuser',
+                email: 'testuser@example.com',
                 password: 'password123',
                 recaptchaToken: 'integration-test-token'
             })
@@ -774,6 +796,7 @@ describe('Authentication API', () => {
             .post('/api/auth/register')
             .send({
                 username: 'firstuser',
+                email: 'testuser@example.com',
                 password: 'password123',
                 recaptchaToken: 'integration-test-token'
             })
@@ -783,6 +806,7 @@ describe('Authentication API', () => {
             .post('/api/auth/register')
             .send({
                 username: 'seconduser',
+                email: 'testuser2@example.com',
                 password: 'password123',
                 recaptchaToken: 'integration-test-token'
             })
@@ -809,6 +833,7 @@ describe('Authentication API', () => {
             .post('/api/auth/register')
             .send({
                 username: 'firstuser',
+                email: 'testuser@example.com',
                 password: 'password123',
                 recaptchaToken: 'integration-test-token'
             })
@@ -818,6 +843,7 @@ describe('Authentication API', () => {
             .post('/api/auth/register')
             .send({
                 username: 'seconduser',
+                email: 'testuser2@example.com',
                 password: 'password123',
                 recaptchaToken: 'integration-test-token'
             })

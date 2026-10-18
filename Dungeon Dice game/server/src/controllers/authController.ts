@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from 'express';
 
-import type { Credentials } from '../domain/auth/types.js';
+import type { Credentials, RegistrationInput } from '../domain/auth/types.js';
 import { toAuthUser } from '../domain/user/toAuthUser.js';
 import { AppError } from '../errors/AppError.js';
 import { AuthService } from '../services/authService.js';
@@ -20,11 +20,11 @@ export class AuthController {
 
     async register(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const credentials = this.getCredentials(req);
+            const input = this.getRegistrationInput(req);
 
             await this.recaptchaService.verify(req.body?.recaptchaToken)
 
-            const user = await this.authService.register(credentials);
+            const user = await this.authService.register(input);
 
             await this.sessionService.create(req, user.id);
 
@@ -126,4 +126,39 @@ export class AuthController {
             password
         };
     }
+
+
+    private getRegistrationInput(req: Request): RegistrationInput {
+        const credentials = this.getCredentials(req);
+        const { email } = req.body;
+
+        if (
+            typeof email !== 'string' ||
+            email.trim() === ''
+        ) {
+            throw new AppError(400, 'A valid email address is required.');
+        }
+
+        const normalizedEmail = email.trim().toLowerCase();
+
+        // Practical format validation. Email delivery and mailbox
+        // ownership cannot be established by syntax validation alone.
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (
+            normalizedEmail.length > 254 ||
+            !emailRegex.test(normalizedEmail)
+        ) {
+            throw new AppError(
+                400,
+                'A valid email address is required.'
+            );
+        }
+
+        return {
+            ...credentials,
+            email: normalizedEmail,
+        };
+    }
+
 }

@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
 
-import type { Credentials } from '../domain/auth/types.js';
+import type { Credentials, RegistrationInput } from '../domain/auth/types.js';
 import type { User } from '../domain/user/types.js';
 import { AppError } from '../errors/AppError.js';
 import { UserRepository } from '../repositories/userRepository.js';
@@ -12,19 +12,49 @@ export class AuthService {
         private readonly userRepository: UserRepository,
     ) { }
 
-    async register(credentials: Credentials): Promise<User> {
-        const existingUser = this.userRepository.findByUsername(credentials.username);
+    async register(input: RegistrationInput): Promise<User> {
+        const email = input.email.trim().toLowerCase();
+
+        const existingUser = this.userRepository.findByUsername(
+            input.username,
+        );
 
         if (existingUser) {
             throw new AppError(409, 'Username already exists.');
         }
 
-        const passwordHash = await bcrypt.hash(credentials.password, SALT_ROUNDS);
+        if (this.userRepository.findByEmail(email)) {
+            throw new AppError(409, 'Email address already exists.');
+        }
 
-        return this.userRepository.create({
-            username: credentials.username,
-            passwordHash
-        });
+        const passwordHash = await bcrypt.hash(
+            input.password,
+            SALT_ROUNDS
+        );
+
+        try {
+            return this.userRepository.create({
+                username: input.username,
+                email,
+                passwordHash,
+            });
+        } catch (error) {
+            // The database index also protects against concurrent
+            // registrations using the same email address.
+            if (
+                error instanceof Error &&
+                error.message.includes(
+                    'UNIQUE constraint failed: users.email',
+                )
+            ) {
+                throw new AppError(
+                    409,
+                    'Email address already exists.',
+                );
+            }
+
+            throw error;
+        }
     }
 
     async login(credentials: Credentials): Promise<User> {

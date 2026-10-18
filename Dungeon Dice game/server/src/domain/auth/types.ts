@@ -3,6 +3,10 @@ export interface Credentials {
     password: string;
 }
 
+export interface RegistrationInput extends Credentials {
+    email: string;
+}
+
 export interface AuthUser {
     id: number;
     username: string;

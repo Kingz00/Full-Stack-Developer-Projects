@@ -14,6 +14,8 @@ describe('battle integration', () => {
         db.exec(`
         CREATE TABLE users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
+            email TEXT,
+            email_verified_at TEXT,
             username TEXT NOT NULL UNIQUE,
             password_hash TEXT NOT NULL,
             created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -156,6 +158,7 @@ describe('battle integration', () => {
             .post('/api/auth/register')
             .send({
                 username: 'battle-player',
+                email: 'testuser@example.com',
                 password: 'password123',
                 recaptchaToken: 'integration-test-token'
             })
@@ -238,6 +241,7 @@ describe('battle integration', () => {
             .post('/api/auth/register')
             .send({
                 username: 'player-one',
+                email: 'testuser@example.com',
                 password: 'password123',
                 recaptchaToken: 'integration-test-token'
             })
@@ -248,6 +252,7 @@ describe('battle integration', () => {
             .post('/api/auth/register')
             .send({
                 username: 'player-two',
+                email: 'testuser2@example.com',
                 password: 'password123',
                 recaptchaToken: 'integration-test-token'
             })
@@ -326,6 +331,7 @@ describe('battle integration', () => {
             .post('/api/auth/register')
             .send({
                 username: 'battle-run-owner',
+                email: 'testuser@example.com',
                 password: 'password123',
                 recaptchaToken: 'integration-test-token'
             })
@@ -335,6 +341,7 @@ describe('battle integration', () => {
             .post('/api/auth/register')
             .send({
                 username: 'battle-run-attacker',
+                email: 'testuser2@example.com',
                 password: 'password123',
                 recaptchaToken: 'integration-test-token'
             })
@@ -418,6 +425,7 @@ describe('battle integration', () => {
             .post('/api/auth/register')
             .send({
                 username: 'active-battle-none',
+                email: 'testuser@example.com',
                 password: 'password123',
                 recaptchaToken: 'integration-test-token'
             })
@@ -465,6 +473,7 @@ describe('battle integration', () => {
             .post('/api/auth/register')
             .send({
                 username: 'active-battle-found',
+                email: 'testuser@example.com',
                 password: 'password123',
                 recaptchaToken: 'integration-test-token'
             })
@@ -541,6 +550,7 @@ describe('battle integration', () => {
             .post('/api/auth/register')
             .send({
                 username: 'active-battle-owner',
+                email: 'testuser@example.com',
                 password: 'password123',
                 recaptchaToken: 'integration-test-token'
             })
@@ -550,6 +560,7 @@ describe('battle integration', () => {
             .post('/api/auth/register')
             .send({
                 username: 'active-battle-other',
+                email: 'testuser2@example.com',
                 password: 'password123',
                 recaptchaToken: 'integration-test-token'
             })
@@ -618,6 +629,7 @@ describe('battle integration', () => {
             .post('/api/auth/register')
             .send({
                 username: 'battle-by-id',
+                email: 'testuser@example.com',
                 password: 'password123',
                 recaptchaToken: 'integration-test-token'
             })
@@ -694,6 +706,7 @@ describe('battle integration', () => {
             .post('/api/auth/register')
             .send({
                 username: 'battle-id-owner',
+                email: 'testuser@example.com',
                 password: 'password123',
                 recaptchaToken: 'integration-test-token'
             })
@@ -703,6 +716,7 @@ describe('battle integration', () => {
             .post('/api/auth/register')
             .send({
                 username: 'battle-id-other',
+                email: 'testuser2@example.com',
                 password: 'password123',
                 recaptchaToken: 'integration-test-token'
             })
@@ -769,6 +783,7 @@ describe('battle integration', () => {
             .post('/api/auth/register')
             .send({
                 username: 'round-player',
+                email: 'testuser@example.com',
                 password: 'password123',
                 recaptchaToken: 'integration-test-token'
             })
@@ -846,6 +861,7 @@ describe('battle integration', () => {
             .post('/api/auth/register')
             .send({
                 username: 'history-player',
+                email: 'testuser@example.com',
                 password: 'password123',
                 recaptchaToken: 'integration-test-token'
             })
@@ -963,6 +979,7 @@ describe('battle integration', () => {
             .post('/api/auth/register')
             .send({
                 username: 'active-battle-player',
+                email: 'testuser@example.com',
                 password: 'password123',
                 recaptchaToken: 'integration-test-token'
             })
@@ -1064,6 +1081,7 @@ describe('battle integration', () => {
             .post('/api/auth/register')
             .send({
                 username: 'continuous-player',
+                email: 'testuser@example.com',
                 password: 'password123',
                 recaptchaToken: 'integration-test-token'
             })
@@ -1205,6 +1223,7 @@ describe('battle integration', () => {
             .post('/api/auth/register')
             .send({
                 username: 'reset-battle-player',
+                email: 'testuser@example.com',
                 password: 'password123',
                 recaptchaToken: 'integration-test-token'
             })
@@ -1313,6 +1332,7 @@ describe('battle integration', () => {
             .post('/api/auth/register')
             .send({
                 username: 'reset-battle-player',
+                email: 'testuser@example.com',
                 password: 'password123',
                 recaptchaToken: 'integration-test-token'
             })
@@ -1394,6 +1414,7 @@ describe('battle integration', () => {
             .post('/api/auth/register')
             .send({
                 username: 'completed-battle',
+                email: 'testuser@example.com',
                 password: 'password123',
                 recaptchaToken: 'integration-test-token'
             })
@@ -1527,6 +1548,7 @@ describe('battle integration', () => {
             .post('/api/auth/register')
             .send({
                 username: 'abandoned-battle',
+                email: 'testuser@example.com',
                 password: 'password123',
                 recaptchaToken: 'integration-test-token'
             })

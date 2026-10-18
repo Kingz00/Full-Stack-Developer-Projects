@@ -17,6 +17,7 @@ describe('AuthController', () => {
     const user: User = {
         id: 10,
         username: 'testuser',
+        email: 'testuser@example.com',
         passwordHash: 'hashed-password',
         createdAt: '2026-09-20T08:00:00.000Z',
     };
@@ -92,6 +93,7 @@ describe('AuthController', () => {
 
             req.body = {
                 username: 'testuser',
+                email: 'testuser@example.com',
                 password: 'password123',
                 recaptchaToken: 'valid-test-token'
             };
@@ -107,6 +109,7 @@ describe('AuthController', () => {
             expect(authService.register)
                 .toHaveBeenCalledWith({
                     username: 'testuser',
+                    email: 'testuser@example.com',
                     password: 'password123',
                 });
 
@@ -150,6 +153,7 @@ describe('AuthController', () => {
 
             req.body = {
                 username: 'testuser',
+                email: 'testuser@example.com',
                 password: 'password123',
                 recaptchaToken: 'invalid-test-token',
             }
@@ -181,6 +185,7 @@ describe('AuthController', () => {
 
             req.body = {
                 username: 'testuser',
+                email: 'testuser@example.com',
                 password: 'password123',
             };
 
@@ -208,6 +213,7 @@ describe('AuthController', () => {
             } = createController();
 
             req.body = {
+                email: 'testuser@example.com',
                 password: 'password123',
             };
 
@@ -238,6 +244,7 @@ describe('AuthController', () => {
 
             req.body = {
                 username: 'testuser',
+                email: 'testuser@example.com',
             };
 
             await controller.register(req, res, next);
@@ -267,6 +274,7 @@ describe('AuthController', () => {
 
             req.body = {
                 username: 123,
+                email: 'testuser@example.com',
                 password: 'password123',
             };
 
@@ -297,6 +305,7 @@ describe('AuthController', () => {
 
             req.body = {
                 username: 'testuser',
+                email: 'testuser@example.com',
                 password: 123,
             };
 
@@ -327,6 +336,7 @@ describe('AuthController', () => {
 
             req.body = {
                 username: '',
+                email: 'testuser@example.com',
                 password: 'password123',
             };
 
@@ -357,6 +367,7 @@ describe('AuthController', () => {
 
             req.body = {
                 username: '   ',
+                email: 'testuser@example.com',
                 password: 'password123',
             };
 
@@ -387,6 +398,7 @@ describe('AuthController', () => {
 
             req.body = {
                 username: 'test user!',
+                email: 'testuser@example.com',
                 password: 'password123',
             };
 
@@ -417,6 +429,7 @@ describe('AuthController', () => {
 
             req.body = {
                 username: 'thisusernameiswaytoolong',
+                email: 'testuser@example.com',
                 password: 'password123',
             };
 
@@ -448,6 +461,7 @@ describe('AuthController', () => {
 
             req.body = {
                 username: '  testuser  ',
+                email: 'testuser@example.com',
                 password: ' password123 ',
             };
 
@@ -462,6 +476,7 @@ describe('AuthController', () => {
             expect(authService.register)
                 .toHaveBeenCalledWith({
                     username: 'testuser',
+                    email: 'testuser@example.com',
                     password: ' password123 ',
                 });
 

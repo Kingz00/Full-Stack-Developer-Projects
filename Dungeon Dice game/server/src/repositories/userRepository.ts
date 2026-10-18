@@ -4,6 +4,7 @@ import type { User } from '../domain/user/types.js';
 
 export interface CreateUserInput {
     username: string;
+    email: string;
     passwordHash: string;
 }
 
@@ -15,11 +16,12 @@ export class UserRepository {
             .prepare(`
                         INSERT INTO users (
                         username,
+                    email,
                         password_hash
                         )
-                        VALUES (?, ?)
+                VALUES (?, ?, ?)
                     `)
-            .run(input.username, input.passwordHash);
+            .run(input.username, input.email, input.passwordHash);
 
         const user = this.findById(Number(result.lastInsertRowid));
 
@@ -33,7 +35,7 @@ export class UserRepository {
     findByUsername(username: string): User | null {
         const row = this.db
             .prepare(`
-                    SELECT id, username, password_hash, created_at
+                SELECT id, username, email, password_hash, created_at, email_verified_at
                         FROM users
                         WHERE username = ?
                 `)
@@ -42,10 +44,22 @@ export class UserRepository {
         return row ? this.toDomain(row) : null;
     }
 
+    findByEmail(email: string): User | null {
+        const row = this.db
+            .prepare(`
+                SELECT id, username, email, password_hash, created_at, email_verified_at
+                FROM users
+                WHERE email = ?
+            `)
+            .get(email);
+
+        return row ? this.toDomain(row) : null;
+    }
+
     findById(id: number): User | null {
         const row = this.db
             .prepare(`
-                    SELECT id, username, password_hash, created_at
+                SELECT id, username, email, password_hash, created_at, email_verified_at
                         FROM users
                         WHERE id = ?
                 `)
@@ -58,15 +72,19 @@ export class UserRepository {
         const user = row as {
             id: number;
             username: string;
+            email: string | null;
             password_hash: string;
             created_at: string;
+            email_verified_at: string | null;
         };
 
         return {
             id: user.id,
             username: user.username,
+            email: user.email,
             passwordHash: user.password_hash,
             createdAt: user.created_at,
+            emailVerifiedAt: user.email_verified_at,
         };
     }
 }
