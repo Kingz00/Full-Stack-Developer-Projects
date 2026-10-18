@@ -20,6 +20,8 @@ describe('GameRunService', () => {
         db.exec(`
         CREATE TABLE users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
+            email TEXT,
+            email_verified_at TEXT,
             username TEXT NOT NULL UNIQUE,
             password_hash TEXT NOT NULL,
             created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP

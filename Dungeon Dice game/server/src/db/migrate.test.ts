@@ -58,4 +58,62 @@ describe('runMigrations', () => {
 
         expect(after).toEqual(before);
     });
+
+
+    it('preserves existing users when adding the email column', () => {
+        db.exec(`
+            CREATE TABLE users (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                username TEXT NOT NULL UNIQUE,
+                password_hash TEXT NOT NULL,
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+            );
+
+            INSERT INTO users (username, password_hash)
+            VALUES ('legacyuser', 'existing-hash');
+
+            CREATE TABLE migrations (
+                id INTEGER PRIMARY KEY,
+                name TEXT NOT NULL UNIQUE,
+                executed_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+            );
+
+            INSERT INTO migrations (name) VALUES
+                ('001_create_users.sql'),
+                ('002_create_heroes.sql'),
+                ('003_create_game_runs.sql'),
+                ('004_create_battles.sql'),
+                ('005_create_battle_rounds.sql');
+        `);
+
+        runMigrations(db);
+
+        const user = db.prepare(`
+            SELECT id, username, email, password_hash
+            FROM users
+            WHERE username = ?
+        `).get('legacyuser') as {
+            id: number;
+            username: string;
+            email: string | null;
+            password_hash: string;
+        };
+
+        expect(user).toMatchObject({
+            id: 1,
+            username: 'legacyuser',
+            email: null,
+            password_hash: 'existing-hash',
+        });
+
+        const emailIndex = db.prepare(`
+            SELECT name
+            FROM sqlite_master
+            WHERE type = 'index'
+            AND name = 'idx_users_email_unique'
+        `).get();
+
+        expect(emailIndex).toBeDefined();
+    });
+
 });

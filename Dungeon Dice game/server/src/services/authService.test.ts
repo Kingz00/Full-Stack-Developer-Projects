@@ -17,10 +17,16 @@ describe('AuthService', () => {
         db.exec(`
             CREATE TABLE users (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
+                email TEXT,
+                email_verified_at TEXT,
                 username TEXT NOT NULL UNIQUE,
                 password_hash TEXT NOT NULL,
                 created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
             );
+
+            CREATE UNIQUE INDEX idx_users_email_unique
+                ON users(email)
+                WHERE email IS NOT NULL;
         `);
 
         userRepository = new UserRepository(db);
@@ -34,12 +40,14 @@ describe('AuthService', () => {
     it('registers a user and stores a password hash', async () => {
         const user = await authService.register({
             username: 'testuser',
+            email: 'testuser@example.com',
             password: 'password123',
         });
 
         expect(user).toMatchObject({
             id: 1,
             username: 'testuser',
+            email: 'testuser@example.com'
         });
 
         const passwordMatches = await bcrypt.compare(
@@ -60,12 +68,14 @@ describe('AuthService', () => {
     it('does not allow duplicate usernames', async () => {
         await authService.register({
             username: 'testuser',
+            email: 'testuser@example.com',
             password: 'password123',
         });
 
         await expect(
             authService.register({
                 username: 'testuser',
+                email: 'testuser@example.com',
                 password: 'another-password',
             }),
         ).rejects.toEqual(
@@ -76,9 +86,63 @@ describe('AuthService', () => {
         );
     });
 
+
+    it('normalizes email addresses before storing them', async () => {
+        const user = await authService.register({
+            username: 'emailuser',
+            email: '  Player@Example.COM  ',
+            password: 'password123',
+        });
+
+        expect(user.email).toBe('player@example.com');
+
+        expect(
+            userRepository.findByEmail('player@example.com')?.id,
+        ).toBe(user.id);
+    });
+
+    it('rejects a duplicate email address', async () => {
+        await authService.register({
+            username: 'firstuser',
+            email: 'player@example.com',
+            password: 'password123',
+        });
+
+        await expect(
+            authService.register({
+                username: 'seconduser',
+                email: 'PLAYER@example.com',
+                password: 'another-password',
+            }),
+        ).rejects.toMatchObject({
+            statusCode: 409,
+            message: 'Email address already exists.',
+        });
+    });
+
+    it('allows different users to register with different email addresses', async () => {
+        const firstUser = await authService.register({
+            username: 'firstuser',
+            email: 'first@example.com',
+            password: 'password123',
+        });
+
+        const secondUser = await authService.register({
+            username: 'seconduser',
+            email: 'second@example.com',
+            password: 'password123',
+        });
+
+        expect(firstUser.email).toBe('first@example.com');
+        expect(secondUser.email).toBe('second@example.com');
+        expect(firstUser.id).not.toBe(secondUser.id);
+    });
+
+
     it('logs in with valid credentials', async () => {
         await authService.register({
             username: 'testuser',
+            email: 'testuser@example.com',
             password: 'password123',
         });
 
@@ -110,6 +174,7 @@ describe('AuthService', () => {
     it('rejects an incorrect password', async () => {
         await authService.register({
             username: 'testuser',
+            email: 'testuser@example.com',
             password: 'password123',
         });
 

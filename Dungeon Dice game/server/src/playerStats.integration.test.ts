@@ -16,6 +16,8 @@ describe('Player Statistics API', () => {
         db.exec(`
             CREATE TABLE users (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
+                email TEXT,
+                email_verified_at TEXT,
                 username TEXT NOT NULL UNIQUE,
                 password_hash TEXT NOT NULL,
                 created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -200,12 +202,14 @@ describe('Player Statistics API', () => {
 
     async function register(
         agent: ReturnType<typeof request.agent>,
-        username: string
+        username: string,
+        email: string
     ) {
         return agent
             .post('/api/auth/register')
             .send({
                 username,
+                email,
                 password: 'password123',
                 recaptchaToken: 'integration-test-token'
             });
@@ -227,7 +231,8 @@ describe('Player Statistics API', () => {
 
         const registerResponse = await register(
             agent,
-            'stats-player'
+            'stats-player',
+            'testuser@example.com'
         );
 
         expect(registerResponse.status).toBe(201);
@@ -259,7 +264,7 @@ describe('Player Statistics API', () => {
     it('returns the authenticated user\'s battle statistics', async () => {
         const agent = request.agent(app);
 
-        await register(agent, 'stats-player');
+        await register(agent, 'stats-player', 'testuser@example.com');
 
         const user = db.prepare(`
             SELECT id FROM users
@@ -300,7 +305,7 @@ describe('Player Statistics API', () => {
     it('excludes active and abandoned battles from totals', async () => {
         const agent = request.agent(app);
 
-        await register(agent, 'stats-player');
+        await register(agent, 'stats-player', 'testuser@example.com');
 
         const user = db.prepare(`
             SELECT id FROM users
@@ -333,7 +338,7 @@ describe('Player Statistics API', () => {
     it('does not allow an abandoned run to become bestRun', async () => {
         const agent = request.agent(app);
 
-        await register(agent, 'stats-player');
+        await register(agent, 'stats-player', 'testuser@example.com');
 
         const user = db.prepare(`
             SELECT id FROM users
@@ -365,7 +370,7 @@ describe('Player Statistics API', () => {
     it('does not allow an active run to become bestRun', async () => {
         const agent = request.agent(app);
 
-        await register(agent, 'stats-player');
+        await register(agent, 'stats-player', 'testuser@example.com');
 
         const user = db.prepare(`
             SELECT id FROM users
@@ -398,9 +403,9 @@ describe('Player Statistics API', () => {
         const agentOne = request.agent(app);
         const agentTwo = request.agent(app);
 
-        await register(agentOne, 'stats-player-one');
+        await register(agentOne, 'stats-player-one', 'testuser@example.com');
 
-        await register(agentTwo, 'stats-player-two');
+        await register(agentTwo, 'stats-player-two', 'testuser2@example.com');
 
         const userOne = db.prepare(`
             SELECT id FROM users
@@ -447,7 +452,7 @@ describe('Player Statistics API', () => {
     it('applies all bestRun tie-breakers in order', async () => {
         const agent = request.agent(app);
 
-        await register(agent, 'stats-player');
+        await register(agent, 'stats-player', 'testuser@example.com');
 
         const user = db.prepare(`
             SELECT id FROM users

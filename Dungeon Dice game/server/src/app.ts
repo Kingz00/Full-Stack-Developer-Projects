@@ -35,7 +35,18 @@ import { createHeroRoutes } from './routes/heroRoutes.js';
 
 import { RecaptchaService } from './services/recaptchaService.js'
 
-export function createApp(db: Database.Database) {
+import { EmailVerificationController } from './controllers/emailVerificationController.js';
+import { EmailVerificationRepository } from './repositories/emailVerificationRepository.js';
+import { createEmailVerificationRoutes } from './routes/emailVerificationRoutes.js';
+import { EmailVerificationService } from './services/emailVerificationService.js';
+import { BrevoEmailSender, type EmailSender } from './services/emailSender.js';
+
+import { PasswordRecoveryController } from './controllers/passwordRecoveryController.js';
+import { PasswordResetRepository } from './repositories/passwordResetRepository.js';
+import { createPasswordRecoveryRoutes } from './routes/passwordRecoveryRoutes.js';
+import { PasswordRecoveryService } from './services/passwordRecoveryService.js';
+
+export function createApp(db: Database.Database, options: { emailSender?: EmailSender } = {}) {
     const app = express();
 
     if (process.env.NODE_ENV === 'production') {
@@ -92,6 +103,29 @@ export function createApp(db: Database.Database) {
         recaptchaService
     );
 
+    // Email Verification
+    const emailVerificationRepository = new EmailVerificationRepository(db);
+    const emailSender = options.emailSender ?? new BrevoEmailSender();
+    const emailVerificationService = new EmailVerificationService(
+        userRepository,
+        emailVerificationRepository,
+        emailSender,
+        frontendOrigin
+    );
+
+    const emailVerificationController = new EmailVerificationController(emailVerificationService);
+
+    // Password Recovery
+    const passwordResetRepository = new PasswordResetRepository(db);
+    const passwordRecoveryService = new PasswordRecoveryService(
+        userRepository,
+        passwordResetRepository,
+        emailSender,
+        frontendOrigin
+    );
+
+    const passwordRecoveryController = new PasswordRecoveryController(passwordRecoveryService);
+
     // Battle Service
     const battleEngine = new BattleEngine();
 
@@ -113,6 +147,8 @@ export function createApp(db: Database.Database) {
 
     // Routes
     app.use('/api/auth', createAuthRoutes(authController));
+    app.use('/api/auth/email-verification', createEmailVerificationRoutes(emailVerificationController));
+    app.use('/api/auth', createPasswordRecoveryRoutes(passwordRecoveryController));
     app.use('/api', createHeroRoutes(heroController));
     app.use('/api/runs', createGameRunRoutes(gameRunController));
     app.use('/api', createBattleRoutes(battleController));
