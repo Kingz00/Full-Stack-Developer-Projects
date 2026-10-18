@@ -5,3 +5,18 @@ dist/
 *.db-shm
 *.db-wal
 logTable.ts
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Ignore local state and lock files
+state/
+*.lock
