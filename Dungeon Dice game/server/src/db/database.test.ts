@@ -42,6 +42,27 @@ describe('createDatabase', () => {
         expect(db.open).toBe(true);
     });
 
+
+    it('does not open a database as a module import side effect', async () => {
+        const databaseConstructor = vi.fn();
+
+        vi.resetModules();
+
+        vi.doMock('better-sqlite3', () => ({
+            default: databaseConstructor,
+        }));
+
+        try {
+            await import('./database.js');
+
+            expect(databaseConstructor).not.toHaveBeenCalled();
+        } finally {
+            vi.doUnmock('better-sqlite3');
+            vi.resetModules();
+        }
+    });
+
+
     it('enables foreign-key enforcement', () => {
         tempDirectory = fs.mkdtempSync(
             path.join(os.tmpdir(), 'dungeon-db-'),

@@ -20,14 +20,3 @@ export function createDatabase(databasePath: string): Database.Database {
         throw error;
     }
 }
-
-const configuredPath = process.env.DATABASE_PATH;
-
-const databasePath = path.resolve(
-    process.cwd(),
-    configuredPath || 'data/dungeon-dice.db',
-);
-
-const db = createDatabase(databasePath);
-
-export default db;

@@ -1,8 +1,11 @@
+import 'dotenv/config';
 import fs from 'node:fs';
 import path from 'node:path';
 import type Database from 'better-sqlite3';
 
-import db from './database.js';
+import { createDatabase } from './database.js';
+import { resolveDatabasePath } from './databasePath.js';
+
 
 const migrationsDirectory = path.resolve(
     import.meta.dirname,
@@ -59,6 +62,8 @@ export function runMigrations(database: Database.Database): void {
 // Preserve the existing npm run db:migrate command.
 if (process.argv[1] &&
     path.resolve(process.argv[1]) === path.resolve(import.meta.filename)) {
+    const db = createDatabase(resolveDatabasePath());
+
     try {
         runMigrations(db);
     } finally {

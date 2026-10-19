@@ -1,7 +1,9 @@
+import 'dotenv/config';
 import path from 'node:path';
 import type Database from 'better-sqlite3';
 
-import db from './database.js';
+import { createDatabase } from './database.js';
+import { resolveDatabasePath } from './databasePath.js';
 import { heroSeedData } from './heroSeedData.js';
 
 export function seedHeroes(database: Database.Database) {
@@ -45,8 +47,11 @@ export function seedHeroes(database: Database.Database) {
 
 
 // Preserve the existing npm run db:seed command.
+
 if (process.argv[1] &&
     path.resolve(process.argv[1]) === path.resolve(import.meta.filename)) {
+    const db = createDatabase(resolveDatabasePath());
+
     try {
         seedHeroes(db);
     } finally {
