@@ -1,8 +1,10 @@
 import './BattleActions.css'
 
+type ProcessingAction = 'new-battle' | 'complete' | 'abandon' | null
+
 interface BattleActionsProps {
     isBattleResolved: boolean
-    isProcessing: boolean
+    processingAction: ProcessingAction
     error: string | null
     onStartNewBattle: () => void
     onCompleteRun: () => void
@@ -11,12 +13,14 @@ interface BattleActionsProps {
 
 function BattleActions({
     isBattleResolved,
-    isProcessing,
+    processingAction,
     error,
     onStartNewBattle,
     onCompleteRun,
     onAbandonRun,
 }: BattleActionsProps) {
+    const isProcessing = processingAction !== null
+
     return (
         <section
             className="battle-actions"
@@ -28,8 +32,18 @@ function BattleActions({
                     className="battle-actions__button battle-actions__button--primary"
                     onClick={onStartNewBattle}
                     disabled={isProcessing}
+                    aria-busy={processingAction === 'new-battle'}
                 >
-                    {isProcessing ? 'Processing…' : 'Start New Battle'}
+                    {processingAction === 'new-battle' && (
+                        <span
+                            className="loading-spinner loading-spinner--small"
+                            aria-hidden="true"
+                        />
+                    )}
+
+                    {processingAction === 'new-battle'
+                        ? 'Starting New Battle…'
+                        : 'Start New Battle'}
                 </button>
             )}
 
@@ -39,8 +53,18 @@ function BattleActions({
                     className="battle-actions__button battle-actions__button--danger"
                     onClick={onAbandonRun}
                     disabled={isProcessing}
+                    aria-busy={processingAction === 'abandon'}
                 >
-                    Abandon Run
+                    {processingAction === 'abandon' && (
+                        <span
+                            className="loading-spinner loading-spinner--small"
+                            aria-hidden="true"
+                        />
+                    )}
+
+                    {processingAction === 'abandon'
+                        ? 'Abandoning Run…'
+                        : 'Abandon Run'}
                 </button>
 
                 <button
@@ -48,8 +72,18 @@ function BattleActions({
                     className="battle-actions__button battle-actions__button--gold"
                     onClick={onCompleteRun}
                     disabled={isProcessing}
+                    aria-busy={processingAction === 'complete'}
                 >
-                    Complete Run
+                    {processingAction === 'complete' && (
+                        <span
+                            className="loading-spinner loading-spinner--small"
+                            aria-hidden="true"
+                        />
+                    )}
+
+                    {processingAction === 'complete'
+                        ? 'Completing Run…'
+                        : 'Complete Run'}
                 </button>
             </div>
 

@@ -271,6 +271,11 @@
 .auth-form__submit {
     position: relative;
 
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
+
     min-height: 3rem;
     margin-top: 0.25rem;
     padding: 0.7rem 1rem;

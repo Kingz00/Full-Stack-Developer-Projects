@@ -74,7 +74,15 @@ function AppHeader() {
                             className="app-header__logout"
                             type="submit"
                             disabled={isLoggingOut}
+                            aria-busy={isLoggingOut}
                         >
+                            {isLoggingOut && (
+                                <span
+                                    className="loading-spinner loading-spinner--small"
+                                    aria-hidden="true"
+                                />
+                            )}
+
                             {isLoggingOut
                                 ? 'Signing out...'
                                 : 'Sign out'}
