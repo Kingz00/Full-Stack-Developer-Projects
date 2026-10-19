@@ -178,7 +178,15 @@ function RegisterPage() {
                         type="submit"
                         className="auth-form__submit"
                         disabled={isSubmitting}
+                        aria-busy={isSubmitting}
                     >
+                        {isSubmitting && (
+                            <span
+                                className="loading-spinner loading-spinner--small"
+                                aria-hidden="true"
+                            />
+                        )}
+
                         {isSubmitting
                             ? 'Creating account...'
                             : 'Create account'}

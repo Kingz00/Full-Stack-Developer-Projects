@@ -101,3 +101,71 @@ h3 {
     border-radius: 0;
     background-clip: padding-box;
 }
+
+/* --------------------------------------------------
+   Loading feedback
+-------------------------------------------------- */
+
+.loading-spinner {
+    display: inline-block;
+    flex: 0 0 auto;
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: loading-spinner-rotate 700ms linear infinite;
+    vertical-align: middle;
+}
+
+.loading-spinner--small {
+    width: 0.8rem;
+    height: 0.8rem;
+    border-width: 2px;
+}
+
+@keyframes loading-spinner-rotate {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.app-loading-fallback {
+    display: flex;
+    min-height: 100vh;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 1.5rem;
+    color: var(--color-text-secondary);
+    font-family: var(--font-heading);
+    text-align: center;
+}
+
+.route-loading-indicator {
+    position: fixed;
+    z-index: 1000;
+    top: 0.75rem;
+    left: 50%;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    max-width: calc(100vw - 2rem);
+    padding: 0.55rem 0.85rem;
+    border: 1px solid var(--color-frame);
+    border-radius: var(--radius-sm);
+    background: var(--color-bg-card);
+    color: var(--color-text-primary);
+    font-size: 0.8rem;
+    box-shadow: 0 0.4rem 1.2rem rgb(0 0 0 / 0.4);
+    transform: translateX(-50%);
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+    .loading-spinner {
+        animation: none;
+        border-right-color: currentColor;
+        opacity: 0.75;
+    }
+}

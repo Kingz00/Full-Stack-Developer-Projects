@@ -175,6 +175,11 @@
 }
 
 .app-header__logout {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
+
     min-width: 9.5rem;
 
     padding: 0.7rem 1.35rem;

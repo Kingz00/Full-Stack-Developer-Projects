@@ -36,6 +36,8 @@ function GamePage() {
 
     const [isProcessingRun, setIsProcessingRun] = useState(false)
 
+    const [processingRunAction, setProcessingRunAction] = useState<'complete' | 'abandon' | null>(null)
+
     const [gameError, setGameError] = useState<string | null>(null)
 
     const [showAbandonConfirmation, setShowAbandonConfirmation] = useState(false)
@@ -121,6 +123,7 @@ function GamePage() {
         }
 
         setGameError(null)
+        setProcessingRunAction(action)
         setIsProcessingRun(true)
 
         try {
@@ -166,6 +169,7 @@ function GamePage() {
             )
         } finally {
             setIsProcessingRun(false)
+            setProcessingRunAction(null)
         }
     }
 
@@ -322,9 +326,15 @@ function GamePage() {
                                         isProcessingBattle ||
                                         isProcessingRun
                                     }
+                                    aria-busy={isProcessingBattle}
                                 >
+
                                     <span aria-hidden="true">
-                                        ⚔
+                                        {isProcessingBattle ? (
+                                            <span className="loading-spinner loading-spinner--small" />
+                                        ) : (
+                                            '⚔'
+                                        )}
                                     </span>
 
                                     {isProcessingBattle
@@ -354,13 +364,19 @@ function GamePage() {
                                         isProcessingBattle ||
                                         isProcessingRun
                                     }
+                                    aria-busy={processingRunAction === 'complete'}
                                 >
+
                                     <span aria-hidden="true">
-                                        ⚑
+                                        {processingRunAction === 'complete' ? (
+                                            <span className="loading-spinner loading-spinner--small" />
+                                        ) : (
+                                            '⚑'
+                                        )}
                                     </span>
 
-                                    {isProcessingRun
-                                        ? 'Processing...'
+                                    {processingRunAction === 'complete'
+                                        ? 'Completing Run...'
                                         : 'Complete Run'}
 
                                     <span aria-hidden="true">
@@ -376,12 +392,19 @@ function GamePage() {
                                         isProcessingBattle ||
                                         isProcessingRun
                                     }
+                                    aria-busy={processingRunAction === 'abandon'}
                                 >
                                     <span aria-hidden="true">
-                                        ☠
+                                        {processingRunAction === 'abandon' ? (
+                                            <span className="loading-spinner loading-spinner--small" />
+                                        ) : (
+                                            '☠'
+                                        )}
                                     </span>
 
-                                    Abandon Run
+                                    {processingRunAction === 'abandon'
+                                        ? 'Abandoning Run...'
+                                        : 'Abandon Run'}
 
                                     <span aria-hidden="true">
                                         ›
@@ -435,9 +458,14 @@ function GamePage() {
                                         className="game-page__primary-action"
                                         type="submit"
                                         disabled={isStartingRun}
+                                        aria-busy={isStartingRun}
                                     >
                                         <span aria-hidden="true">
-                                            ⚔
+                                            {isStartingRun ? (
+                                                <span className="loading-spinner loading-spinner--small" />
+                                            ) : (
+                                                '⚔'
+                                            )}
                                         </span>
 
                                         {isStartingRun

@@ -65,7 +65,7 @@ function BattlePageContent({ battle, hero }: BattlePageContentProps) {
     const [isPlayingRound, setIsPlayingRound] = useState(false)
     const [animationPhase, setAnimationPhase] = useState<CombatAnimationPhase>('idle')
     const [roundError, setRoundError] = useState<string | null>(null)
-    const [isProcessingLifecycle, setIsProcessingLifecycle] = useState(false)
+    const [processingLifecycleAction, setProcessingLifecycleAction] = useState<'new-battle' | 'complete' | 'abandon' | null>(null)
     const [lifecycleError, setLifecycleError] = useState<string | null>(null)
     const [isAbandonModalOpen, setIsAbandonModalOpen] = useState(false)
     const [outcomeFeedback, setOutcomeFeedback] = useState<BattleOutcome | null>(null)
@@ -184,12 +184,11 @@ function BattlePageContent({ battle, hero }: BattlePageContentProps) {
             return
         }
 
-        setIsProcessingLifecycle(true)
+        setProcessingLifecycleAction('new-battle')
         setLifecycleError(null)
 
         try {
-            const response = await fetch(
-                `${apiBaseUrl}/runs/${battle.runId}/battles`,
+            const response = await fetch(`${apiBaseUrl}/runs/${battle.runId}/battles`,
                 {
                     method: 'POST',
                     credentials: 'include',
@@ -213,8 +212,7 @@ function BattlePageContent({ battle, hero }: BattlePageContentProps) {
                 return
             }
 
-            const data: { battle: { id: number } } =
-                await response.json()
+            const data: { battle: { id: number } } = await response.json()
 
             navigate(`/game/battle?battleId=${data.battle.id}`)
         } catch {
@@ -222,7 +220,7 @@ function BattlePageContent({ battle, hero }: BattlePageContentProps) {
                 'Unable to connect to the server. Please try again.',
             )
         } finally {
-            setIsProcessingLifecycle(false)
+            setProcessingLifecycleAction(null)
         }
     }
 
@@ -234,12 +232,11 @@ function BattlePageContent({ battle, hero }: BattlePageContentProps) {
             return
         }
 
-        setIsProcessingLifecycle(true)
+        setProcessingLifecycleAction(action)
         setLifecycleError(null)
 
         try {
-            const response = await fetch(
-                `${apiBaseUrl}/runs/${battle.runId}/${action}`,
+            const response = await fetch(`${apiBaseUrl}/runs/${battle.runId}/${action}`,
                 {
                     method: 'POST',
                     credentials: 'include',
@@ -277,7 +274,7 @@ function BattlePageContent({ battle, hero }: BattlePageContentProps) {
                 'Unable to connect to the server. Please try again.',
             )
         } finally {
-            setIsProcessingLifecycle(false)
+            setProcessingLifecycleAction(null)
         }
     }
 
@@ -375,7 +372,7 @@ function BattlePageContent({ battle, hero }: BattlePageContentProps) {
 
                         <BattleActions
                             isBattleResolved={isBattleResolved}
-                            isProcessing={isProcessingLifecycle}
+                            processingAction={processingLifecycleAction}
                             error={lifecycleError}
                             onStartNewBattle={() => void handleStartNewBattle()}
                             onCompleteRun={() => void handleRunLifecycle('complete')}
@@ -385,7 +382,7 @@ function BattlePageContent({ battle, hero }: BattlePageContentProps) {
                 ) : (
                     <BattleActions
                         isBattleResolved={isBattleResolved}
-                        isProcessing={isProcessingLifecycle}
+                        processingAction={processingLifecycleAction}
                         error={lifecycleError}
                         onStartNewBattle={() => void handleStartNewBattle()}
                         onCompleteRun={() => void handleRunLifecycle('complete')}
