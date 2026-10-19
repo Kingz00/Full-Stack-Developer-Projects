@@ -1,11 +1,13 @@
 import type { Request, Response, NextFunction } from 'express';
 
-import { AppError } from '../errors/AppError.js';
-import { PasswordRecoveryService } from '../services/passwordRecoveryService.js';
+import { AppError } from '../errors/AppError.js'
+import { PasswordRecoveryService } from '../services/passwordRecoveryService.js'
+import { RecaptchaService } from '../services/recaptchaService.js'
 
 export class PasswordRecoveryController {
     constructor(
         private readonly passwordRecoveryService: PasswordRecoveryService,
+        private readonly recaptchaService: RecaptchaService,
     ) { }
 
     async forgotPassword(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -20,6 +22,9 @@ export class PasswordRecoveryController {
             ) {
                 throw new AppError(400, 'A valid email address is required.');
             }
+
+            // Verify the CAPTCHA before invoking the email recovery service.
+            await this.recaptchaService.verify(req.body?.recaptchaToken);
 
             const message = await this.passwordRecoveryService.requestPasswordReset(email);
 
@@ -72,6 +77,9 @@ export class PasswordRecoveryController {
             ) {
                 throw new AppError(400, 'A valid email address is required.');
             }
+
+            // Verify the CAPTCHA before invoking the email recovery service.
+            await this.recaptchaService.verify(req.body?.recaptchaToken);
 
             const message = await this.passwordRecoveryService.recoverUsername(email);
 

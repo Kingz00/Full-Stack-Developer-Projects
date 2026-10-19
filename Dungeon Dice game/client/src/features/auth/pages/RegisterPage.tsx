@@ -7,6 +7,7 @@ import './AuthPage.css'
 
 interface RegisterActionData {
     fieldErrors?: {
+        email?: string
         username?: string
         password?: string
         confirmPassword?: string
@@ -60,6 +61,37 @@ function RegisterPage() {
                 </div>
 
                 <Form method="post" className="auth-form">
+                    <div className="auth-form__field">
+                        <label htmlFor="email">Email address</label>
+
+                        <input
+                            id="email"
+                            name="email"
+                            type="email"
+                            autoComplete="email"
+                            maxLength={254}
+                            required
+                            aria-invalid={Boolean(
+                                actionData?.fieldErrors?.email
+                            )}
+                            aria-describedby={
+                                actionData?.fieldErrors?.email
+                                    ? 'email-error'
+                                    : undefined
+                            }
+                        />
+
+                        {actionData?.fieldErrors?.email && (
+                            <p
+                                id="email-error"
+                                className="auth-form__error"
+                                role="alert"
+                            >
+                                {actionData.fieldErrors.email}
+                            </p>
+                        )}
+                    </div>
+
                     <div className="auth-form__field">
                         <label htmlFor="username">Username</label>
 

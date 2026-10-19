@@ -18,7 +18,15 @@ import { battleLoader } from './features/battles/loaders/battleLoader'
 import { statisticsLoader } from './features/statistics/loaders/statisticsLoader'
 import StatisticsPage from './features/statistics/pages/StatisticsPage'
 import AboutPage from './features/about/pages/AboutPage'
-
+import CheckEmailPage from './features/auth/pages/CheckEmailPage'
+import VerifyEmailPage from './features/auth/pages/VerifyEmailPage'
+import { emailVerificationLoader } from './features/auth/loaders/emailVerificationLoader'
+import ForgotPasswordPage from './features/auth/pages/ForgotPasswordPage'
+import ForgotUsernamePage from './features/auth/pages/ForgotUsernamePage'
+import ResetPasswordPage from './features/auth/pages/ResetPasswordPage'
+import { forgotPasswordAction } from './features/auth/actions/forgotPasswordAction'
+import { forgotUsernameAction } from './features/auth/actions/forgotUsernameAction'
+import { resetPasswordAction } from './features/auth/actions/resetPasswordAction'
 
 
 export const router = createBrowserRouter([
@@ -40,10 +48,37 @@ export const router = createBrowserRouter([
                 errorElement: <AuthErrorElement />,
             },
             {
+                path: '/forgot-password',
+                action: forgotPasswordAction,
+                element: <ForgotPasswordPage />,
+                errorElement: <AuthErrorElement />,
+            },
+            {
+                path: '/forgot-username',
+                action: forgotUsernameAction,
+                element: <ForgotUsernamePage />,
+                errorElement: <AuthErrorElement />,
+            },
+            {
+                path: '/reset-password',
+                action: resetPasswordAction,
+                element: <ResetPasswordPage />,
+                errorElement: <AuthErrorElement />,
+            },
+            {
                 path: '/register',
                 action: registerAction,
                 element: <RegisterPage />,
                 errorElement: <AuthErrorElement />,
+            },
+            {
+                path: '/check-email',
+                element: <CheckEmailPage />,
+            },
+            {
+                path: '/verify-email',
+                loader: emailVerificationLoader,
+                element: <VerifyEmailPage />,
             },
             {
                 path: '/logout',

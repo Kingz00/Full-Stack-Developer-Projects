@@ -124,7 +124,7 @@ export function createApp(db: Database.Database, options: { emailSender?: EmailS
         frontendOrigin
     );
 
-    const passwordRecoveryController = new PasswordRecoveryController(passwordRecoveryService);
+    const passwordRecoveryController = new PasswordRecoveryController(passwordRecoveryService, recaptchaService);
 
     // Battle Service
     const battleEngine = new BattleEngine();

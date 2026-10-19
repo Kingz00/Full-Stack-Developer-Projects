@@ -138,7 +138,7 @@ describe('Email verification and password recovery API', () => {
     async function requestReset(email = 'testuser@example.com') {
         const response = await request(app)
             .post('/api/auth/forgot-password')
-            .send({ email });
+            .send({ email, recaptchaToken: 'valid-test-token' });
 
         return response;
     }
@@ -349,11 +349,11 @@ describe('Email verification and password recovery API', () => {
 
         const known = await request(app)
             .post('/api/auth/forgot-username')
-            .send({ email: user.email });
+            .send({ email: user.email, recaptchaToken: 'valid-test-token' });
 
         const unknown = await request(app)
             .post('/api/auth/forgot-username')
-            .send({ email: 'unknown@example.com' });
+            .send({ email: 'unknown@example.com', recaptchaToken: 'valid-test-token' });
 
         expect(known.status).toBe(202);
         expect(unknown.status).toBe(202);
@@ -386,7 +386,7 @@ describe('Email verification and password recovery API', () => {
 
         const response = await request(unconfiguredApp)
             .post('/api/auth/forgot-password')
-            .send({ email: 'testuser@example.com' });
+            .send({ email: 'testuser@example.com', recaptchaToken: 'valid-test-token' });
 
         expect(response.status).toBe(503);
     });
@@ -445,4 +445,77 @@ describe('Email verification and password recovery API', () => {
         expect(response.status).toBe(200);
         expect(response.body.user.username).toBe(user.username);
     });
+
+
+    it('rejects password recovery without a CAPTCHA token', async () => {
+        await createUser()
+
+        const response = await request(app)
+            .post('/api/auth/forgot-password')
+            .send({ email: 'testuser@example.com' })
+
+        expect(response.status).toBe(400)
+        expect(response.body).toEqual({
+            error: 'Complete the CAPTCHA verification.',
+        })
+
+        expect(sender.passwordResetEmails).toHaveLength(0)
+    })
+
+    it('rejects username recovery without a CAPTCHA token', async () => {
+        await createUser()
+
+        const response = await request(app)
+            .post('/api/auth/forgot-username')
+            .send({ email: 'testuser@example.com' })
+
+        expect(response.status).toBe(400)
+        expect(response.body).toEqual({
+            error: 'Complete the CAPTCHA verification.',
+        })
+
+        expect(sender.usernameRecoveryEmails).toHaveLength(0)
+    })
+
+    it('does not send recovery emails when Google rejects the CAPTCHA', async () => {
+        await createUser()
+
+        vi.stubGlobal(
+            'fetch',
+            vi.fn().mockResolvedValue({
+                ok: true,
+                json: async () => ({
+                    success: false,
+                    'error-codes': ['invalid-input-response'],
+                }),
+            }),
+        )
+
+        const passwordResponse = await request(app)
+            .post('/api/auth/forgot-password')
+            .send({
+                email: 'testuser@example.com',
+                recaptchaToken: 'invalid-test-token',
+            })
+
+        const usernameResponse = await request(app)
+            .post('/api/auth/forgot-username')
+            .send({
+                email: 'testuser@example.com',
+                recaptchaToken: 'invalid-test-token',
+            })
+
+        expect(passwordResponse.status).toBe(400)
+        expect(passwordResponse.body).toEqual({
+            error: 'CAPTCHA verification failed. Please try again.',
+        })
+
+        expect(usernameResponse.status).toBe(400)
+        expect(usernameResponse.body).toEqual({
+            error: 'CAPTCHA verification failed. Please try again.',
+        })
+
+        expect(sender.passwordResetEmails).toHaveLength(0)
+        expect(sender.usernameRecoveryEmails).toHaveLength(0)
+    })
 });
