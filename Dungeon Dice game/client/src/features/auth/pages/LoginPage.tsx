@@ -116,6 +116,12 @@ function LoginPage() {
                     </button>
                 </Form>
 
+                <p className="auth-recovery-links">
+                    <Link to="/forgot-password">Forgot password?</Link>
+                    <span aria-hidden="true">·</span>
+                    <Link to="/forgot-username">Forgot username?</Link>
+                </p>
+
                 <p className="auth-card__footer">
                     Don't have an account?{' '}
                     <Link to={registerPath}>Create one</Link>
