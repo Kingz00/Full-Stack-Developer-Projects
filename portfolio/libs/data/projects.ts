@@ -1,6 +1,106 @@
 import type { Project } from "@/libs/types/project"
 
 export const projects: Project[] = [
+
+    {
+        id: "dungeon-dice-duel",
+        title: "Dungeon Dice Duel",
+        slug: "dungeon-dice-duel",
+        description:
+            "A full-stack browser game featuring dice-based combat, persistent game runs, and session-based authentication, built with TypeScript, Express, and SQLite.",
+        longDescription:
+            "Dungeon Dice Duel is a browser-based game backed by a TypeScript and Express server. Players can authenticate, manage game runs, and engage in turn-based encounters governed by dedicated battle logic. The backend uses SQLite to persist application data and separates authentication, game services, repositories, and domain logic into focused modules.\n\nThe project also addresses state consistency across game runs and battles, including rules for active battles, battle outcomes, and run resets. Automated unit and integration tests help verify authentication flows, persistence, and game lifecycle behavior.",
+        image: "/projects/dungeon-dice-duel/hero-selection.jpeg",
+        technologies: [
+            "TypeScript",
+            "Node.js",
+            "Express",
+            "SQLite",
+            "better-sqlite3",
+            "Vitest",
+        ],
+        featuredTechnologies: [
+            "TypeScript",
+            "Express",
+            "SQLite",
+            "Vitest",
+        ],
+        featureSectionTitle: "Gameplay and application features",
+        features: [
+            "User registration and login",
+            "Session-based authentication and logout",
+            "Persistent game runs",
+            "Dice-based combat and damage calculation",
+            "Enemy encounters and battle outcomes",
+            "Game-run reset and abandonment handling",
+        ],
+        highlights: [
+            "Layered backend architecture",
+            "Authentication and session lifecycle management",
+            "SQLite persistence with dedicated repositories",
+            "Battle rules and domain logic",
+            "Game-run and battle lifecycle integrity",
+            "Unit and integration testing",
+        ],
+        technicalDetails: {
+            frontend:
+                "React 19 and TypeScript, built with Vite and routed with React Router 7. Feature-specific components, loaders, and actions handle API requests close to the functionality that uses them.",
+            backend:
+                "Node.js, Express 5, and TypeScript, organized into routes, controllers, middleware, services, repositories, and domain logic.",
+            database:
+                "SQLite using better-sqlite3 for persistent application data and a persistent session store.",
+            other:
+                "Session-based authentication, email verification, account recovery, player statistics, and Vitest unit and integration testing with Supertest.",
+        },
+        challenges: [
+            "Maintaining consistent state across game runs and individual battles, including preventing multiple simultaneous active battles within a run.",
+            "Enforcing lifecycle rules so that resetting a run during an active battle abandons that battle instead of leaving conflicting state behind.",
+            "Separating authentication, persistence, and battle logic into focused modules to make the backend easier to maintain and test.",
+            "Managing authentication and session transitions across registration, login, authenticated requests, and logout.",
+            "Testing game rules, persistence behavior, authentication flows, and interactions between backend components through unit and integration tests.",
+        ],
+        screenshots: [
+            {
+                src: "/projects/dungeon-dice-duel/hero-selection.jpeg",
+                alt: "Dungeon Dice Duel hero selection screen displaying the available heroes.",
+                caption:
+                    "Hero selection lets players choose their character before entering a dungeon run.",
+            },
+            {
+                src: "/projects/dungeon-dice-duel/game-run.jpeg",
+                alt: "Dungeon Dice Duel active game run showing the selected hero and run progress.",
+                caption:
+                    "The game-run screen brings together the selected hero, current progress, and available actions.",
+            },
+            {
+                src: "/projects/dungeon-dice-duel/battle-screen.jpeg",
+                alt: "Dungeon Dice Duel battle screen showing combatants and battle controls.",
+                caption:
+                    "The battle interface presents the combatants and the controls used to resolve encounters.",
+            },
+            {
+                src: "/projects/dungeon-dice-duel/battle-outcome-victory.jpeg",
+                alt: "Dungeon Dice Duel battle screen displaying a victory outcome.",
+                caption:
+                    "Battle outcomes communicate the result of an encounter and its place in the run.",
+            },
+            {
+                src: "/projects/dungeon-dice-duel/player-statistics.jpeg",
+                alt: "Dungeon Dice Duel player statistics screen displaying battle records.",
+                caption:
+                    "Player statistics summarize battle results across completed encounters.",
+            },
+            {
+                src: "/projects/dungeon-dice-duel/mobile-responsive.jpeg",
+                alt: "Dungeon Dice Duel gameplay interface displayed in a narrow mobile layout.",
+                caption:
+                    "The mobile layout adapts the gameplay interface to a narrow screen.",
+            },
+        ],
+        githubUrl:
+            "https://github.com/Kingz00/Full-Stack-Developer-Projects/tree/main/Dungeon%20Dice%20game",
+        liveUrl: "https://dungeon-dice.kingsleyonwupeluonye.dev/",
+    },
     {
         id: "spiral-sounds",
         title: "Spiral Sounds",
@@ -297,3 +397,21 @@ export const projects: Project[] = [
         liveUrl: "https://kingz-assembly-endgame-project.netlify.app/"
     },
 ]
+
+
+const featuredProjectIds = [
+    "dungeon-dice-duel",
+    "vanlife",
+    "print-forge",
+    "spiral-sounds",
+]
+
+export const featuredProjects: Project[] = featuredProjectIds.map((id) => {
+    const project = projects.find((project) => project.id === id)
+
+    if (!project) {
+        throw new Error(`Featured project "${id}" was not found in projects.`)
+    }
+
+    return project
+})
