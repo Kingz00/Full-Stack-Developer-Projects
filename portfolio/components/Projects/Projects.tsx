@@ -1,11 +1,12 @@
+import Link from "next/link"
 import ProjectCard from "./ProjectCard"
-import { projects } from "@/libs/data/projects"
+import { featuredProjects } from "@/libs/data/projects"
 
 export default function Projects() {
     return (
         <section
             id="projects"
-            className="px-6 py-24 sm:py-32"
+            className="px-6 pt-24 pb-8 sm:pt-32 sm:pb-8"
         >
             <div className="mx-auto max-w-7xl">
                 {/* Section heading */}
@@ -36,7 +37,7 @@ export default function Projects() {
 
                 {/* Projects */}
                 <div className="grid gap-x-8 gap-y-20 md:grid-cols-2">
-                    {projects.map((project, index) => (
+                    {featuredProjects.map((project, index) => (
                         <ProjectCard
                             key={project.id}
                             project={project}
@@ -44,6 +45,24 @@ export default function Projects() {
                         />
                     ))}
                 </div>
+
+
+                {/* All Projects link */}
+                <div className="mt-16 flex justify-center">
+                    <Link
+                        href="/projects"
+                        className="group inline-flex items-center gap-3 rounded-full border border-white/15 px-7 py-4 text-sm font-medium text-white transition-colors hover:border-orange-500 hover:text-orange-500"
+                    >
+                        Explore All Projects
+                        <span
+                            aria-hidden="true"
+                            className="transition-transform group-hover:translate-x-1"
+                        >
+                            →
+                        </span>
+                    </Link>
+                </div>
+
             </div>
         </section>
     )
