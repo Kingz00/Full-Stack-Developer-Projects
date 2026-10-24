@@ -1,7 +1,7 @@
 import { Link, useLoaderData } from 'react-router-dom'
 
 import type { EmailVerificationResult } from '../loaders/emailVerificationLoader'
-import logo from '../../../assets/branding/dungeon-dice-duel-logo.png'
+import logo from '../../../assets/branding/dungeon-dice-duel-logo.webp'
 import './AuthPage.css'
 
 function VerifyEmailPage() {

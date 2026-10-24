@@ -1,7 +1,7 @@
 import { Form, Link, useActionData, useNavigation } from 'react-router-dom'
 
 import RecaptchaCheckbox from '../../../components/RecaptchaCheckbox'
-import logo from '../../../assets/branding/dungeon-dice-duel-logo.png'
+import logo from '../../../assets/branding/dungeon-dice-duel-logo.webp'
 import './AuthPage.css'
 
 interface RecoveryActionData {

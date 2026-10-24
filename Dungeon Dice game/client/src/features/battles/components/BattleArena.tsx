@@ -1,4 +1,4 @@
-import battleVersusEmblem from '../../../assets/decorations/battle-versus-emblem.png'
+import battleVersusEmblem from '../../../assets/decorations/battle-versus-emblem.webp'
 import type { Hero } from '../../heroes/loaders/heroesLoader'
 import type { Battle, BattleState } from '../types'
 

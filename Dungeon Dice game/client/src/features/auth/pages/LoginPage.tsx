@@ -2,7 +2,7 @@ import { Form, Link, useNavigation, useSearchParams, useActionData, useRouteLoad
 import RecaptchaCheckbox from '../../../components/RecaptchaCheckbox'
 import type { AuthUser } from '../loaders/authLoader'
 
-import logo from '../../../assets/branding/dungeon-dice-duel-logo.png'
+import logo from '../../../assets/branding/dungeon-dice-duel-logo.webp'
 import './AuthPage.css'
 
 interface LoginActionData {

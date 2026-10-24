@@ -94,7 +94,7 @@ h3 {
 
 .ornate-frame {
     border: 14px solid transparent;
-    border-image-source: url('../assets/decorations/battle-panel-frame.png');
+    border-image-source: url('../assets/decorations/battle-panel-frame.webp');
     border-image-slice: 110 fill;
     border-image-width: 14px;
     border-image-repeat: stretch;

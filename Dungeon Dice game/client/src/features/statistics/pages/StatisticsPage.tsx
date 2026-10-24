@@ -2,12 +2,12 @@ import { useLoaderData, Link } from 'react-router-dom'
 
 import type { StatisticsLoaderData } from '../types'
 
-import totalBattlesIcon from '../../../assets/icons/statistics/total-battles.png'
-import winsIcon from '../../../assets/icons/statistics/wins.png'
-import lossesIcon from '../../../assets/icons/statistics/losses.png'
-import drawsIcon from '../../../assets/icons/statistics/draws.png'
-import bestRunEmblem from '../../../assets/decorations/best-run-emblem.png'
-import heroDivider from '../../../assets/decorations/hero-selection-divider.png'
+import totalBattlesIcon from '../../../assets/icons/statistics/total-battles.webp'
+import winsIcon from '../../../assets/icons/statistics/wins.webp'
+import lossesIcon from '../../../assets/icons/statistics/losses.webp'
+import drawsIcon from '../../../assets/icons/statistics/draws.webp'
+import bestRunEmblem from '../../../assets/decorations/best-run-emblem.webp'
+import heroDivider from '../../../assets/decorations/hero-selection-divider.webp'
 
 import './StatisticsPage.css'
 

@@ -6,7 +6,7 @@ export const heroSeedData: Hero[] = [
         name: 'Knight of Ashfang',
         description:
             'A battle-hardened knight who channels the searing power of an ancient ashfang dragon.',
-        imageUrl: '/heroes/01-knight-of-ashfang.png',
+        imageUrl: '/heroes/01-knight-of-ashfang.webp',
         health: 18,
         attack: 8,
         defense: 8,
@@ -16,7 +16,7 @@ export const heroSeedData: Hero[] = [
         name: 'Mireclaw Raider',
         description:
             'A ruthless swamp raider who strikes quickly from the mist and disappears before the counterattack.',
-        imageUrl: '/heroes/02-mireclaw-raider.png',
+        imageUrl: '/heroes/02-mireclaw-raider.webp',
         health: 15,
         attack: 8,
         defense: 7,
@@ -26,7 +26,7 @@ export const heroSeedData: Hero[] = [
         name: 'Voltjaw Rogue',
         description:
             'A lightning-fast rogue whose electrified blades make every attack dangerously unpredictable.',
-        imageUrl: '/heroes/03-voltjaw-rogue.png',
+        imageUrl: '/heroes/03-voltjaw-rogue.webp',
         health: 14,
         attack: 8,
         defense: 7,
@@ -36,7 +36,7 @@ export const heroSeedData: Hero[] = [
         name: 'Grimscale Guardian',
         description:
             'A heavily armored guardian protected by grimscale plating that turns aside devastating blows.',
-        imageUrl: '/heroes/04-grimscale-guardian.png',
+        imageUrl: '/heroes/04-grimscale-guardian.webp',
         health: 19,
         attack: 7,
         defense: 8,
@@ -46,7 +46,7 @@ export const heroSeedData: Hero[] = [
         name: 'Briarhorn Druid',
         description:
             'A woodland warrior who commands thorn-covered roots and draws strength from the ancient forest.',
-        imageUrl: '/heroes/05-briarhorn-druid.png',
+        imageUrl: '/heroes/05-briarhorn-druid.webp',
         health: 16,
         attack: 8,
         defense: 8,
@@ -56,7 +56,7 @@ export const heroSeedData: Hero[] = [
         name: 'Voidborn Sorceress',
         description:
             'A mysterious sorceress who draws destructive magic from the darkness between worlds.',
-        imageUrl: '/heroes/06-voidborn-sorceress.png',
+        imageUrl: '/heroes/06-voidborn-sorceress.webp',
         health: 15,
         attack: 10,
         defense: 8,
@@ -66,7 +66,7 @@ export const heroSeedData: Hero[] = [
         name: 'Stoneforge Paladin',
         description:
             'A steadfast paladin clad in stone-forged armor, built to withstand relentless assaults.',
-        imageUrl: '/heroes/07-stoneforge-paladin.png',
+        imageUrl: '/heroes/07-stoneforge-paladin.webp',
         health: 20,
         attack: 7,
         defense: 9,
@@ -76,7 +76,7 @@ export const heroSeedData: Hero[] = [
         name: 'Zenith Monk',
         description:
             'A disciplined martial artist who has mastered the balance between precision, speed, and defense.',
-        imageUrl: '/heroes/08-zenith-monk.png',
+        imageUrl: '/heroes/08-zenith-monk.webp',
         health: 16,
         attack: 8,
         defense: 9,
@@ -86,7 +86,7 @@ export const heroSeedData: Hero[] = [
         name: 'Shadowleaf Rogue',
         description:
             'A silent forest assassin who blends into the shadows and waits patiently for the perfect strike.',
-        imageUrl: '/heroes/09-shadowleaf-rogue.png',
+        imageUrl: '/heroes/09-shadowleaf-rogue.webp',
         health: 14,
         attack: 9,
         defense: 7,
@@ -96,7 +96,7 @@ export const heroSeedData: Hero[] = [
         name: 'Stormsoul Sorceress',
         description:
             'A storm-wielding mage who channels thunderous energy through every devastating spell.',
-        imageUrl: '/heroes/10-stormsoul-sorceress.png',
+        imageUrl: '/heroes/10-stormsoul-sorceress.webp',
         health: 15,
         attack: 8,
         defense: 8,
@@ -106,7 +106,7 @@ export const heroSeedData: Hero[] = [
         name: 'Sunblade Paladin',
         description:
             'A radiant champion who carries a blazing blade and stands firm against the forces of darkness.',
-        imageUrl: '/heroes/11-sunblade-paladin.png',
+        imageUrl: '/heroes/11-sunblade-paladin.webp',
         health: 18,
         attack: 7,
         defense: 10,
@@ -116,7 +116,7 @@ export const heroSeedData: Hero[] = [
         name: 'Gravebind Warlock',
         description:
             'A dark spellcaster who binds spectral forces to weaken enemies and protect their own life force.',
-        imageUrl: '/heroes/12-gravebind-warlock.png',
+        imageUrl: '/heroes/12-gravebind-warlock.webp',
         health: 17,
         attack: 8,
         defense: 8,
@@ -126,7 +126,7 @@ export const heroSeedData: Hero[] = [
         name: 'Shadow Rogue',
         description:
             'A master of deception who moves unseen and delivers devastating attacks from the darkness.',
-        imageUrl: '/heroes/13-shadow-rogue.png',
+        imageUrl: '/heroes/13-shadow-rogue.webp',
         health: 15,
         attack: 9,
         defense: 6,
@@ -136,7 +136,7 @@ export const heroSeedData: Hero[] = [
         name: 'Wildroot Warden',
         description:
             'A fierce guardian of the wild who protects her lands with a bow, blade, and unwavering bond with the creatures she defends.',
-        imageUrl: '/heroes/14-wildroot-warden.png',
+        imageUrl: '/heroes/14-wildroot-warden.webp',
         health: 19,
         attack: 8,
         defense: 9,
@@ -146,7 +146,7 @@ export const heroSeedData: Hero[] = [
         name: 'Frostmane Warlock',
         description:
             'A frostbound warlock who commands chilling magic capable of slowing even the fiercest foes.',
-        imageUrl: '/heroes/15-frostmane-warlock.png',
+        imageUrl: '/heroes/15-frostmane-warlock.webp',
         health: 15,
         attack: 8,
         defense: 7,
@@ -156,7 +156,7 @@ export const heroSeedData: Hero[] = [
         name: 'Emberfang Berserker',
         description:
             'A furious berserker who channels the rage of an emberfang beast into overwhelming attacks.',
-        imageUrl: '/heroes/16-emberfang-berserker.png',
+        imageUrl: '/heroes/16-emberfang-berserker.webp',
         health: 16,
         attack: 9,
         defense: 7,
@@ -166,7 +166,7 @@ export const heroSeedData: Hero[] = [
         name: 'Tidecaller Mystic',
         description:
             'A mystical warrior who bends the power of the tides to protect allies and withstand attacks.',
-        imageUrl: '/heroes/17-tidecaller-mystic.png',
+        imageUrl: '/heroes/17-tidecaller-mystic.webp',
         health: 17,
         attack: 8,
         defense: 9,
@@ -176,7 +176,7 @@ export const heroSeedData: Hero[] = [
         name: 'Shadowfen Assassin',
         description:
             'A deadly assassin from the shadowfen, striking with precision before vanishing into the gloom.',
-        imageUrl: '/heroes/18-shadowfen-assassin.png',
+        imageUrl: '/heroes/18-shadowfen-assassin.webp',
         health: 15,
         attack: 9,
         defense: 6,
@@ -186,7 +186,7 @@ export const heroSeedData: Hero[] = [
         name: 'Ironbark Sentinel',
         description:
             'An immovable sentinel whose ironbark armor provides exceptional protection against enemy attacks.',
-        imageUrl: '/heroes/19-ironbark-sentinel.png',
+        imageUrl: '/heroes/19-ironbark-sentinel.webp',
         health: 20,
         attack: 7,
         defense: 9,
@@ -196,7 +196,7 @@ export const heroSeedData: Hero[] = [
         name: 'Stormveil Archer',
         description:
             'A master archer who fires with the speed and precision of a storm sweeping across the battlefield.',
-        imageUrl: '/heroes/20-stormveil-archer.png',
+        imageUrl: '/heroes/20-stormveil-archer.webp',
         health: 14,
         attack: 8,
         defense: 8,
@@ -206,7 +206,7 @@ export const heroSeedData: Hero[] = [
         name: 'Duskwraith Knight',
         description:
             'A spectral knight who walks between darkness and light, balancing powerful attacks with sturdy defense.',
-        imageUrl: '/heroes/21-duskwraith-knight.png',
+        imageUrl: '/heroes/21-duskwraith-knight.webp',
         health: 18,
         attack: 8,
         defense: 8,
@@ -216,7 +216,7 @@ export const heroSeedData: Hero[] = [
         name: 'Bloodmoon Warlord',
         description:
             'A formidable warlord who draws strength from the crimson glow of the bloodmoon.',
-        imageUrl: '/heroes/22-bloodmoon-warlord.png',
+        imageUrl: '/heroes/22-bloodmoon-warlord.webp',
         health: 20,
         attack: 9,
         defense: 7,
@@ -226,7 +226,7 @@ export const heroSeedData: Hero[] = [
         name: 'Venomshade Huntress',
         description:
             'A relentless huntress whose poisoned attacks wear down enemies while she keeps her distance.',
-        imageUrl: '/heroes/23-venomshade-huntress.png',
+        imageUrl: '/heroes/23-venomshade-huntress.webp',
         health: 14,
         attack: 9,
         defense: 7,
@@ -236,7 +236,7 @@ export const heroSeedData: Hero[] = [
         name: 'Thunderforge Monk',
         description:
             'A disciplined warrior whose devastating strikes carry the force of thunder from an ancient forge.',
-        imageUrl: '/heroes/24-thunderforge-monk.png',
+        imageUrl: '/heroes/24-thunderforge-monk.webp',
         health: 17,
         attack: 9,
         defense: 8,

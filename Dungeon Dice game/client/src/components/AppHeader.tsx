@@ -1,7 +1,7 @@
 import { Form, Link, useNavigation, useRouteLoaderData } from 'react-router-dom'
 
 import type { AuthUser } from '../features/auth/loaders/authLoader'
-import logo from '../assets/branding/dungeon-dice-duel-logo.png'
+import logo from '../assets/branding/dungeon-dice-duel-logo.webp'
 
 import './AppHeader.css'
 

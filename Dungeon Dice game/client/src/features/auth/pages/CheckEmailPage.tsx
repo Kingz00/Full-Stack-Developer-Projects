@@ -1,6 +1,6 @@
 import { Link, useSearchParams } from 'react-router-dom'
 
-import logo from '../../../assets/branding/dungeon-dice-duel-logo.png'
+import logo from '../../../assets/branding/dungeon-dice-duel-logo.webp'
 import './AuthPage.css'
 
 function CheckEmailPage() {

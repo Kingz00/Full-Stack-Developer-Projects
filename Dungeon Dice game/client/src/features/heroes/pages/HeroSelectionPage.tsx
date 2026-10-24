@@ -9,7 +9,7 @@ import healthIcon from '../../../assets/icons/health.svg'
 import attackIcon from '../../../assets/icons/attack.svg'
 import defenseIcon from '../../../assets/icons/defense.svg'
 
-import heroDivider from '../../../assets/decorations/hero-selection-divider.png'
+import heroDivider from '../../../assets/decorations/hero-selection-divider.webp'
 
 
 function HeroSelectionPage() {
@@ -63,6 +63,8 @@ function HeroSelectionPage() {
                                     className="hero-card__image"
                                     src={hero.imageUrl}
                                     alt={hero.name}
+                                    loading="lazy"
+                                    decoding="async"
                                 />
                             </div>
 

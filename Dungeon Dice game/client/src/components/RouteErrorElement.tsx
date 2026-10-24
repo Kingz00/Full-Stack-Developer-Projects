@@ -1,6 +1,6 @@
 import { isRouteErrorResponse, Link, useRouteError } from 'react-router-dom'
 
-import logo from '../assets/branding/dungeon-dice-duel-logo.png'
+import logo from '../assets/branding/dungeon-dice-duel-logo.webp'
 import './RouteErrorElement.css'
 
 function RouteErrorElement() {

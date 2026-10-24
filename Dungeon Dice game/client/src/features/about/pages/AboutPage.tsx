@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 
-import heroDivider from '../../../assets/decorations/hero-selection-divider.png'
+import heroDivider from '../../../assets/decorations/hero-selection-divider.webp'
 
 import './AboutPage.css'
 
